@@ -297,6 +297,6 @@ end
 describe Order, "#strike" do
   it "should raise error if order has been cancelled" do
     order = Order.new(state: Order::CANCEL)
-    expect { order.strike(mock('trade')) }.to raise_error
+    expect { order.strike(build_stubbed(:trade)) }.to raise_error(OrderError)
   end
 end

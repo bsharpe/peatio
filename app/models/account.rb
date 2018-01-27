@@ -185,10 +185,6 @@ class Account < ActiveRecord::Base
   scope :locked_sum, -> (currency) { with_currency(currency).sum(:locked) }
   scope :balance_sum, -> (currency) { with_currency(currency).sum(:balance) }
 
-  class AccountError < RuntimeError; end
-  class LockedError < AccountError; end
-  class BalanceError < AccountError; end
-
   def as_json(options = {})
     super(options).merge({
       # check if there is a useable address, but don't touch it to create the address now.

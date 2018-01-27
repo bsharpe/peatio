@@ -1,45 +1,61 @@
 source 'https://rubygems.org'
 
+# Framework
 gem 'rails', '~> 4.2.0'
 gem 'rails-i18n', '>= 4.0.9'
-
-gem 'mysql2'
-gem 'daemons-rails'
-gem 'redis-rails', '>= 5.0.2'
 gem 'responders', '~> 2.0'
-gem 'rotp'
-gem 'json'
-gem 'jbuilder'
-gem 'bcrypt-ruby', '~> 3.1.2'
+gem 'rails-observers'
+gem "globalize", "~> 4.0.0"
 
-gem 'doorkeeper', '~> 1.4.2'
-gem 'omniauth', '~> 1.2.2'
-gem 'omniauth-identity', '~> 1.1.1'
-gem 'omniauth-weibo-oauth2', '~> 0.4.0'
-
-gem 'figaro', '>= 0.7.0'
-gem 'hashie'
-
+# Data
+gem 'mysql2'
+gem 'redis-rails', '>= 5.0.2'
 gem 'aasm', '~> 3.4.0'
-gem 'amqp', '~> 1.3.0'
-gem 'bunny', '~> 1.2.1'
-gem 'cancancan'
 gem 'enumerize'
-gem 'datagrid', '>= 1.5.7'
 gem 'acts-as-taggable-on', '>= 3.0.1'
 gem 'kaminari', '>= 0.15.1'
 gem 'paranoid2'
-gem 'active_hash', '~> 1.5.0'
-gem 'http_accept_language'
-gem "globalize", "~> 4.0.0"
 gem 'paper_trail', '~> 3.0.1'
-gem 'rails-observers'
-gem 'country_select', '~> 2.1.0'
 
-gem 'gon', '~> 5.2.0'
+# Security
+gem 'rotp'
+gem 'bcrypt-ruby', '~> 3.1.2'
+
+# Background Processing
+gem 'amqp', '~> 1.3.0'
+gem 'bunny', '~> 1.2.1'
 gem 'pusher'
 gem 'eventmachine', '~> 1.0.4'
 gem 'em-websocket', '~> 0.5.1'
+gem 'daemons-rails'
+
+# API
+gem 'grape', '~> 0.7.0'
+gem 'grape-entity', '~> 0.4.2'
+gem 'grape-swagger', '~> 0.7.2'
+gem 'json'
+gem 'jbuilder'
+
+# Authentication
+gem 'doorkeeper'
+gem 'omniauth'
+gem 'omniauth-identity'
+gem 'omniauth-weibo-oauth2'
+
+# Authorization
+gem 'cancancan'
+
+# ENV Vars
+gem 'figaro', '>= 0.7.0'
+
+gem 'hashie'
+
+gem 'datagrid', '>= 1.5.7'
+gem 'active_hash', '~> 1.5.0'
+gem 'http_accept_language'
+gem 'country_select', '~> 2.1.0'
+
+gem 'gon', '~> 5.2.0'
 
 gem 'simple_form', '~> 3.1.1'
 gem 'slim-rails', '>= 3.1.3'
@@ -58,9 +74,6 @@ gem 'browser', '~> 0.8.0'
 gem 'rbtree'
 gem 'liability-proof', '0.0.9'
 gem 'whenever', '~> 0.9.2'
-gem 'grape', '~> 0.7.0'
-gem 'grape-entity', '~> 0.4.2'
-gem 'grape-swagger', '~> 0.7.2'
 gem 'rack-attack', '~> 4.3.1'
 gem 'easy_table', '>= 0.0.6'
 gem 'phonelib', '~> 0.3.5'
@@ -73,8 +86,8 @@ gem 'rest-client', '~> 1.6.8'
 group :development, :test do
   gem 'factory_girl_rails', '>= 4.9.0'
   gem 'faker', '~> 1.4.3'
-  gem 'mina'
-  gem 'mina-slack', github: 'peatio/mina-slack'
+  # gem 'mina'
+  # gem 'mina-slack', github: 'peatio/mina-slack'
   gem 'meta_request', '>= 0.4.3'
   gem 'better_errors'
   gem 'binding_of_caller'

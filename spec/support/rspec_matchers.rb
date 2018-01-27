@@ -10,7 +10,7 @@ RSpec::Matchers.define :be_d do |expected|
     end
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     "expected #{actual.to_s} would be of #{expected.to_s}"
   end
 end

@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: members
+#
+#  id           :integer          not null, primary key
+#  sn           :string(255)
+#  display_name :string(255)
+#  email        :string(255)
+#  identity_id  :integer
+#  created_at   :datetime
+#  updated_at   :datetime
+#  state        :integer
+#  activated    :boolean
+#  country_code :integer
+#  phone_number :string(255)
+#  disabled     :boolean          default(FALSE)
+#  api_disabled :boolean          default(FALSE)
+#  nickname     :string(255)
+#
+
 require 'spec_helper'
 
 describe Member do

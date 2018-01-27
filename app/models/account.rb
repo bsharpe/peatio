@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id                              :integer          not null, primary key
+#  member_id                       :integer
+#  currency                        :integer
+#  balance                         :decimal(32, 16)
+#  locked                          :decimal(32, 16)
+#  created_at                      :datetime
+#  updated_at                      :datetime
+#  in                              :decimal(32, 16)
+#  out                             :decimal(32, 16)
+#  default_withdraw_fund_source_id :integer
+#
+# Indexes
+#
+#  index_accounts_on_member_id               (member_id)
+#  index_accounts_on_member_id_and_currency  (member_id,currency) UNIQUE
+#
+
 class Account < ActiveRecord::Base
   include Currencible
 
@@ -20,14 +41,15 @@ class Account < ActiveRecord::Base
 
   belongs_to :member
   has_many :payment_addresses
-  has_many :versions, class_name: "::AccountVersion"
+  has_many :versions, class_name: AccountVersion.name
   has_many :partial_trees
 
   # Suppose to use has_one here, but I want to store
   # relationship at account side. (Daniel)
-  belongs_to :default_withdraw_fund_source, class_name: 'FundSource'
+  belongs_to :default_withdraw_fund_source, class_name: FundSource.name
 
-  validates :member_id, uniqueness: { scope: :currency }
+  # validates :member_id, uniqueness: { scope: :currency }
+
   validates_numericality_of :balance, :locked, greater_than_or_equal_to: ZERO
 
   scope :enabled, -> { where("currency in (?)", Currency.ids) }
@@ -50,27 +72,27 @@ class Account < ActiveRecord::Base
   end
 
   def plus_funds(amount, fee: ZERO, reason: nil, ref: nil)
-    (amount <= ZERO or fee > amount) and raise AccountError, "cannot add funds (amount: #{amount})"
+    raise AccountError, "cannot add funds (amount: #{amount})" if (!amount.positive? || fee > amount)
     change_balance_and_locked amount, 0
   end
 
   def sub_funds(amount, fee: ZERO, reason: nil, ref: nil)
-    (amount <= ZERO or amount > self.balance) and raise AccountError, "cannot subtract funds (amount: #{amount})"
+    raise AccountError, "cannot subtract funds (amount: #{amount})" if (!amount.positive? || amount > self.balance)
     change_balance_and_locked -amount, 0
   end
 
   def lock_funds(amount, reason: nil, ref: nil)
-    (amount <= ZERO or amount > self.balance) and raise AccountError, "cannot lock funds (amount: #{amount})"
+    raise AccountError, "cannot lock funds (amount: #{amount})" if (!amount.positive? || amount > self.balance)
     change_balance_and_locked -amount, amount
   end
 
   def unlock_funds(amount, reason: nil, ref: nil)
-    (amount <= ZERO or amount > self.locked) and raise AccountError, "cannot unlock funds (amount: #{amount})"
+    raise AccountError, "cannot unlock funds (amount: #{amount})" if (!amount.positive? || amount > self.locked)
     change_balance_and_locked amount, -amount
   end
 
   def unlock_and_sub_funds(amount, locked: ZERO, fee: ZERO, reason: nil, ref: nil)
-    raise AccountError, "cannot unlock and subtract funds (amount: #{amount})" if ((amount <= 0) or (amount > locked))
+    raise AccountError, "cannot unlock and subtract funds (amount: #{amount})" if (!amount.positive? || (amount > locked))
     raise LockedError, "invalid lock amount" unless locked
     raise LockedError, "invalid lock amount (amount: #{amount}, locked: #{locked}, self.locked: #{self.locked})" if ((locked <= 0) or (locked > self.locked))
     change_balance_and_locked locked-amount, -locked
@@ -155,7 +177,7 @@ class Account < ActiveRecord::Base
   def change_balance_and_locked(delta_b, delta_l)
     self.balance += delta_b
     self.locked  += delta_l
-    self.class.connection.execute "update accounts set balance = balance + #{delta_b}, locked = locked + #{delta_l} where id = #{id}"
+    self.class.connection.execute "UPDATE accounts SET balance = balance + #{delta_b}, locked = locked + #{delta_l} WHERE id = #{id}"
     add_to_transaction # so after_commit will be triggered
     self
   end
@@ -179,7 +201,9 @@ class Account < ActiveRecord::Base
   private
 
   def sync_update
-    ::Pusher["private-#{member.sn}"].trigger_async('accounts', { type: 'update', id: self.id, attributes: {balance: balance, locked: locked} })
+    if self.member
+      ::Pusher["private-#{member.sn}"].trigger_async('accounts', { type: 'update', id: self.id, attributes: {balance: balance, locked: locked} })
+    end
   end
 
 end

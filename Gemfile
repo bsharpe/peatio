@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Framework
-gem 'rails', '~> 4.2.0'
+gem 'rails', '~> 4.2'
 gem 'rails-i18n', '>= 4.0.9'
 gem 'responders', '~> 2.0'
 gem 'rails-observers'
@@ -11,11 +11,12 @@ gem "globalize", "~> 4.0.0"
 gem 'mysql2'
 gem 'redis-rails', '>= 5.0.2'
 gem 'aasm', '~> 3.4.0'
-gem 'enumerize'
+gem 'enumerize', '~> 1.1.1'
 gem 'acts-as-taggable-on', '>= 3.0.1'
 gem 'kaminari', '>= 0.15.1'
 gem 'paranoid2'
 gem 'paper_trail', '~> 3.0.1'
+gem 'marginalia'        # show where queries are coming from in the logs
 
 # Security
 gem 'rotp'
@@ -46,7 +47,7 @@ gem 'omniauth-weibo-oauth2'
 gem 'cancancan'
 
 # ENV Vars
-gem 'figaro', '>= 0.7.0'
+gem 'figaro', github: 'laserlemon/figaro', branch: :master
 
 gem 'hashie'
 
@@ -83,8 +84,14 @@ gem 'carrierwave', '~> 0.10.0'
 gem 'simple_captcha2', require: 'simple_captcha'
 gem 'rest-client', '~> 1.6.8'
 
+## MISC
+gem 'colorize'
+gem 'hirb'
+gem 'annotate'
+gem 'bootsnap'
+
 group :development, :test do
-  gem 'factory_girl_rails', '>= 4.9.0'
+  gem 'factory_bot_rails'
   gem 'faker', '~> 1.4.3'
   # gem 'mina'
   # gem 'mina-slack', github: 'peatio/mina-slack'
@@ -96,7 +103,6 @@ group :development, :test do
   gem 'mails_viewer', '>= 0.1.2'
   gem 'timecop'
   gem 'dotenv-rails'
-  gem 'rspec-rails', '>= 3.7.1'
   gem 'byebug'
 end
 
@@ -109,7 +115,7 @@ group :test do
   gem 'selenium-webdriver', '>= 2.39.0'
   gem 'poltergeist', '>= 1.16.0'
 
-  # rspec-rails rely on test-unit if rails version less then 4.1.0
-  # but test-unit has been removed from ruby core since 2.2.0
-  gem 'test-unit'
+  gem 'rspec-rails'
+  gem 'rspec-collection_matchers'
+  gem 'rspec-its'
 end

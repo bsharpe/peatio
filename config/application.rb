@@ -30,7 +30,7 @@ module Peatio
     #config.i18n.available_locales = ['en', 'ru']
     #config.i18n.available_locales = ['en']
 
-    config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/extras)
+    # config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/extras)
 
     #config.assets.precompile += ['bootstrap-datetimepicker.css']
     config.assets.initialize_on_precompile = true
@@ -41,9 +41,11 @@ module Peatio
     end
 
     config.generators do |g|
-      g.orm             :active_record
-      g.template_engine :erb
-      g.stylesheets     false
+      g.orm                :active_record
+      g.template_engine    :erb
+      g.stylesheets        false
+      g.factory_bot        dir: 'spec/factories/'
+      g.test_framework     :rspec
     end
 
     # Observer configuration

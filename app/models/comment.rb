@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: comments
+#
+#  id         :integer          not null, primary key
+#  content    :text(65535)
+#  author_id  :integer
+#  ticket_id  :integer
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class Comment < ActiveRecord::Base
   after_commit :send_notification, on: [:create]
 

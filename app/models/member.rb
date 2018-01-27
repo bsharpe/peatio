@@ -32,7 +32,7 @@ class Member < ActiveRecord::Base
   validates :email, email: true, uniqueness: true, allow_nil: true
 
   before_create :build_default_id_document
-  after_create  :touch_accounts
+  # after_create  :touch_accounts
   after_update :resend_activation
   after_update :sync_update
 

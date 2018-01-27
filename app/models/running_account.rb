@@ -1,3 +1,25 @@
+# == Schema Information
+#
+# Table name: running_accounts
+#
+#  id          :integer          not null, primary key
+#  category    :integer
+#  income      :decimal(32, 16)  default(0.0), not null
+#  expenses    :decimal(32, 16)  default(0.0), not null
+#  currency    :integer
+#  member_id   :integer
+#  source_id   :integer
+#  source_type :string(255)
+#  note        :string(255)
+#  created_at  :datetime
+#  updated_at  :datetime
+#
+# Indexes
+#
+#  index_running_accounts_on_member_id                  (member_id)
+#  index_running_accounts_on_source_type_and_source_id  (source_type,source_id)
+#
+
 class RunningAccount < ActiveRecord::Base
   include Currencible
 

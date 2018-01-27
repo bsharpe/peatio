@@ -109,7 +109,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_timezone
-    Time.zone = ENV['TIMEZONE'] if ENV['TIMEZONE']
+    Time.zone = ENV['DEFAULT_TIMEZONE'] if ENV['DEFAULT_TIMEZONE']
   end
 
   def set_gon

@@ -5,6 +5,8 @@ module Datagrid
     module ClassMethods
       def column_localtime(name, options = {}, &block)
         column(name, options) do |model|
+          puts "HELLO #{model} #{name} ".yellow
+
           val = block ? block.call(model) : model.send(name)
           if options[:i18n]
             I18n.l(val.localtime, options[:i18n])
@@ -15,6 +17,7 @@ module Datagrid
       end
 
       def column_i18n(name, options = {}, &block)
+        puts "GOODBYE".yellow
         column(name, options) do |model|
           val = block ? block.call(model) : model.send(name)
           if options[:i18n]

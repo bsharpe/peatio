@@ -35,7 +35,7 @@ describe APIv2::Trades do
       response.should be_success
       json = JSON.parse(response.body)
       json.should have(1).trade
-      json.first['id'].should == bid_trade.id
+      expect(json.first['id']).to eq bid_trade.id
     end
 
     it "should return trades between id range" do
@@ -44,28 +44,28 @@ describe APIv2::Trades do
       response.should be_success
       json = JSON.parse(response.body)
       json.should have(1).trade
-      json.first['id'].should == bid_trade.id
+      expect(json.first['id']).to eq bid_trade.id
     end
 
     it "should sort trades in reverse creation order" do
       get '/api/v2/trades', market: 'btceur'
       response.should be_success
-      JSON.parse(response.body).first['id'].should == bid_trade.id
+      expect(JSON.parse(response.body).first['id']).to eq bid_trade.id
     end
 
     it "should get trades by from and limit" do
       another = create(:trade, bid: bid, created_at: 6.hours.ago)
       get '/api/v2/trades', market: 'btceur', from: ask_trade.id, limit: 1, order_by: 'asc'
       response.should be_success
-      JSON.parse(response.body).first['id'].should == bid_trade.id
+      expect(JSON.parse(response.body).first['id']).to eq bid_trade.id
     end
   end
 
   describe 'GET /api/v2/trades/my' do
     it "should require authentication" do
       get '/api/v2/trades/my', market: 'btceur', access_key: 'test', tonce: time_to_milliseconds, signature: 'test'
-      response.code.should == '401'
-      response.body.should == '{"error":{"code":2008,"message":"The access key test does not exist."}}'
+      expect(response.code).to eq '401'
+      expect(response.body).to eq '{"error":{"code":2008,"message":"The access key test does not exist."}}'
     end
 
     it "should return all my recent trades" do
@@ -73,10 +73,10 @@ describe APIv2::Trades do
       response.should be_success
 
       result = JSON.parse(response.body)
-      result.find {|t| t['id'] == ask_trade.id }['side'].should == 'ask'
-      result.find {|t| t['id'] == ask_trade.id }['order_id'].should == ask.id
-      result.find {|t| t['id'] == bid_trade.id }['side'].should == 'bid'
-      result.find {|t| t['id'] == bid_trade.id }['order_id'].should == bid.id
+      expect(result.find {|t| t['id'] == ask_trade.id }['side']).to eq 'ask'
+      expect(result.find {|t| t['id'] == ask_trade.id }['order_id']).to eq ask.id
+      expect(result.find {|t| t['id'] == bid_trade.id }['side']).to eq 'bid'
+      expect(result.find {|t| t['id'] == bid_trade.id }['order_id']).to eq bid.id
     end
 
     it "should return 1 trade" do
@@ -93,8 +93,8 @@ describe APIv2::Trades do
 
     it "should return limit out of range error" do
       signed_get '/api/v2/trades/my', params: {market: 'btceur', limit: 1024}, token: token
-      response.code.should == '400'
-      response.body.should == '{"error":{"code":1001,"message":"limit must be in range: 1..1000"}}'
+      expect(response.code).to eq '400'
+      expect(response.body).to eq '{"error":{"code":1001,"message":"limit must be in range: 1..1000"}}'
     end
   end
 

@@ -34,7 +34,7 @@ describe Member do
   describe 'before_create' do
     it "should unify email" do
       create(:identity, email: 'foo@example.com')
-      build(:identity, email: 'Foo@example.com').should_not be_valid
+      expect(build(:identity, email: 'Foo@example.com')).to_not be_valid
     end
 
     it 'creates accounts for the member' do
@@ -90,7 +90,7 @@ describe Member do
       bid = create(:order_bid, member: member)
       t1 = create(:trade, ask: ask)
       t2 = create(:trade, bid: bid)
-      member.trades.order('id').should == [t1, t2]
+      expect(member.trades.order('id')).to eq [t1, t2]
     end
   end
 
@@ -104,14 +104,14 @@ describe Member do
       Thread.current[:user] = nil
     end
 
-    specify { Member.current.should == member }
+    specify { expect(Member.current).to eq member }
   end
 
   describe ".current=" do
     let(:member) { create(:member) }
     before { Member.current = member }
     after { Member.current = nil }
-    specify { Thread.current[:user].should == member }
+    specify { expect(Thread.current[:user]).to eq member }
   end
 
   describe "#unread_messages" do
@@ -122,7 +122,7 @@ describe Member do
 
     before { ReadMark.delete_all }
 
-    specify { user.unread_comments.count.should == 1 }
+    specify { expect(user.unread_comments.count).to eq 1 }
 
   end
 
@@ -164,7 +164,7 @@ describe Member do
 
     describe 'search by name' do
       let(:member) { create(:verified_member) }
-      subject { Member.search(field: 'name', term: member.name) }
+      subject { Member.search( field: 'name', term: member.name ) }
 
       it { expect(subject.count).to eq(1) }
       it { expect(subject).to be_include(member) }
@@ -213,7 +213,7 @@ describe Member do
             member.remove_auth('weibo')
           end.not_to change(Identity, :count)
         end.to change(Authentication, :count).by(-1)
-        member.auth('weibo').should be_nil
+        expect(member.auth('weibo')).to be_nil
       end
     end
 
@@ -224,7 +224,7 @@ describe Member do
             member.remove_auth('identity')
           end.to change(Identity, :count).by(-1)
         end.to change(Authentication, :count).by(-1)
-        member.auth('identity').should be_nil
+        expect(member.auth('identity')).to be_nil
       end
     end
   end
@@ -237,8 +237,8 @@ describe Member do
       }
 
       it "should return nil" do
-        Member.count.should == 1
-        Member.send(:locate_email, auth).should be_nil
+        expect(Member.count).to eq 1
+        expect(Member.send(:locate_email, auth)).to be_nil
       end
     end
 
@@ -251,7 +251,7 @@ describe Member do
 
       it "should return the user and create the auth" do
         expect do
-          Member.send(:locate_email, auth).should == member
+          expect(Member.send(:locate_email, auth)).to eq member
         end.to change(Authentication, :count).by(1)
       end
     end
@@ -266,7 +266,7 @@ describe Member do
 
       it "should not create auth and return nil" do
         expect do
-          Member.send(:locate_email, auth).should be_nil
+          expect(Member.send(:locate_email, auth)).to be_nil
         end.not_to change(Authentication, :count)
       end
     end

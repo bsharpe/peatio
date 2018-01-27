@@ -28,24 +28,24 @@ describe APIv2::Deposits do
 
     it "deposits num" do
       signed_get '/api/v2/deposits', token: token
-      JSON.parse(response.body).size.should == 3
+      expect(JSON.parse(response.body).size).to eq 3
     end
 
     it "should return limited deposits" do
       signed_get '/api/v2/deposits', params: {limit: 1}, token: token
-      JSON.parse(response.body).size.should == 1
+      expect(JSON.parse(response.body).size).to eq 1
     end
 
     it "should filter deposits by state" do
       signed_get '/api/v2/deposits', params: {state: 'cancelled'}, token: token
-      JSON.parse(response.body).size.should == 0
+      expect(JSON.parse(response.body).size).to eq 0
 
       d = create(:deposit, member: member, currency: 'btc')
       d.submit!
       signed_get '/api/v2/deposits', params: {state: 'submitted'}, token: token
       json = JSON.parse(response.body)
-      json.size.should == 1
-      json.first['txid'].should == d.txid
+      expect(json.size).to eq 1
+      expect(json.first['txid']).to eq d.txid
     end
 
     it "deposits currency eur" do
@@ -57,26 +57,26 @@ describe APIv2::Deposits do
 
     it "should return 404 if txid not exist" do
       signed_get '/api/v2/deposit', params: {txid: 5}, token: token
-      response.code.should == '404'
+      expect(response.code).to eq '404'
     end
 
     it "should return 404 if txid not belongs_to you " do
       signed_get '/api/v2/deposit', params: {txid: 10}, token: token
-      response.code.should == '404'
+      expect(response.code).to eq '404'
     end
 
     it "should ok txid if exist" do
       signed_get '/api/v2/deposit', params: {txid: 1}, token: token
 
-      response.code.should == '200'
-      JSON.parse(response.body)['amount'].should == '520.0'
+      expect(response.code).to eq '200'
+      expect(JSON.parse(response.body)['amount']).to eq '520.0'
     end
 
     it "should return deposit no time limit " do
       signed_get '/api/v2/deposit', params: {txid: 'test'}, token: token
 
-      response.code.should == '200'
-      JSON.parse(response.body)['amount'].should == '111.0'
+      expect(response.code).to eq '200'
+      expect(JSON.parse(response.body)['amount']).to eq '111.0'
     end
   end
 end

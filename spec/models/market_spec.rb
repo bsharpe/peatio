@@ -9,7 +9,7 @@ describe Market do
 
   context 'markets hash' do
     it "should list all markets info" do
-      Market.to_hash.should == {:btceur=>{:name=>"BTC/EUR", :base_unit=>"btc", :quote_unit=>"eur"}}
+      expect(Market.to_hash).to eq {:btceur=>{:name=>"BTC/EUR", :base_unit=>"btc", :quote_unit=>"eur"}}
     end
   end
 

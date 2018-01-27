@@ -113,7 +113,7 @@ describe APIv2::Auth::Authenticator do
   it "should not be authentic if token is soft deleted" do
     token.destroy
     APIToken.find_by_id(token.id).should be_nil
-    APIToken.with_deleted.find_by_id(token.id).should == token
+    expect(APIToken.with_deleted.find_by_id(token.id)).to eq token
     lambda {
       subject.authenticate!
     }.should raise_error(APIv2::InvalidAccessKeyError)

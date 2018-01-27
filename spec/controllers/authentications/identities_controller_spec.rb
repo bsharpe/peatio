@@ -11,7 +11,7 @@ describe Authentications::IdentitiesController do
     it "should set the identity" do
       do_request
       assigns(:identity).new_record?.should be_true
-      assigns(:identity).email.should == email
+      expect(assigns(:identity).email).to eq email
     end
   end
 
@@ -32,7 +32,7 @@ describe Authentications::IdentitiesController do
     it "should be recirect to settings path with flash" do
       do_request
       response.should redirect_to(settings_path)
-      flash[:notice].should == t("authentications.identities.create.success")
+      expect(flash[:notice]).to eq t("authentications.identities.create.success")
     end
   end
 

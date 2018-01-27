@@ -41,8 +41,8 @@ describe APIv2::OrderBooks do
       response.should be_success
 
       result = JSON.parse(response.body)
-      result['asks'].should == asks.reverse
-      result['bids'].should == bids
+      expect(result['asks']).to eq asks.reverse
+      expect(result['bids']).to eq bids
     end
   end
 

@@ -27,7 +27,7 @@ describe Withdraw do
   context '#fix_precision' do
     it "should round down to max precision" do
       withdraw = create(:satoshi_withdraw, sum: '0.123456789')
-      withdraw.sum.should == '0.12345678'.to_d
+      expect(withdraw.sum).to eq '0.12345678'.to_d
     end
   end
 
@@ -35,7 +35,7 @@ describe Withdraw do
     it "should strip trailing spaces in fund_uid" do
       fund_source = create(:btc_fund_source, uid: 'test   ')
       @withdraw = create(:satoshi_withdraw, fund_source_id: fund_source.id)
-      @withdraw.fund_uid.should == 'test'
+      expect(@withdraw.fund_uid).to eq 'test'
     end
   end
 

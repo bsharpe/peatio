@@ -10,11 +10,11 @@ describe Worker::Matching do
 
   context "engines" do
     it "should get all engines" do
-      subject.engines.keys.should == [market.id]
+      expect(subject.engines.keys).to eq [market.id]
     end
 
     it "should started all engines" do
-      subject.engines.values.map(&:mode).should == [:run]
+      expect(subject.engines.values.map(&:mode)).to eq [:run]
     end
   end
 
@@ -26,7 +26,7 @@ describe Worker::Matching do
     end
 
     it "should started engine" do
-      subject.engines['btceur'].mode.should == :run
+      expect(subject.engines['btceur'].mode).to eq :run
     end
 
     it "should match part of existing order" do
@@ -118,14 +118,14 @@ describe Worker::Matching do
       end
 
       it "should not start engine" do
-        subject.engines['btceur'].mode.should == :dryrun
+        expect(subject.engines['btceur'].mode).to eq :dryrun
         subject.engines['btceur'].queue.should have(1).trade
       end
     end
 
     context "buffered orders matched" do
       it "should start engine" do
-        subject.engines['btceur'].mode.should == :run
+        expect(subject.engines['btceur'].mode).to eq :run
       end
     end
   end

@@ -28,8 +28,8 @@ describe APIToken do
   let(:token) { create(:api_token, scopes: '') }
 
   it "should generate keys before validation on create" do
-    token.access_key.size.should == 40
-    token.secret_key.size.should == 40
+    expect(token.access_key.size).to eq 40
+    expect(token.secret_key.size).to eq 40
   end
 
   it "should not change keys on update" do
@@ -39,19 +39,19 @@ describe APIToken do
     token.member_id = 999
     token.save && token.reload
 
-    token.access_key.should == access_key
-    token.secret_key.should == secret_key
+    expect(token.access_key).to eq access_key
+    expect(token.secret_key).to eq secret_key
   end
 
   it "should allow ip if ip filters is not set" do
-    token.allow_ip?('127.0.0.1').should == true
-    token.allow_ip?('127.0.0.2').should == true
+    expect(token.allow_ip?('127.0.0.1')).to eq true
+    expect(token.allow_ip?('127.0.0.2')).to eq true
   end
 
   it "should allow ip if ip is in ip whitelist" do
     token.trusted_ip_list = %w(127.0.0.1)
-    token.allow_ip?('127.0.0.1').should == true
-    token.allow_ip?('127.0.0.2').should == false
+    expect(token.allow_ip?('127.0.0.1')).to eq true
+    expect(token.allow_ip?('127.0.0.2')).to eq false
   end
 
   it "should tranlsate comma seperated whitelist to trusted ip list" do
@@ -65,7 +65,7 @@ describe APIToken do
 
   it "should return scopes array" do
     token.scopes = 'foo bar'
-    token.scopes.should == %w(foo bar)
+    expect(token.scopes).to eq %w(foo bar)
   end
 
   it "should return false if out of scope" do

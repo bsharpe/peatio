@@ -15,41 +15,41 @@ describe APIv2::Orders do
 
     it "should require authentication" do
       get "/api/v2/orders", market: 'btceur'
-      response.code.should == '401'
+      expect(response.code).to eq '401'
     end
 
     it "should validate market param" do
       signed_get '/api/v2/orders', params: {market: 'mtgox'}, token: token
-      response.code.should == '400'
-      JSON.parse(response.body).should == {"error" => {"code" => 1001,"message" => "market does not have a valid value"}}
+      expect(response.code).to eq '400'
+      expect(JSON.parse(response.body)).to eq {"error" => {"code" => 1001,"message" => "market does not have a valid value"}}
     end
 
     it "should validate state param" do
       signed_get '/api/v2/orders', params: {market: 'btceur', state: 'test'}, token: token
-      response.code.should == '400'
-      JSON.parse(response.body).should == {"error" => {"code" => 1001,"message" => "state does not have a valid value"}}
+      expect(response.code).to eq '400'
+      expect(JSON.parse(response.body)).to eq {"error" => {"code" => 1001,"message" => "state does not have a valid value"}}
     end
 
     it "should return active orders by default" do
       signed_get '/api/v2/orders', params: {market: 'btceur'}, token: token
       response.should be_success
-      JSON.parse(response.body).size.should == 2
+      expect(JSON.parse(response.body).size).to eq 2
     end
 
     it "should return complete orders" do
       signed_get '/api/v2/orders', params: {market: 'btceur', state: Order::DONE}, token: token
       response.should be_success
-      JSON.parse(response.body).first['state'].should == Order::DONE
+      expect(JSON.parse(response.body).first['state']).to eq Order::DONE
     end
 
     it "should return paginated orders" do
       signed_get '/api/v2/orders', params: {market: 'btceur', limit: 1, page: 1}, token: token
       response.should be_success
-      JSON.parse(response.body).first['price'].should == '11.0'
+      expect(JSON.parse(response.body).first['price']).to eq '11.0'
 
       signed_get '/api/v2/orders', params: {market: 'btceur', limit: 1, page: 2}, token: token
       response.should be_success
-      JSON.parse(response.body).first['price'].should == '13.0'
+      expect(JSON.parse(response.body).first['price']).to eq '13.0'
     end
 
     it "should sort orders" do
@@ -75,23 +75,23 @@ describe APIv2::Orders do
       response.should be_success
 
       result = JSON.parse(response.body)
-      result['id'].should == order.id
-      result['executed_volume'].should == '8.99'
+      expect(result['id']).to eq order.id
+      expect(result['executed_volume']).to eq '8.99'
     end
 
     it "should include related trades" do
       signed_get "/api/v2/order", params: {id: order.id}, token: token
 
       result = JSON.parse(response.body)
-      result['trades_count'].should == 1
+      expect(result['trades_count']).to eq 1
       result['trades'].should have(1).trade
-      result['trades'].first['id'].should == trade.id
-      result['trades'].first['side'].should == 'buy'
+      expect(result['trades'].first['id']).to eq trade.id
+      expect(result['trades'].first['side']).to eq 'buy'
     end
 
     it "should get 404 error when order doesn't exist" do
       signed_get "/api/v2/order", params: {id: 99999}, token: token
-      response.code.should == '404'
+      expect(response.code).to eq '404'
     end
   end
 
@@ -116,10 +116,10 @@ describe APIv2::Orders do
 
         result = JSON.parse(response.body)
         result.should have(2).orders
-        result.first['side'].should   == 'sell'
-        result.first['volume'].should == '12.13'
-        result.last['side'].should    == 'buy'
-        result.last['volume'].should  == '17.31'
+        expect(result.first['side']).to eq 'sell'
+        expect(result.first['volume']).to eq '12.13'
+        expect(result.last['side']).to eq 'buy'
+        expect(result.last['volume']).to eq '17.31'
       }.to change(Order, :count).by(2)
     end
 
@@ -135,8 +135,8 @@ describe APIv2::Orders do
       expect {
         AMQPQueue.expects(:enqueue).times(0)
         signed_post '/api/v2/orders/multi', token: token, params: params
-        response.code.should == '400'
-        response.body.should == '{"error":{"code":2002,"message":"Failed to create order. Reason: Validation failed: Price must be greater than 0"}}'
+        expect(response.code).to eq '400'
+        expect(response.body).to eq '{"error":{"code":2002,"message":"Failed to create order. Reason: Validation failed: Price must be greater than 0"}}'
       }.not_to change(Order, :count)
     end
   end
@@ -148,7 +148,7 @@ describe APIv2::Orders do
       expect {
         signed_post '/api/v2/orders', token: token, params: {market: 'btceur', side: 'sell', volume: '12.13', price: '2014'}
         response.should be_success
-        JSON.parse(response.body)['id'].should == OrderAsk.last.id
+        expect(JSON.parse(response.body)['id']).to eq OrderAsk.last.id
       }.to change(OrderAsk, :count).by(1)
     end
 
@@ -158,34 +158,34 @@ describe APIv2::Orders do
       expect {
         signed_post '/api/v2/orders', token: token, params: {market: 'btceur', side: 'buy', volume: '12.13', price: '2014'}
         response.should be_success
-        JSON.parse(response.body)['id'].should == OrderBid.last.id
+        expect(JSON.parse(response.body)['id']).to eq OrderBid.last.id
       }.to change(OrderBid, :count).by(1)
     end
 
     it "should set order source to APIv2" do
       member.get_account(:eur).update_attributes(balance: 100000)
       signed_post '/api/v2/orders', token: token, params: {market: 'btceur', side: 'buy', volume: '12.13', price: '2014'}
-      OrderBid.last.source.should == 'APIv2'
+      expect(OrderBid.last.source).to eq 'APIv2'
     end
 
     it "should return cannot lock funds error" do
       expect {
         signed_post '/api/v2/orders', params: {market: 'btceur', side: 'sell', volume: '12.13', price: '2014'}
-        response.code.should == '400'
-        response.body.should == '{"error":{"code":2002,"message":"Failed to create order. Reason: cannot lock funds (amount: 12.13)"}}'
+        expect(response.code).to eq '400'
+        expect(response.body).to eq '{"error":{"code":2002,"message":"Failed to create order. Reason: cannot lock funds (amount: 12.13)"}}'
       }.not_to change(OrderAsk, :count).by(1)
     end
 
     it "should give a number as volume parameter" do
       signed_post '/api/v2/orders', params: {market: 'btceur', side: 'sell', volume: 'test', price: '2014'}
-      response.code.should == '400'
-      response.body.should == '{"error":{"code":2002,"message":"Failed to create order. Reason: Validation failed: Volume must be greater than 0"}}'
+      expect(response.code).to eq '400'
+      expect(response.body).to eq '{"error":{"code":2002,"message":"Failed to create order. Reason: Validation failed: Volume must be greater than 0"}}'
     end
 
     it "should give a number as price parameter" do
       signed_post '/api/v2/orders', params: {market: 'btceur', side: 'sell', volume: '12.13', price: 'test'}
-      response.code.should == '400'
-      response.body.should == '{"error":{"code":2002,"message":"Failed to create order. Reason: Validation failed: Price must be greater than 0"}}'
+      expect(response.code).to eq '400'
+      expect(response.body).to eq '{"error":{"code":2002,"message":"Failed to create order. Reason: Validation failed: Price must be greater than 0"}}'
     end
   end
 
@@ -202,7 +202,7 @@ describe APIv2::Orders do
         expect {
           signed_post "/api/v2/order/delete", params: {id: order.id}, token: token
           response.should be_success
-          JSON.parse(response.body)['id'].should == order.id
+          expect(JSON.parse(response.body)['id']).to eq order.id
         }.not_to change(Order, :count)
       end
     end
@@ -210,8 +210,8 @@ describe APIv2::Orders do
     context "failed" do
       it "should return order not found error" do
         signed_post "/api/v2/order/delete", params: {id: '0'}, token: token
-        response.code.should == '400'
-        JSON.parse(response.body)['error']['code'].should == 2003
+        expect(response.code).to eq '400'
+        expect(JSON.parse(response.body)['error']['code']).to eq 2003
       end
     end
 
@@ -252,7 +252,7 @@ describe APIv2::Orders do
 
         result = JSON.parse(response.body)
         result.should have(1).orders
-        result.first['id'].should == member.orders.where(type: 'OrderAsk').first.id
+        expect(result.first['id']).to eq member.orders.where(type: 'OrderAsk').first.id
       }.not_to change(Order, :count)
     end
 

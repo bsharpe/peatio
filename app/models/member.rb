@@ -5,6 +5,7 @@ class Member < ActiveRecord::Base
   has_many :orders
   has_many :accounts
   has_many :payment_addresses, through: :accounts
+  has_many :trades, -> {}
   has_many :withdraws
   has_many :fund_sources
   has_many :deposits
@@ -14,7 +15,7 @@ class Member < ActiveRecord::Base
   has_many :comments, foreign_key: 'author_id'
   has_many :signup_histories
 
-  has_one :id_document
+  has_one :id_document, dependent: :destroy
 
   has_many :authentications, dependent: :destroy
 
@@ -32,7 +33,7 @@ class Member < ActiveRecord::Base
   validates :email, email: true, uniqueness: true, allow_nil: true
 
   before_create :build_default_id_document
-  # after_create  :touch_accounts
+  after_create  :touch_accounts
   after_update :resend_activation
   after_update :sync_update
 
@@ -54,43 +55,46 @@ class Member < ActiveRecord::Base
     end
 
     def search(field: nil, term: nil)
-      result = case field
-               when 'email'
-                 where('members.email LIKE ?', "%#{term}%")
-               when 'phone_number'
-                 where('members.phone_number LIKE ?', "%#{term}%")
-               when 'name'
-                 joins(:id_document).where('id_documents.name LIKE ?', "%#{term}%")
-               when 'wallet_address'
-                 members = joins(:fund_sources).where('fund_sources.uid' => term)
-                 if members.empty?
-                  members = joins(:payment_addresses).where('payment_addresses.address' => term)
-                 end
-                 members
-               else
-                 all
-               end
+      result =
+        case field
+        when 'email'
+          self.where('members.email LIKE ?', "%#{term.downcase.squish}%")
+        when 'phone_number'
+          self.where('members.phone_number LIKE ?', "%#{term}%")
+        when 'name'
+          self.joins(:id_document).where('id_documents.name LIKE ?', "%#{term}%")
+        when 'wallet_address'
+          members = self.joins(:fund_sources).where(fund_sources: { uid: term } )
+          if members.empty?
+            members = self.joins(:payment_addresses).where(payment_addresses: { address: term } )
+          end
+          members
+        else
+          self.all
+        end
 
-      result.order(:id).reverse_order
+      result.order(id: :desc)
     end
 
     private
 
     def locate_auth(auth_hash)
-      Authentication.locate(auth_hash).try(:member)
+      Authentication.locate(auth_hash)&.member
     end
 
     def locate_email(auth_hash)
       return nil if auth_hash['info']['email'].blank?
-      member = find_by_email(auth_hash['info']['email'])
+      member = self.find_by_email(auth_hash['info']['email'].downcase.squish)
       return nil unless member
       member.add_auth(auth_hash)
       member
     end
 
     def create_from_auth(auth_hash)
-      member = create(email: auth_hash['info']['email'], nickname: auth_hash['info']['nickname'],
-                      activated: false)
+      member = self.create(
+        email: auth_hash['info']['email'].downcase.squish,
+        nickname: auth_hash['info']['nickname'],
+        activated: false)
       member.add_auth(auth_hash)
       member.send_activation if auth_hash['provider'] == 'identity'
       member
@@ -103,7 +107,7 @@ class Member < ActiveRecord::Base
   end
 
   def trades
-    Trade.where('bid_member_id = ? OR ask_member_id = ?', id, id)
+    Trade.where('bid_member_id = :id OR ask_member_id = :id', id: id)
   end
 
   def active!

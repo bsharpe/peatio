@@ -40,8 +40,7 @@ class IdDocument < ActiveRecord::Base
   alias_attribute :full_name, :name
 
   aasm do
-    #state :unverified, initial: true
-    state :unverified
+    state :unverified, initial: true
     state :verifying
     state :verified, initial: true
 

@@ -37,13 +37,13 @@ describe APIv2::Helpers do
 
       it "should set current user" do
         get '/api/v2/auth_test', access_key: token.access_key, signature: signature, foo: 'bar', hello: 'world', tonce: tonce
-        response.body.should == token.member.reload.to_json
+        expect(response.body).to eq token.member.reload.to_json
       end
 
       it "should fail authorization" do
         get '/api/v2/auth_test'
-        response.code.should == '401'
-        response.body.should == "{\"error\":{\"code\":2001,\"message\":\"Authorization failed\"}}"
+        expect(response.code).to eq '401'
+        expect(response.body).to eq "{\"error\":{\"code\":2001,\"message\":\"Authorization failed\"}}"
       end
     end
 

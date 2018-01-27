@@ -25,8 +25,8 @@ describe Matching::MarketOrder do
 
     it "should also decrease volume and sum limit" do
       subject.fill '6.0'.to_d, '1.0'.to_d, '6.0'.to_d
-      subject.volume.should == '1.0'.to_d
-      subject.locked.should == '4.0'.to_d
+      expect(subject.volume).to eq '1.0'.to_d
+      expect(subject.locked).to eq '4.0'.to_d
     end
   end
 

@@ -23,13 +23,13 @@ describe Private::OrderAsksController do
       expect {
         post :create, params, {member_id: member.id}
         response.should be_success
-        response.body.should == '{"result":true,"message":"Success"}'
+        expect(response.body).to eq '{"result":true,"message":"Success"}'
       }.to change(OrderAsk, :count).by(1)
     end
 
     it "should set order source to Web" do
       post :create, params, {member_id: member.id}
-      assigns(:order).source.should == 'Web'
+      expect(assigns(:order).source).to eq 'Web'
     end
   end
 
@@ -41,8 +41,8 @@ describe Private::OrderAsksController do
 
       post :clear, {market_id: market.id}, {member_id: member.id}
       response.should be_success
-      assigns(:orders).size.should == 1
-      assigns(:orders).first.should == o1
+      expect(assigns(:orders).size).to eq 1
+      expect(assigns(:orders).first).to eq o1
     end
   end
 

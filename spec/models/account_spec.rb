@@ -52,20 +52,20 @@ describe Account, type: :model do
   it { expect(subject.lock_funds(10).locked).to eql "20.0".to_d }
   it { expect(subject.lock_funds(10).balance).to eql "0.0".to_d }
 
-  it { expect{subject.sub_funds("11.0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.lock_funds("11.0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.unlock_funds("11.0".to_d)}.to raise_error(Account::AccountError) }
+  it { expect{subject.sub_funds("11.0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.lock_funds("11.0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.unlock_funds("11.0".to_d)}.to raise_error(AccountError) }
 
-  it { expect{subject.unlock_and_sub_funds('1.1'.to_d, locked: '1.0'.to_d)}.to raise_error(Account::AccountError) }
+  it { expect{subject.unlock_and_sub_funds('1.1'.to_d, locked: '1.0'.to_d)}.to raise_error(AccountError) }
 
-  it { expect{subject.sub_funds("-1.0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.plus_funds("-1.0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.lock_funds("-1.0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.unlock_funds("-1.0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.sub_funds("0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.plus_funds("0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.lock_funds("0".to_d)}.to raise_error(Account::AccountError) }
-  it { expect{subject.unlock_funds("0".to_d)}.to raise_error(Account::AccountError) }
+  it { expect{subject.sub_funds("-1.0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.plus_funds("-1.0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.lock_funds("-1.0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.unlock_funds("-1.0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.sub_funds("0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.plus_funds("0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.lock_funds("0".to_d)}.to raise_error(AccountError) }
+  it { expect{subject.unlock_funds("0".to_d)}.to raise_error(AccountError) }
 
   it "expect to set reason" do
     subject.plus_funds("1.0".to_d)

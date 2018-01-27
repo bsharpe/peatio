@@ -17,7 +17,7 @@ module Authentications
 
         it "should tell user the reason" do
           do_request
-          flash[:alert].should == t("authentications.weibo.destroy.last_auth_alert")
+          expect(flash[:alert]).to eq t("authentications.weibo.destroy.last_auth_alert")
         end
       end
 
@@ -32,7 +32,7 @@ module Authentications
 
         it "should set the flash message" do
           do_request
-          flash[:notice].should == t("authentications.weibo.destroy.unbind_success")
+          expect(flash[:notice]).to eq t("authentications.weibo.destroy.unbind_success")
         end
 
       end

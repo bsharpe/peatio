@@ -12,7 +12,7 @@ module Authentications
 
       it  do
         get :new
-        flash[:info].should == t('authentications.emails.new.setup_email')
+        expect(flash[:info]).to eq t('authentications.emails.new.setup_email')
       end
     end
 
@@ -24,7 +24,7 @@ module Authentications
       it "should update current_user's email" do
         post :create, data
         member.reload
-        member.email.should == 'xman@xman.com'
+        expect(member.email).to eq 'xman@xman.com'
         member.activated.should be_false
       end
     end

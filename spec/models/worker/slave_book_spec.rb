@@ -19,14 +19,14 @@ describe Worker::SlaveBook do
     end
 
     it "should return lowest asks" do
-      subject.get_depth(market, :ask).should == [
+      expect(subject.get_depth(market, :ask)).to eq [
         ['10.0'.to_d, low_ask.volume],
         ['12.0'.to_d, high_ask.volume]
       ]
     end
 
     it "should return highest bids" do
-      subject.get_depth(market, :bid).should == [
+      expect(subject.get_depth(market, :bid)).to eq [
         ['8.0'.to_d, high_bid.volume],
         ['6.0'.to_d, low_bid.volume]
       ]
@@ -35,7 +35,7 @@ describe Worker::SlaveBook do
     it "should updated volume" do
       attrs = low_ask.attributes.merge(volume: '0.01'.to_d)
       subject.process({action: 'update', order: attrs}, {}, {})
-      subject.get_depth(market, :ask).should == [
+      expect(subject.get_depth(market, :ask)).to eq [
         ['10.0'.to_d, '0.01'.to_d],
         ['12.0'.to_d, high_ask.volume]
       ]

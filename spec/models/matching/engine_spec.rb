@@ -32,8 +32,8 @@ describe Matching::Engine do
       subject.submit mo
 
       subject.ask_orders.limit_orders.should have(1).price_level
-      subject.ask_orders.limit_orders.values.first.should == [ask3]
-      ask3.volume.should == '0.6'.to_d
+      expect(subject.ask_orders.limit_orders.values.first).to eq [ask3]
+      expect(ask3.volume).to eq '0.6'.to_d
 
       subject.bid_orders.market_orders.should be_empty
     end
@@ -67,8 +67,8 @@ describe Matching::Engine do
       subject.submit mo
 
       subject.ask_orders.limit_orders.should have(2).price_level
-      ask2.volume.should == '0.25'.to_d
-      ask3.volume.should == '1.0'.to_d
+      expect(ask2.volume).to eq '0.25'.to_d
+      expect(ask3.volume).to eq '1.0'.to_d
 
       subject.bid_orders.market_orders.should be_empty
     end
@@ -182,7 +182,7 @@ describe Matching::Engine do
       subject.submit ask3
       subject.submit ask4
 
-      used_funds.should ==  order.compute_locked
+      expect(used_funds).to eq  order.compute_locked
     end
   end
 
@@ -199,7 +199,7 @@ describe Matching::Engine do
       subject.bid_orders.limit_orders.should be_empty
 
       subject.queue.should have(1).trade
-      subject.queue.first.should == [:trade_executor, {market_id: market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: '50.0'.to_d}, {persistent: false}]
+      expect(subject.queue.first).to eq [:trade_executor, {market_id: market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: '50.0'.to_d}, {persistent: false}]
     end
   end
 

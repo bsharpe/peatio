@@ -45,11 +45,11 @@ describe Matching::Executor do
       expect {
         trade = subject.execute!
 
-        trade.trend.should  == 'up'
-        trade.price.should  == price
-        trade.volume.should == volume
-        trade.ask_id.should == ask.id
-        trade.bid_id.should == bid.id
+        expect(trade.trend).to eq 'up'
+        expect(trade.price).to eq price
+        expect(trade.volume).to eq volume
+        expect(trade.ask_id).to eq ask.id
+        expect(trade.bid_id).to eq bid.id
       }.to change(Trade, :count).by(1)
     end
 
@@ -57,26 +57,26 @@ describe Matching::Executor do
       market.expects(:latest_price).returns(11.to_d)
       trade = subject.execute!
 
-      trade.trend.should == 'down'
+      expect(trade.trend).to eq 'down'
     end
 
     it "should set trade used funds" do
       market.expects(:latest_price).returns(11.to_d)
       trade = subject.execute!
-      trade.funds.should == price*volume
+      expect(trade.funds).to eq price*volume
     end
 
     it "should increase order's trades count" do
       subject.execute!
-      Order.find(ask.id).trades_count.should == 1
-      Order.find(bid.id).trades_count.should == 1
+      expect(Order.find(ask.id).trades_count).to eq 1
+      expect(Order.find(bid.id).trades_count).to eq 1
     end
 
     it "should mark both orders as done" do
       subject.execute!
 
-      Order.find(ask.id).state.should == Order::DONE
-      Order.find(bid.id).state.should == Order::DONE
+      expect(Order.find(ask.id).state).to eq Order::DONE
+      expect(Order.find(bid.id).state).to eq Order::DONE
     end
 
     it "should publish trade through amqp" do
@@ -93,7 +93,7 @@ describe Matching::Executor do
       subject.execute!
 
       ask.reload.state.should_not == Order::DONE
-      bid.reload.state.should == Order::DONE
+      expect(bid.reload.state).to eq Order::DONE
     end
   end
 
@@ -104,7 +104,7 @@ describe Matching::Executor do
     it "should set ask to done only" do
       subject.execute!
 
-      ask.reload.state.should == Order::DONE
+      expect(ask.reload.state).to eq Order::DONE
       bid.reload.state.should_not == Order::DONE
     end
   end
@@ -124,7 +124,7 @@ describe Matching::Executor do
       )
       executor.execute!
 
-      bid.reload.state.should == Order::CANCEL
+      expect(bid.reload.state).to eq Order::CANCEL
     end
   end
 
@@ -149,12 +149,12 @@ describe Matching::Executor do
       subject.execute!
       locked_after = bid.hold_account.reload.locked
 
-      locked_after.should == locked_before - (price*volume)
+      expect(locked_after).to eq locked_before - (price*volume)
     end
 
     it "should save unused amount in order locked attribute" do
       subject.execute!
-      bid.reload.locked.should == price*volume - (price-1)*volume
+      expect(bid.reload.locked).to eq price*volume - (price-1)*volume
     end
   end
 

@@ -54,7 +54,7 @@ describe OrderAsk do
     end
 
     it "should require a little" do
-      OrderBid.new(volume: '5'.to_d, ord_type: 'market').compute_locked.should == '1010'.to_d * OrderBid::LOCKING_BUFFER_FACTOR
+      expect(OrderBid.new(volume: '5'.to_d, ord_type: 'market').compute_locked).to eq '1010'.to_d * OrderBid::LOCKING_BUFFER_FACTOR
     end
 
     it "should raise error if volume is too large" do

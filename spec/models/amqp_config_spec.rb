@@ -28,23 +28,23 @@ describe AMQPConfig do
   end
 
   it "should tell client how to connect" do
-    AMQPConfig.connect.should == {'host' => '127.0.0.1'}
+    expect(AMQPConfig.connect).to eq {'host' => '127.0.0.1'}
   end
 
   it "should return queue settings" do
-    AMQPConfig.queue(:testq).should == ['testq', {durable: true}]
+    expect(AMQPConfig.queue(:testq)).to eq ['testq', {durable: true}]
   end
 
   it "should return exchange settings" do
-    AMQPConfig.exchange(:testx).should == ['fanout', 'testx']
+    expect(AMQPConfig.exchange(:testx)).to eq ['fanout', 'testx']
   end
 
   it "should return binding queue" do
-    AMQPConfig.binding_queue(:test).should == ['testq', {durable: true}]
+    expect(AMQPConfig.binding_queue(:test)).to eq ['testq', {durable: true}]
   end
 
   it "should return binding exchange" do
-    AMQPConfig.binding_exchange(:test).should == ['fanout', 'testx']
+    expect(AMQPConfig.binding_exchange(:test)).to eq ['fanout', 'testx']
   end
 
   it "should set exchange to nil when binding use default exchange" do
@@ -56,11 +56,11 @@ describe AMQPConfig do
   end
 
   it "should return queue name of binding" do
-    AMQPConfig.routing_key(:testd).should == 'testq'
+    expect(AMQPConfig.routing_key(:testd)).to eq 'testq'
   end
 
   it "should return topics to subscribe" do
-    AMQPConfig.topics(:topic).should == ['test.a', 'test.b']
+    expect(AMQPConfig.topics(:topic)).to eq ['test.a', 'test.b']
   end
 
 end

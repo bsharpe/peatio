@@ -25,7 +25,7 @@ describe Identity do
 
   it "should unify email" do
     create(:identity, email: 'foo@example.com')
-    build(:identity, email: 'Foo@example.com').should_not be_valid
+    expect(build(:identity, email: 'Foo@example.com')).to_not be_valid
   end
 
 end

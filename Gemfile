@@ -16,7 +16,8 @@ gem 'acts-as-taggable-on', '>= 3.0.1'
 gem 'kaminari', '>= 0.15.1'
 gem 'paranoid2'
 gem 'paper_trail', '~> 3.0.1'
-gem 'marginalia'        # show where queries are coming from in the logs
+gem 'marginalia'                  # show where queries are coming from in the logs
+gem 'active_hash', '~> 1.5.0'     # YAML-sourced data
 
 # Security
 gem 'rotp'
@@ -52,15 +53,10 @@ gem 'figaro', github: 'laserlemon/figaro', branch: :master
 # Frontend
 gem 'puma'
 
-gem 'hashie'
-
 gem 'datagrid', '>= 1.5.7'
-gem 'active_hash', '~> 1.5.0'
 gem 'http_accept_language'
 gem 'country_select', '~> 2.1.0'
-
 gem 'gon', '~> 5.2.0'
-
 gem 'simple_form', '~> 3.1.1'
 gem 'slim-rails', '>= 3.1.3'
 gem 'sass-rails', '>= 5.0.6'
@@ -77,17 +73,20 @@ gem 'eco'
 gem 'browser', '~> 0.8.0'
 gem 'rbtree'
 gem 'liability-proof', '0.0.9'
-gem 'whenever', '~> 0.9.2'
-gem 'rack-attack', '~> 4.3.1'
-gem 'easy_table', '>= 0.0.6'
-gem 'phonelib', '~> 0.3.5'
+gem 'whenever'
+gem 'rack-attack'
+gem 'easy_table'
+gem 'phonelib'
 gem 'twilio-ruby', '~> 3.11'
 gem 'unread', github: 'peatio/unread'
 gem 'carrierwave', '~> 0.10.0'
 gem 'simple_captcha2', require: 'simple_captcha'
-gem 'rest-client', '~> 1.6.8'
+gem 'rest-client'
 
 ## MISC
+# gem 'hashie'
+gem 'recursive-open-struct'
+
 gem 'awesome_print'             # fancy object output for console
 gem 'bootsnap'                  # faster booting
 gem 'bundleup', require: false  # easy gem upgrading

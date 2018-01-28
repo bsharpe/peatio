@@ -15,7 +15,7 @@ module Worker
     end
 
     def process(payload, metadata, delivery_info)
-      @payload = Hashie::Mash.new payload
+      @payload = RecursiveOpenStruct.new(payload)
 
       case @payload.action
       when 'new'

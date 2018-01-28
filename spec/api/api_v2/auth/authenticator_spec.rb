@@ -11,14 +11,14 @@ describe APIv2::Auth::Authenticator do
   let(:payload) { "GET|/api/|access_key=#{token.access_key}&foo=bar&hello=world&tonce=#{tonce}" }
 
   let(:params) do
-    Hashie::Mash.new({
+    {
       "access_key" => token.access_key,
       "tonce"      => tonce,
       "foo"        => "bar",
       "hello"      => "world",
       "route_info" => Grape::Route.new,
       "signature"  => APIv2::Auth::Utils.hmac_signature(token.secret_key, payload)
-    })
+    }.with_indifferent_access
   end
 
   subject { Authenticator.new(request, params) }

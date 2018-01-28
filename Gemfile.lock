@@ -355,6 +355,7 @@ GEM
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     rbtree (0.4.2)
+    recursive-open-struct (1.0.5)
     redis (4.0.1)
     redis-actionpack (5.0.2)
       actionpack (>= 4.0, < 6)
@@ -504,7 +505,7 @@ DEPENDENCIES
   database_cleaner
   datagrid (>= 1.5.7)
   doorkeeper
-  easy_table (>= 0.0.6)
+  easy_table
   eco
   em-websocket (~> 0.5.1)
   ensurance
@@ -520,7 +521,6 @@ DEPENDENCIES
   grape (~> 0.7.0)
   grape-entity (~> 0.4.2)
   grape-swagger (~> 0.7.2)
-  hashie
   hirb
   http_accept_language
   jbuilder
@@ -539,20 +539,21 @@ DEPENDENCIES
   omniauth-weibo-oauth2
   paper_trail (~> 3.0.1)
   paranoid2
-  phonelib (~> 0.3.5)
+  phonelib
   poltergeist
   pry-rails
   puma
   pusher
   quiet_assets
-  rack-attack (~> 4.3.1)
+  rack-attack
   rails (~> 4.2)
   rails-i18n
   rails-observers
   rbtree
+  recursive-open-struct
   redis-rails (>= 5.0.2)
   responders
-  rest-client (~> 1.6.8)
+  rest-client
   rotp
   rspec-collection_matchers
   rspec-its
@@ -569,7 +570,7 @@ DEPENDENCIES
   twilio-ruby (~> 3.11)
   uglifier (>= 2.7.2)
   unread!
-  whenever (~> 0.9.2)
+  whenever
 
 BUNDLED WITH
    1.16.1

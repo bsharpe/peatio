@@ -8,7 +8,7 @@ end
 describe AMQPConfig do
 
   let(:config) do
-    Hashie::Mash.new({
+    {
       connect:   { host: '127.0.0.1' },
       exchange:  { testx:  { name: 'testx', type: 'fanout' },
                    testd:  { name: 'testd', type: 'direct' },
@@ -20,7 +20,7 @@ describe AMQPConfig do
         topic:   { queue: 'testq', exchange: 'topicx', topics: 'test.a,test.b' },
         default: { queue: 'testq' }
       }
-    })
+    }.with_indifferent_access
   end
 
   before do

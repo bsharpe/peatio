@@ -28,29 +28,29 @@ require 'spec_helper'
 describe PaymentTransaction do
   it "expect state transfer" do
     tx = create(:payment_transaction, deposit: create(:deposit))
-    tx.stubs(:refresh_confirmations)
+    allow(tx).to receive(:refresh_confirmations)
 
-    tx.stubs(:min_confirm?).returns(false)
-    tx.stubs(:max_confirm?).returns(false)
+    allow(tx).to receive(:min_confirm?).and_return(false)
+    allow(tx).to receive(:max_confirm?).and_return(false)
 
-    expect(tx.unconfirm?).to be_true
-    expect(tx.check).to be_false
-    expect(tx.check).to be_false
-    expect(tx.check).to be_false
-    expect(tx.unconfirm?).to be_true
+    expect(tx.unconfirm?).to eq(true)
+    expect(tx.check).to eq(false)
+    expect(tx.check).to eq(false)
+    expect(tx.check).to eq(false)
+    expect(tx.unconfirm?).to eq(true)
 
-    tx.stubs(:min_confirm?).returns(true)
-    tx.stubs(:max_confirm?).returns(false)
+    allow(tx).to receive(:min_confirm?).and_return(true)
+    allow(tx).to receive(:max_confirm?).and_return(false)
 
-    expect(tx.check).to be_true
-    expect(tx.confirming?).to be_true
+    expect(tx.check).to eq(true)
+    expect(tx.confirming?).to eq(true)
 
-    tx.stubs(:min_confirm?).returns(false)
-    tx.stubs(:max_confirm?).returns(true)
+    allow(tx).to receive(:min_confirm?).and_return(false)
+    allow(tx).to receive(:max_confirm?).and_return(true)
 
-    expect(tx.check).to be_true
-    expect(tx.confirmed?).to be_true
-    expect(tx.check).to be_true
+    expect(tx.check).to eq(true)
+    expect(tx.confirmed?).to eq(true)
+    expect(tx.check).to eq(true)
   end
 
 end

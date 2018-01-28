@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Authentications
-  describe WeiboAccountsController do
+  describe WeiboAccountsController, type: :controller do
     let(:member) { create(:member, email: nil, activated: false) }
     before { session[:member_id] = member.id }
 

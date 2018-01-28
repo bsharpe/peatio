@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Private::OrderAsksController do
+describe Private::OrderAsksController, type: :controller do
 
   let(:member) do
     create(:member).tap {|m|

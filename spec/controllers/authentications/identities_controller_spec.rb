@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Authentications::IdentitiesController do
+describe Authentications::IdentitiesController, type: :controller do
   let(:email) { 'xman@xman.com' }
   let(:member) { create(:verified_member, email: email) }
   before { session[:member_id] = member.id }

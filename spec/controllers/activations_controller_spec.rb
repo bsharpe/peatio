@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Private
-  describe ActivationsController do
+  describe ActivationsController, type: :controller do
 
     describe "GET /activations/new" do
       describe 'non-login user' do

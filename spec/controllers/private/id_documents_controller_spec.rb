@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Private::IdDocumentsController do
+describe Private::IdDocumentsController, type: :controller do
   let(:member) { create(:member) }
   before { session[:member_id] = member.id }
 

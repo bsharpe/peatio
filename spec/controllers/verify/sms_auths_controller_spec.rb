@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Verify
-  describe SmsAuthsController do
+  describe SmsAuthsController, type: :controller do
 
     describe 'GET verify/sms_auth' do
       let(:member) { create :verified_member }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Private::OrderBidsController do
+describe Private::OrderBidsController, type: :controller do
 
   let(:member) do
     create(:member).tap {|m|

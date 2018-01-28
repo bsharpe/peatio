@@ -10,7 +10,7 @@ describe Matching::Engine do
 
   let(:orderbook) { Matching::OrderBookManager.new('btceur', broadcast: false) }
   subject         { Matching::Engine.new(market, mode: :run) }
-  before          { subject.stubs(:orderbook).returns(orderbook) }
+  before          { allow(subject).to receive(:orderbook).and_return(orderbook) }
 
   context "submit market order" do
     let!(:bid)  { Matching.mock_limit_order(type: :bid, price: '0.1'.to_d, volume: '0.1'.to_d) }
@@ -21,9 +21,9 @@ describe Matching::Engine do
     it "should fill the market order completely" do
       mo = Matching.mock_market_order(type: :bid, locked: '6.0'.to_d, volume: '2.4'.to_d)
 
-      AMQPQueue.expects(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
-      AMQPQueue.expects(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: ask2.volume, funds: '2.0'.to_d}, anything)
-      AMQPQueue.expects(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask3.id, bid_id: mo.id, strike_price: ask3.price, volume: '0.4'.to_d, funds: '1.2'.to_d}, anything)
+      expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
+      expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: ask2.volume, funds: '2.0'.to_d}, anything)
+      expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask3.id, bid_id: mo.id, strike_price: ask3.price, volume: '0.4'.to_d, funds: '1.2'.to_d}, anything)
 
       subject.submit bid
       subject.submit ask1
@@ -31,34 +31,34 @@ describe Matching::Engine do
       subject.submit ask3
       subject.submit mo
 
-      subject.ask_orders.limit_orders.should have(1).price_level
+      expect(subject.ask_orders.limit_orders).to have(1).price_level
       expect(subject.ask_orders.limit_orders.values.first).to eq [ask3]
       expect(ask3.volume).to eq '0.6'.to_d
 
-      subject.bid_orders.market_orders.should be_empty
+      expect(subject.bid_orders.market_orders).to be_empty
     end
 
     it "should fill the market order partially and cancel it" do
       mo = Matching.mock_market_order(type: :bid, locked: '6.0'.to_d, volume: '2.4'.to_d)
 
-      AMQPQueue.expects(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
-      AMQPQueue.expects(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: ask2.volume, funds: '2.0'.to_d}, anything)
-      AMQPQueue.expects(:enqueue).with(:order_processor, has_entries(action: 'cancel', order: has_entry(id: mo.id)), anything)
+      expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
+      expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: ask2.volume, funds: '2.0'.to_d}, anything)
+      expect(AMQPQueue).to receive(:enqueue).with(:order_processor, hash_including(action: 'cancel', order: hash_including(id: mo.id)), anything)
 
       subject.submit bid
       subject.submit ask1
       subject.submit ask2
       subject.submit mo
 
-      subject.ask_orders.limit_orders.should be_empty
-      subject.bid_orders.market_orders.should be_empty
+      expect(subject.ask_orders.limit_orders).to be_empty
+      expect(subject.bid_orders.market_orders).to be_empty
     end
 
     it "should partially fill then cancel the market order if locked funds run out" do
       mo = Matching.mock_market_order(type: :bid, locked: '2.5'.to_d, volume: '2'.to_d)
 
-      AMQPQueue.expects(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
-      AMQPQueue.expects(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: '0.75'.to_d, funds: '1.5'.to_d}, anything)
+      expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
+      expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: '0.75'.to_d, funds: '1.5'.to_d}, anything)
 
       subject.submit bid
       subject.submit ask1
@@ -66,25 +66,25 @@ describe Matching::Engine do
       subject.submit ask3
       subject.submit mo
 
-      subject.ask_orders.limit_orders.should have(2).price_level
+      expect(subject.ask_orders.limit_orders).to have(2).price_level
       expect(ask2.volume).to eq '0.25'.to_d
       expect(ask3.volume).to eq '1.0'.to_d
 
-      subject.bid_orders.market_orders.should be_empty
+      expect(subject.bid_orders.market_orders).to be_empty
     end
   end
 
   context "submit limit order" do
     context "fully match incoming order" do
       it "should execute trade" do
-        AMQPQueue.expects(:enqueue)
+        expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: '50.0'.to_d}, anything)
 
         subject.submit(ask)
         subject.submit(bid)
 
-        subject.ask_orders.limit_orders.should be_empty
-        subject.bid_orders.limit_orders.should be_empty
+        expect(subject.ask_orders.limit_orders).to be_empty
+        expect(subject.bid_orders.limit_orders).to be_empty
       end
     end
 
@@ -92,19 +92,19 @@ describe Matching::Engine do
       let(:ask) { Matching.mock_limit_order(type: :ask, price: price, volume: 3.to_d)}
 
       it "should execute trade" do
-        AMQPQueue.expects(:enqueue)
+        expect(AMQPQueue).to receive(:enqueue)
           .with(:trade_executor, {market_id: market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: 3.to_d, funds: '30.0'.to_d}, anything)
 
         subject.submit(ask)
         subject.submit(bid)
 
-        subject.ask_orders.limit_orders.should be_empty
-        subject.bid_orders.limit_orders.should_not be_empty
+        expect(subject.ask_orders.limit_orders).to be_empty
+        expect(subject.bid_orders.limit_orders).to_not be_empty
 
-        AMQPQueue.expects(:enqueue)
+        expect(AMQPQueue).to receive(:enqueue)
           .with(:order_processor, {action: 'cancel', order: bid.attributes}, anything)
         subject.cancel(bid)
-        subject.bid_orders.limit_orders.should be_empty
+        expect(subject.bid_orders.limit_orders).to be_empty
       end
     end
 
@@ -118,13 +118,13 @@ describe Matching::Engine do
       end
 
       it "should execute trade" do
-        AMQPQueue.expects(:enqueue).times(asks.size)
+        expect(AMQPQueue).to receive(:enqueue).exactly(asks.size).times
 
         asks.each {|ask| subject.submit(ask) }
         subject.submit(bid)
 
-        subject.ask_orders.limit_orders.should be_empty
-        subject.bid_orders.limit_orders.should_not be_empty
+        expect(subject.ask_orders.limit_orders).to be_empty
+        expect(subject.bid_orders.limit_orders).to_not be_empty
       end
     end
 
@@ -138,12 +138,12 @@ describe Matching::Engine do
         subject.submit(high_ask)
         subject.cancel(low_ask) # but it's cancelled
 
-        AMQPQueue.expects(:enqueue)
+        expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: high_ask.id, bid_id: bid.id, strike_price: high_ask.price, volume: high_ask.volume, funds: '30.0'.to_d}, anything)
         subject.submit(bid)
 
-        subject.ask_orders.limit_orders.should be_empty
-        subject.bid_orders.limit_orders.should_not be_empty
+        expect(subject.ask_orders.limit_orders).to be_empty
+        expect(subject.bid_orders.limit_orders).to_not be_empty
       end
     end
   end
@@ -152,11 +152,11 @@ describe Matching::Engine do
     it "should cancel order" do
       subject.submit(ask)
       subject.cancel(ask)
-      subject.ask_orders.limit_orders.should be_empty
+      expect(subject.ask_orders.limit_orders).to be_empty
 
       subject.submit(bid)
       subject.cancel(bid)
-      subject.bid_orders.limit_orders.should be_empty
+      expect(subject.bid_orders.limit_orders).to be_empty
     end
   end
 
@@ -171,7 +171,7 @@ describe Matching::Engine do
       ask4 = Matching.mock_limit_order(type: :ask, price: '3661.68'.to_d, volume: '0.0526'.to_d)
 
       used_funds = 0
-      subject.stubs(:publish).with do |order, counter_order, trade|
+      allow(subject).to receive(:publish) do |order, counter_order, trade|
         price, volume, funds = trade
         used_funds += funds
       end
@@ -190,15 +190,15 @@ describe Matching::Engine do
     subject { Matching::Engine.new(market, mode: :dryrun) }
 
     it "should not publish matched trades" do
-      AMQPQueue.expects(:enqueue).never
+      expect(AMQPQueue).to receive(:enqueue).never
 
       subject.submit(ask)
       subject.submit(bid)
 
-      subject.ask_orders.limit_orders.should be_empty
-      subject.bid_orders.limit_orders.should be_empty
+      expect(subject.ask_orders.limit_orders).to be_empty
+      expect(subject.bid_orders.limit_orders).to be_empty
 
-      subject.queue.should have(1).trade
+      expect(subject.queue).to have(1).trade
       expect(subject.queue.first).to eq [:trade_executor, {market_id: market.id, ask_id: ask.id, bid_id: bid.id, strike_price: price, volume: volume, funds: '50.0'.to_d}, {persistent: false}]
     end
   end

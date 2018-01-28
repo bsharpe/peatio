@@ -3,13 +3,12 @@ require 'spec_helper'
 describe Market do
 
   context 'visible market' do
-    # it { expect(Market.orig_all.count).to eq(2) }
     it { expect(Market.all.count).to eq(1) }
   end
 
   context 'markets hash' do
     it "should list all markets info" do
-      expect(Market.to_hash).to eq {:btceur=>{:name=>"BTC/EUR", :base_unit=>"btc", :quote_unit=>"eur"}}
+      expect(Market.to_hash).to eq( { btceur: {:name => "BTC/EUR", :base_unit => "btc", :quote_unit => "eur"} } )
     end
   end
 
@@ -20,7 +19,7 @@ describe Market do
     its(:name)       { should == 'BTC/EUR' }
     its(:base_unit)  { should == 'btc' }
     its(:quote_unit) { should == 'eur' }
-    its(:visible)    { should be_true }
+    its(:visible)    { should == true }
   end
 
   context 'enumerize' do

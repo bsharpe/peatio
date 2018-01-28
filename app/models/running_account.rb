@@ -20,7 +20,7 @@
 #  index_running_accounts_on_source_type_and_source_id  (source_type,source_id)
 #
 
-class RunningAccount < ActiveRecord::Base
+class RunningAccount < ApplicationRecord
   include Currencible
 
   CATEGORY = {

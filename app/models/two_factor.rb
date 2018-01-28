@@ -11,7 +11,7 @@
 #  refreshed_at   :datetime
 #
 
-class TwoFactor < ActiveRecord::Base
+class TwoFactor < ApplicationRecord
   belongs_to :member
 
   before_validation :gen_code, on: :create

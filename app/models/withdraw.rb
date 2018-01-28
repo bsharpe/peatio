@@ -20,12 +20,10 @@
 #  type       :string(255)
 #
 
-class Withdraw < ActiveRecord::Base
+class Withdraw < ApplicationRecord
   STATES = [:submitting, :submitted, :rejected, :accepted, :suspect, :processing,
-            :done, :canceled, :almost_done, :failed]
-  COMPLETED_STATES = [:done, :rejected, :canceled, :almost_done, :failed]
-
-  extend Enumerize
+            :done, :canceled, :almost_done, :failed].freeze
+  COMPLETED_STATES = [:done, :rejected, :canceled, :almost_done, :failed].freeze
 
   include AASM
   include AASM::Locking
@@ -66,8 +64,8 @@ class Withdraw < ActiveRecord::Base
 
   validate :ensure_account_balance, on: :create
 
-  scope :completed, -> { where aasm_state: COMPLETED_STATES }
-  scope :not_completed, -> { where.not aasm_state: COMPLETED_STATES }
+  scope :completed, -> { where( aasm_state: COMPLETED_STATES ) }
+  scope :not_completed, -> { where.not( aasm_state: COMPLETED_STATES ) }
 
   def self.channel
     WithdrawChannel.find_by_key(name.demodulize.underscore)
@@ -150,7 +148,7 @@ class Withdraw < ActiveRecord::Base
   end
 
   def cancelable?
-    submitting? or submitted? or accepted?
+    submitting? || submitted? || accepted?
   end
 
   def quick?
@@ -178,17 +176,17 @@ class Withdraw < ActiveRecord::Base
 
   def lock_funds
     account.lock!
-    account.lock_funds sum, reason: Account::WITHDRAW_LOCK, ref: self
+    account.lock_funds( sum, reason: Account::WITHDRAW_LOCK, ref: self)
   end
 
   def unlock_funds
     account.lock!
-    account.unlock_funds sum, reason: Account::WITHDRAW_UNLOCK, ref: self
+    account.unlock_funds( sum, reason: Account::WITHDRAW_UNLOCK, ref: self)
   end
 
   def unlock_and_sub_funds
     account.lock!
-    account.unlock_and_sub_funds sum, locked: sum, fee: fee, reason: Account::WITHDRAW, ref: self
+    account.unlock_and_sub_funds( sum, locked: sum, fee: fee, reason: Account::WITHDRAW, ref: self)
   end
 
   def set_txid
@@ -209,7 +207,7 @@ class Withdraw < ActiveRecord::Base
   end
 
   def send_sms
-    return true if not member.sms_two_factor.activated?
+    return true unless member.sms_two_factor.activated?
 
     sms_message = I18n.t('sms.withdraw_done', email: member.email,
                                               currency: currency_text,
@@ -225,13 +223,13 @@ class Withdraw < ActiveRecord::Base
   end
 
   def ensure_account_balance
-    if sum.nil? or sum > account.balance
+    if sum.nil? || sum > account.balance
       errors.add :base, -> { I18n.t('activerecord.errors.models.withdraw.account_balance_is_poor') }
     end
   end
 
   def fix_precision
-    if sum && currency_obj.precision
+    if sum && currency_obj&.precision
       self.sum = sum.round(currency_obj.precision, BigDecimal::ROUND_DOWN)
     end
   end

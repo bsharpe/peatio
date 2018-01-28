@@ -11,7 +11,7 @@
 #  sum        :string(255)
 #
 
-class PartialTree < ActiveRecord::Base
+class PartialTree < ApplicationRecord
 
   belongs_to :account
   belongs_to :proof

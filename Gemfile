@@ -102,13 +102,13 @@ group :development, :test do
   gem 'quiet_assets'
   gem 'mails_viewer'
   gem 'timecop'
-  gem 'dotenv-rails'
-  gem 'byebug'
+  # gem 'dotenv-rails'
+  # gem 'byebug'
 end
 
 group :test do
   gem 'database_cleaner'
-  gem 'mocha', :require => false
+  # gem 'mocha', :require => false
   gem 'shoulda-matchers'
   gem 'capybara'
   gem 'launchy'

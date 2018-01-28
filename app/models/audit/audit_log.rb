@@ -19,7 +19,7 @@
 #
 
 module Audit
-  class AuditLog < ActiveRecord::Base
+  class AuditLog < ApplicationRecord
     belongs_to :operator, class_name: 'Member', foreign_key: 'operator_id'
     belongs_to :auditable, polymorphic: true
   end

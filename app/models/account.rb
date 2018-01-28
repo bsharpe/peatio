@@ -19,7 +19,7 @@
 #  index_accounts_on_member_id_and_currency  (member_id,currency) UNIQUE
 #
 
-class Account < ActiveRecord::Base
+class Account < ApplicationRecord
   include Currencible
 
   FIX = :fix

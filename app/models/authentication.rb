@@ -18,7 +18,7 @@
 #  index_authentications_on_provider_and_uid  (provider,uid)
 #
 
-class Authentication < ActiveRecord::Base
+class Authentication < ApplicationRecord
   belongs_to :member
 
   validates :provider, presence: true, uniqueness: { scope: :member_id }

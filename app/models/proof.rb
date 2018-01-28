@@ -13,7 +13,7 @@
 #  balance    :string(30)
 #
 
-class Proof < ActiveRecord::Base
+class Proof < ApplicationRecord
   include Currencible
 
   has_many :partial_trees

@@ -10,7 +10,7 @@
 #  currency   :integer
 #
 
-class PaymentAddress < ActiveRecord::Base
+class PaymentAddress < ApplicationRecord
   include Currencible
   belongs_to :account
 

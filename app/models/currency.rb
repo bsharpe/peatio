@@ -6,7 +6,7 @@ class Currency < ActiveYamlBase
 
   self.singleton_class.send :alias_method, :all_with_invisible, :all
   def self.all
-    all_with_invisible.select &:visible
+    all_with_invisible.select(&:visible)
   end
 
   def self.enumerize
@@ -14,11 +14,11 @@ class Currency < ActiveYamlBase
   end
 
   def self.codes
-    @keys ||= all.map &:code
+    @keys ||= all.map(&:code)
   end
 
   def self.ids
-    @ids ||= all.map &:id
+    @ids ||= all.map(&:id)
   end
 
   def self.assets(code)

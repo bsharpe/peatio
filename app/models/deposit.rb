@@ -26,11 +26,10 @@
 #  index_deposits_on_txid_and_txout  (txid,txout)
 #
 
-class Deposit < ActiveRecord::Base
+class Deposit < ApplicationRecord
   STATES = [:submitting, :cancelled, :submitted, :rejected, :accepted, :checked, :warning]
 
-  extend Enumerize
-
+  
   include AASM
   include AASM::Locking
   include Currencible

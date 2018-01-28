@@ -14,6 +14,6 @@
 #  index_signup_histories_on_member_id  (member_id)
 #
 
-class SignupHistory < ActiveRecord::Base
+class SignupHistory < ApplicationRecord
 
 end

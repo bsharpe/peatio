@@ -18,9 +18,8 @@
 #  aasm_state         :string(255)
 #
 
-class IdDocument < ActiveRecord::Base
-  extend Enumerize
-  include AASM
+class IdDocument < ApplicationRecord
+    include AASM
   include AASM::Locking
 
   has_one :id_document_file, class_name: 'Asset::IdDocumentFile', as: :attachable

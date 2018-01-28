@@ -16,7 +16,7 @@
 #  index_tokens_on_type_and_token_and_expire_at_and_is_used  (type,token,expire_at,is_used)
 #
 
-class Token < ActiveRecord::Base
+class Token < ApplicationRecord
   belongs_to :member
 
   before_validation :generate_token, on: :create

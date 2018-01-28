@@ -11,7 +11,7 @@
 #  updated_at :datetime
 #
 
-class Ticket < ActiveRecord::Base
+class Ticket < ApplicationRecord
   include AASM
   include AASM::Locking
   acts_as_readable on: :created_at

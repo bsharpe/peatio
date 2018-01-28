@@ -9,7 +9,7 @@
 #  file            :string(255)
 #
 
-class Asset < ActiveRecord::Base
+class Asset < ApplicationRecord
   belongs_to :attachable, polymorphic: true
 
   mount_uploader :file, FileUploader

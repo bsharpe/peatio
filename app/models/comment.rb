@@ -10,7 +10,7 @@
 #  updated_at :datetime
 #
 
-class Comment < ActiveRecord::Base
+class Comment < ApplicationRecord
   after_commit :send_notification, on: [:create]
 
   acts_as_readable on: :created_at

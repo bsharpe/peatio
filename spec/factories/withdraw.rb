@@ -22,7 +22,7 @@ FactoryBot.define do
     end
 
     after(:build) do |x|
-      x.stubs(:validate_address).returns(true)
+      allow(x).to receive(:validate_address).and_return(true)
     end
   end
 

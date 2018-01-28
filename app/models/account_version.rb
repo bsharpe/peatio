@@ -25,7 +25,7 @@
 #  index_account_versions_on_modifiable_id_and_modifiable_type  (modifiable_id,modifiable_type)
 #
 
-class AccountVersion < ActiveRecord::Base
+class AccountVersion < ApplicationRecord
   include Currencible
 
   HISTORY = [Account::STRIKE_ADD, Account::STRIKE_SUB, Account::STRIKE_FEE, Account::DEPOSIT, Account::WITHDRAW, Account::FIX]

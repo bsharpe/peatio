@@ -13,7 +13,7 @@
 #  deleted_at :datetime
 #
 
-class FundSource < ActiveRecord::Base
+class FundSource < ApplicationRecord
   include Currencible
 
   attr_accessor :name

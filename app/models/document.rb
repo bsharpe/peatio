@@ -13,7 +13,7 @@
 #  keywords   :text(65535)
 #
 
-class Document < ActiveRecord::Base
+class Document < ApplicationRecord
   TRANSLATABLE_ATTR = [:title, :desc, :keywords, :body]
   translates *TRANSLATABLE_ATTR
 

@@ -31,9 +31,8 @@
 #  index_orders_on_state                (state)
 #
 
-class Order < ActiveRecord::Base
-  extend Enumerize
-
+class Order < ApplicationRecord
+  
   enumerize :bid, in: Currency.enumerize
   enumerize :ask, in: Currency.enumerize
   enumerize :currency, in: Market.enumerize, scope: true

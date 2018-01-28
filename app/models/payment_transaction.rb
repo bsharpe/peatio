@@ -23,9 +23,8 @@
 #  index_payment_transactions_on_type            (type)
 #
 
-class PaymentTransaction < ActiveRecord::Base
-  extend Enumerize
-
+class PaymentTransaction < ApplicationRecord
+  
   include AASM
   include AASM::Locking
   include Currencible

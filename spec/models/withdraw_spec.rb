@@ -46,19 +46,19 @@ describe Withdraw do
 
       it "should accept withdraw with clean history" do
         subject.audit!
-        subject.should be_accepted
+        expect(subject).to be_accepted
       end
 
       it "should mark withdraw with suspicious history" do
         subject.account.versions.delete_all
         subject.audit!
-        subject.should be_suspect
+        expect(subject).to be_suspect
       end
 
       it "should approve quick withdraw directly" do
         subject.update_attributes sum: 5
         subject.audit!
-        subject.should be_processing
+        expect(subject).to be_processing
       end
     end
   end
@@ -72,35 +72,35 @@ describe Withdraw do
       end
 
       it "should be rejected if address is invalid" do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: false}))
+        allow(CoinRPC).to receive(:[]).and_return(double('rpc', validateaddress: {isvalid: false}))
         subject.audit!
-        subject.should be_rejected
+        expect(subject).to be_rejected
       end
 
       it "should be rejected if address belongs to hot wallet" do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: true, ismine: true}))
+        allow(CoinRPC).to receive(:[]).and_return(double('rpc', validateaddress: {isvalid: true, ismine: true}))
         subject.audit!
-        subject.should be_rejected
+        expect(subject).to be_rejected
       end
 
       it "should accept withdraw with clean history" do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: true}))
+        allow(CoinRPC).to receive(:[]).and_return(double('rpc', validateaddress: {isvalid: true}))
         subject.audit!
-        subject.should be_accepted
+        expect(subject).to be_accepted
       end
 
       it "should mark withdraw with suspicious history" do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: true}))
+        allow(CoinRPC).to receive(:[]).and_return(double('rpc', validateaddress: {isvalid: true}))
         subject.account.versions.delete_all
         subject.audit!
-        subject.should be_suspect
+        expect(subject).to be_suspect
       end
 
       it "should approve quick withdraw directly" do
-        CoinRPC.stubs(:[]).returns(mock('rpc', validateaddress: {isvalid: true}))
+        allow(CoinRPC).to receive(:[]).and_return(double('rpc', validateaddress: {isvalid: true}))
         subject.update_attributes sum: '0.099'
         subject.audit!
-        subject.should be_processing
+        expect(subject).to be_processing
       end
     end
 
@@ -136,10 +136,13 @@ describe Withdraw do
   context 'Worker::WithdrawCoin#process' do
     subject { create(:satoshi_withdraw) }
     before do
-      @rpc = mock()
-      @rpc.stubs(getbalance: 50000, sendtoaddress: '12345', settxfee: true )
-      @broken_rpc = mock()
-      @broken_rpc.stubs(getbalance: 5)
+      @rpc = double()
+      allow(@rpc).to receive(:getbalance).and_return(50000)
+      allow(@rpc).to receive(:sendtoaddress).and_return('12345')
+      allow(@rpc).to receive(:settxfee).and_return(true)
+
+      @broken_rpc = double()
+      allow(@broken_rpc).to receive(:getbalance).and_return(5)
 
       subject.submit
       subject.accept
@@ -148,30 +151,36 @@ describe Withdraw do
     end
 
     it 'transitions to :almost_done after calling rpc but getting Exception' do
-      CoinRPC.stubs(:[]).returns(@broken_rpc)
+      allow(CoinRPC).to receive(:[]).and_return(@broken_rpc)
 
-      lambda { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.should raise_error(Account::BalanceError)
+      expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to raise_error(BalanceError)
 
-      expect(subject.reload.almost_done?).to be_true
+      expect(subject.reload.almost_done?).to eq(true)
     end
 
     it 'transitions to :done after calling rpc' do
-      CoinRPC.stubs(:[]).returns(@rpc)
+      allow(CoinRPC).to receive(:[]).and_return(@rpc)
 
       expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to change{subject.account.reload.amount}.by(-subject.sum)
 
       subject.reload
-      expect(subject.done?).to be_true
+      expect(subject.done?).to eq(true)
       expect(subject.txid).to eq('12345')
     end
 
     it 'does not send coins again if previous attempt failed' do
-      CoinRPC.stubs(:[]).returns(@broken_rpc)
-      begin Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}); rescue; end
-      CoinRPC.stubs(:[]).returns(mock())
+      allow(CoinRPC).to receive(:[]).and_return(@broken_rpc)
+      begin
+        Worker::WithdrawCoin.new.process({id: subject.id}, {}, {})
+      rescue
+      end
+      allow(CoinRPC).to receive(:[]).and_return(double())
 
-      expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to_not change{subject.account.reload.amount}
-      expect(subject.reload.almost_done?).to be_true
+      expect {
+        Worker::WithdrawCoin.new.process({id: subject.id}, {}, {})
+      }.to_not change{ subject.account.reload.amount }
+
+      expect(subject.reload.almost_done?).to eq(true)
     end
   end
 
@@ -179,17 +188,17 @@ describe Withdraw do
     subject { create(:bank_withdraw, sum: 1000) }
 
     before do
-      subject.stubs(:send_withdraw_confirm_email)
+      allow(subject).to receive(:send_withdraw_confirm_email)
     end
 
     it 'initializes with state :submitting' do
-      expect(subject.submitting?).to be_true
+      expect(subject.submitting?).to eq(true)
     end
 
     it 'transitions to :submitted after calling #submit!' do
       subject.submit!
 
-      expect(subject.submitted?).to be_true
+      expect(subject.submitted?).to eq(true)
       expect(subject.sum).to eq subject.account.locked
       expect(subject.sum).to eq subject.account_versions.last.locked
     end
@@ -199,7 +208,7 @@ describe Withdraw do
       subject.accept!
       subject.reject!
 
-      expect(subject.rejected?).to be_true
+      expect(subject.rejected?).to eq(true)
     end
 
     context :process do
@@ -209,29 +218,29 @@ describe Withdraw do
       end
 
       it 'transitions to :processing after calling #process! when withdrawing fiat currency' do
-        subject.stubs(:coin?).returns(false)
+        allow(subject).to receive(:coin?).and_return(false)
 
         subject.process!
 
-        expect(subject.processing?).to be_true
+        expect(subject.processing?).to eq(true)
       end
 
       it 'transitions to :failed after calling #fail! when withdrawing fiat currency' do
-        subject.stubs(:coin?).returns(false)
+        allow(subject).to receive(:coin?).and_return(false)
 
         subject.process!
 
         expect { subject.fail! }.to_not change{subject.account.amount}
 
-        expect(subject.failed?).to be_true
+        expect(subject.failed?).to eq(true)
       end
 
       it 'transitions to :processing after calling #process!' do
-        subject.expects(:send_coins!)
+        expect(subject).to receive(:send_coins!)
 
         subject.process!
 
-        expect(subject.processing?).to be_true
+        expect(subject.processing?).to eq(true)
       end
     end
 
@@ -239,7 +248,7 @@ describe Withdraw do
       it 'transitions to :canceled after calling #cancel!' do
         subject.cancel!
 
-        expect(subject.canceled?).to be_true
+        expect(subject.canceled?).to eq(true)
         expect(subject.account.locked).to eq 0
       end
 
@@ -247,7 +256,7 @@ describe Withdraw do
         subject.submit!
         subject.cancel!
 
-        expect(subject.canceled?).to be_true
+        expect(subject.canceled?).to eq(true)
         expect(subject.account.locked).to eq 0
       end
 
@@ -256,7 +265,7 @@ describe Withdraw do
         subject.accept!
         subject.cancel!
 
-        expect(subject.canceled?).to be_true
+        expect(subject.canceled?).to eq(true)
         expect(subject.account.locked).to eq 0
       end
     end
@@ -266,17 +275,17 @@ describe Withdraw do
     subject(:withdraw) { build(:satoshi_withdraw) }
 
     it "returns false if currency doesn't set quick withdraw max" do
-      withdraw.should_not be_quick
+      expect(withdraw).to_not be_quick
     end
 
     it "returns false if exceeds quick withdraw amount" do
-      withdraw.currency_obj.stubs(:quick_withdraw_max).returns(withdraw.sum-1)
-      withdraw.should_not be_quick
+      allow(withdraw.currency_obj).to receive(:quick_withdraw_max).and_return(withdraw.sum-1)
+      expect(withdraw).to_not be_quick
     end
 
     it "returns true" do
-      withdraw.currency_obj.stubs(:quick_withdraw_max).returns(withdraw.sum+1)
-      withdraw.should be_quick
+      allow(withdraw.currency_obj).to receive(:quick_withdraw_max).and_return(withdraw.sum+1)
+      expect(withdraw).to be_quick
     end
   end
 

@@ -25,12 +25,11 @@
 #  index_trades_on_currency       (currency)
 #
 
-class Trade < ActiveRecord::Base
+class Trade < ApplicationRecord
   extend ActiveHash::Associations::ActiveRecordExtensions
   ZERO = '0.0'.to_d
 
-  extend Enumerize
-  enumerize :trend, in: {:up => 1, :down => 0}
+    enumerize :trend, in: {:up => 1, :down => 0}
   enumerize :currency, in: Market.enumerize, scope: true
 
   belongs_to :market, class_name: 'Market', foreign_key: 'currency'

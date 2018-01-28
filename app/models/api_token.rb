@@ -21,7 +21,7 @@
 #  index_api_tokens_on_secret_key  (secret_key) UNIQUE
 #
 
-class APIToken < ActiveRecord::Base
+class APIToken < ApplicationRecord
   paranoid
 
   belongs_to :member

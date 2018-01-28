@@ -24,11 +24,11 @@ describe AMQPConfig do
   end
 
   before do
-    AMQPConfig.stubs(:data).returns(config)
+    allow(AMQPConfig).to receive(:data).and_return(config)
   end
 
   it "should tell client how to connect" do
-    expect(AMQPConfig.connect).to eq {'host' => '127.0.0.1'}
+    expect(AMQPConfig.connect).to eq({'host' => '127.0.0.1'})
   end
 
   it "should return queue settings" do
@@ -48,11 +48,11 @@ describe AMQPConfig do
   end
 
   it "should set exchange to nil when binding use default exchange" do
-    AMQPConfig.binding_exchange(:default).should be_nil
+    expect(AMQPConfig.binding_exchange(:default)).to be_nil
   end
 
   it "should find binding worker" do
-    AMQPConfig.binding_worker(:test).should be_instance_of(Worker::Test)
+    expect(AMQPConfig.binding_worker(:test)).to be_instance_of(Worker::Test)
   end
 
   it "should return queue name of binding" do

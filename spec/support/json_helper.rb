@@ -51,5 +51,8 @@ RSpec.configure do |config|
   end
 
   config.include JSONHelper, type: :api
+  config.before(:each, type: :api) do
+    reset_json_object
+  end
 
 end

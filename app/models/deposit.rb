@@ -27,9 +27,8 @@
 #
 
 class Deposit < ApplicationRecord
-  STATES = [:submitting, :cancelled, :submitted, :rejected, :accepted, :checked, :warning]
+  STATES = [:submitting, :cancelled, :submitted, :rejected, :accepted, :checked, :warning].freeze
 
-  
   include AASM
   include AASM::Locking
   include Currencible
@@ -127,6 +126,7 @@ class Deposit < ApplicationRecord
   end
 
   private
+
   def do
     account.lock!.plus_funds amount, reason: Account::DEPOSIT, ref: self
   end
@@ -136,7 +136,7 @@ class Deposit < ApplicationRecord
   end
 
   def send_sms
-    return true if not member.sms_two_factor.activated?
+    return true unless member.sms_two_factor.activated?
 
     sms_message = I18n.t('sms.deposit_done', email: member.email,
                                              currency: currency_text,

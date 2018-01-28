@@ -27,9 +27,9 @@ describe APIv2::Members do
 
     it "should return current user profile with accounts info" do
       signed_get "/api/v2/members/me", token: token
-      response.should be_success
+      assert_successful
 
-      result = JSON.parse(response.body)
+      result = json_data
       expect(result['sn']).to eq member.sn
       expect(result['activated']).to eq true
       result['accounts'].should =~ [

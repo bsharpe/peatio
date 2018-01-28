@@ -22,7 +22,7 @@ describe APIv2::Mount, type: :controller do
 
   it "should allow 3rd party ajax call" do
     get "/api/v2/null"
-    response.should be_success
+    assert_successful
     expect(response.headers['Access-Control-Allow-Origin']).to eq '*'
   end
 
@@ -30,7 +30,7 @@ describe APIv2::Mount, type: :controller do
     it "should render json error message" do
       get "/api/v2/broken"
       expect(response.code).to eq '400'
-      expect(JSON.parse(response.body)).to eq ({'error' => {'code' => 2014310, 'message' => "MtGox bankrupt"}})
+      expect(json_data).to eq ({'error' => {'code' => 2014310, 'message' => "MtGox bankrupt"}})
     end
   end
 

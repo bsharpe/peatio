@@ -32,7 +32,7 @@ describe APIv2::Auth::Middleware do
 
   it "should authorize request with correct param credentials" do
     signed_get '/', token: token
-    response.should be_success
+    assert_successful
     expect(response.body).to eq token.member.email
   end
 

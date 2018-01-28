@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe APIv2::Deposits do
+describe APIv2::Deposits, type: :api do
 
   let(:member) { create(:member) }
   let(:other_member) { create(:member) }
@@ -18,41 +18,40 @@ describe APIv2::Deposits do
 
     it "should require deposits authentication" do
       get '/api/v2/deposits', token: token
-      response.code.should =='401'
+      expect(response.code).to eq('401')
     end
 
     it "login deposits" do
       signed_get '/api/v2/deposits', token: token
-      response.should be_success
+      assert_successful
     end
 
     it "deposits num" do
       signed_get '/api/v2/deposits', token: token
-      expect(JSON.parse(response.body).size).to eq 3
+      expect(json_data.size).to eq 3
     end
 
     it "should return limited deposits" do
       signed_get '/api/v2/deposits', params: {limit: 1}, token: token
-      expect(JSON.parse(response.body).size).to eq 1
+      expect(json_data.size).to eq 1
     end
 
     it "should filter deposits by state" do
       signed_get '/api/v2/deposits', params: {state: 'cancelled'}, token: token
-      expect(JSON.parse(response.body).size).to eq 0
-
+      expect(json_data.size).to eq 0
+      reset_json_object
       d = create(:deposit, member: member, currency: 'btc')
       d.submit!
       signed_get '/api/v2/deposits', params: {state: 'submitted'}, token: token
-      json = JSON.parse(response.body)
-      expect(json.size).to eq 1
-      expect(json.first['txid']).to eq d.txid
+
+      expect(json_data.size).to eq 1
+      expect(json_data.first['txid']).to eq d.txid
     end
 
     it "deposits currency eur" do
       signed_get '/api/v2/deposits', params: {currency: 'eur'}, token: token
-      result = JSON.parse(response.body)
-      result.should have(2).deposits
-      result.all? {|d| d['currency'] == 'eur' }.should eq(true)
+      expect(json_data).to have(2).deposits
+      expect(json_data.all? {|d| d['currency'] == 'eur' }).to eq(true)
     end
 
     it "should return 404 if txid not exist" do
@@ -69,14 +68,14 @@ describe APIv2::Deposits do
       signed_get '/api/v2/deposit', params: {txid: 1}, token: token
 
       expect(response.code).to eq '200'
-      expect(JSON.parse(response.body)['amount']).to eq '520.0'
+      expect(json_data['amount']).to eq '520.0'
     end
 
     it "should return deposit no time limit " do
       signed_get '/api/v2/deposit', params: {txid: 'test'}, token: token
 
       expect(response.code).to eq '200'
-      expect(JSON.parse(response.body)['amount']).to eq '111.0'
+      expect(json_data['amount']).to eq '111.0'
     end
   end
 end

@@ -32,7 +32,7 @@ describe APIv2::Helpers do
 
       it "should response successfully" do
         get '/api/v2/auth_test', access_key: token.access_key, signature: signature, foo: 'bar', hello: 'world', tonce: tonce
-        response.should be_success
+        assert_successful
       end
 
       it "should set current user" do

@@ -22,7 +22,7 @@ describe Private::OrderBidsController do
     it "should create a buy order" do
       expect {
         post :create, params, {member_id: member.id}
-        response.should be_success
+        assert_successful
         expect(response.body).to eq '{"result":true,"message":"Success"}'
       }.to change(OrderBid, :count).by(1)
     end
@@ -40,7 +40,7 @@ describe Private::OrderBidsController do
       member.should have(2).orders
 
       post :clear, {market_id: market.id}, {member_id: member.id}
-      response.should be_success
+      assert_successful
       expect(assigns(:orders).size).to eq 1
       expect(assigns(:orders).first).to eq o1
     end

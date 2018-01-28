@@ -60,7 +60,7 @@ describe APIToken do
   end
 
   it "should return empty array if no scopes given" do
-    token.scopes.should be_empty
+    expect(token.scopes).to be_empty
   end
 
   it "should return scopes array" do
@@ -69,28 +69,28 @@ describe APIToken do
   end
 
   it "should return false if out of scope" do
-    token.in_scopes?(%w(foo)).should be_false
+    expect(token.in_scopes?(%w(foo))).to eq(false)
   end
 
   it "should return true if in scope" do
     token.scopes = 'foo'
-    token.in_scopes?(%w(foo)).should be_true
+    expect(token.in_scopes?(%w(foo))).to eq(true)
   end
 
   it "should return true if token has all scopes" do
     token.scopes = 'all'
-    token.in_scopes?(%w(foo)).should be_true
-    token.in_scopes?(%w(bar)).should be_true
+    expect(token.in_scopes?(%w(foo))).to eq(true)
+    expect(token.in_scopes?(%w(bar))).to eq(true)
   end
 
   it "should return true if api require no scope" do
-    token.in_scopes?(nil).should be_true
-    token.in_scopes?([]).should be_true
+    expect(token.in_scopes?(nil)).to eq(true)
+    expect(token.in_scopes?([])).to eq(true)
   end
 
   it "should destroy itself only" do
     token.destroy
-    APIToken.find_by_id(token).should be_nil
+    expect(APIToken.find_by_id(token)).to be_nil
   end
 
   it "should destroy dependent oauth access token" do
@@ -100,7 +100,7 @@ describe APIToken do
     token.update_attributes oauth_access_token_id: access_token.id
     token.destroy
 
-    Doorkeeper::AccessToken.find_by_id(access_token).should be_nil
+    expect(Doorkeeper::AccessToken.find_by_id(access_token)).to be_nil
   end
 
 end

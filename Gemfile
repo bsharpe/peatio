@@ -5,7 +5,7 @@ gem 'rails', '~> 4.2'
 gem 'rails-i18n'
 gem 'responders'
 gem 'rails-observers'
-gem "globalize"
+gem "globalize", '< 5.1'
 
 # Data
 gem 'mysql2'

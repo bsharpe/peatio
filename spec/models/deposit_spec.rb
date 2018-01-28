@@ -40,7 +40,7 @@ describe Deposit do
     let(:deposit) { create(:deposit, amount: 100.to_d) }
 
     before do
-      Deposit.any_instance.stubs(:calc_fee).returns([90, 10])
+      allow_any_instance_of(Deposit).to receive(:calc_fee).and_return([90, 10])
     end
 
     it 'should compute fee' do

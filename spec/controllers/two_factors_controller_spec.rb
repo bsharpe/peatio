@@ -9,7 +9,7 @@ describe TwoFactorsController, type: :controller do
       let(:do_request) { get :show, {id: :sms, refresh: true} }
 
       it {
-        AMQPQueue.expects(:enqueue).with(:sms_notification, anything)
+        expect(AMQPQueue).to receive(:enqueue).with(:sms_notification, anything)
         do_request
       }
     end
@@ -26,7 +26,7 @@ describe TwoFactorsController, type: :controller do
       let(:do_request) { get :show, {id: :sms} }
 
       before {
-        controller.stubs(:two_factor_failed_locked?).returns(true)
+        allow(controller).to receive(:two_factor_failed_locked?).and_return(true)
         do_request
       }
 

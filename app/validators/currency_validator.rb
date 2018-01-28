@@ -5,7 +5,7 @@ class CurrencyValidator < ActiveModel::EachValidator
 
     precision = currency[key]['precision'][attribute.to_s]
 
-    unless BigDecimal.new(value) % BigDecimal.new(precision.to_s) == 0
+    if not BigDecimal.new(value) % BigDecimal.new(precision.to_s) == 0
       record.errors[attribute] << (options[:message] || I18n.t('activemodel.errors.messages.orders.precision', p: precision))
     end
 

@@ -51,11 +51,11 @@ module Verify
     end
 
     def google_auth_inactivated?
-      redirect_to settings_path, notice: t('.notice.not_activated_yet') if not @google_auth.activated?
+      redirect_to settings_path, notice: t('.notice.not_activated_yet') unless @google_auth.activated?
     end
 
     def two_factor_required!
-      return if not current_user.sms_two_factor.activated?
+      return unless current_user.sms_two_factor.activated?
 
       if two_factor_locked?
         session[:return_to] = request.original_url

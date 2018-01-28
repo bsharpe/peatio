@@ -39,7 +39,7 @@ module Authentications
 
       it "should redirect user to settings_path" do
         do_request
-        response.should redirect_to(settings_path)
+        expect(response).to redirect_to(settings_path)
       end
     end
 

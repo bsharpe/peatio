@@ -46,7 +46,7 @@ class TwoFactor::Sms < ::TwoFactor
   private
 
   def valid_phone_number_for_country
-    return if not send_code_phase
+    return unless send_code_phase
 
     if Phonelib.invalid_for_country?(phone_number, country)
       errors.add :phone_number, :invalid
@@ -68,7 +68,7 @@ class TwoFactor::Sms < ::TwoFactor
   end
 
   def send_notification
-    return if not self.activated_changed?
+    return unless self.activated_changed?
 
     if self.activated
       MemberMailer.sms_auth_activated(member.id).deliver

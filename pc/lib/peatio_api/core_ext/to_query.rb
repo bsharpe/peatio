@@ -1,6 +1,6 @@
-unless Object.new.respond_to? :to_query and Object.new.respond_to? :to_param
+if not Object.new.respond_to? :to_query and Object.new.respond_to? :to_param
 
-  require 'cgi' unless defined?(CGI) && defined?(CGI::escape)
+  require 'cgi' if not defined?(CGI) && defined?(CGI::escape)
 
   class Object
     def to_param
@@ -49,7 +49,7 @@ unless Object.new.respond_to? :to_query and Object.new.respond_to? :to_param
   class Hash
     def to_query(namespace = nil)
       collect do |key, value|
-        unless (value.is_a?(Hash) || value.is_a?(Array)) && value.empty?
+        if not (value.is_a?(Hash) || value.is_a?(Array)) && value.empty?
           value.to_query(namespace ? "#{namespace}[#{key}]" : key)
         end
       end.compact.sort! * '&'

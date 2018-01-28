@@ -68,7 +68,7 @@ module Verify
     end
 
     def two_factor_required!
-      return if not current_user.app_two_factor.activated?
+      return unless current_user.app_two_factor.activated?
 
       if two_factor_locked?
         session[:return_to] = request.original_url

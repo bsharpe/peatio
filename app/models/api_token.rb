@@ -37,7 +37,7 @@ class APIToken < ApplicationRecord
   scope :oauth_requested, -> { where('oauth_access_token_id IS NOT NULL') }
 
   def self.from_oauth_token(token)
-    return nil unless token && token.token.present?
+    return nil if not token && token.token.present?
     access_key, secret_key = token.token.split(':')
     find_by_access_key access_key
   end

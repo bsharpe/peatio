@@ -33,7 +33,7 @@ class Market < ActiveYamlBase
   def initialize(*args)
     super
 
-    raise "missing base_unit or quote_unit: #{args}" unless base_unit.present? && quote_unit.present?
+    raise "missing base_unit or quote_unit: #{args}" if not base_unit.present? && quote_unit.present?
     @name = self[:name] || "#{base_unit}/#{quote_unit}".upcase
   end
 

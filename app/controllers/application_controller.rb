@@ -34,6 +34,7 @@ class ApplicationController < ActionController::Base
   end
 
   def auth_member!
+    # puts "NOT AUTHORIZED".yellow unless current_user
     unless current_user
       set_redirect_to
       redirect_to root_path, alert: t('activations.new.login_required')
@@ -41,13 +42,13 @@ class ApplicationController < ActionController::Base
   end
 
   def auth_activated!
-    redirect_to settings_path, alert: t('private.settings.index.auth-activated') unless current_user.activated?
+    # puts "NOT ACTIVATED".yellow unless current_user&.activated?
+    redirect_to settings_path, alert: t('private.settings.index.auth-activated') unless current_user&.activated?
   end
 
   def auth_verified!
-    unless current_user and current_user.id_document and current_user.id_document_verified?
-      redirect_to settings_path, alert: t('private.settings.index.auth-verified')
-    end
+    # puts "NOT VERIFIED".yellow unless current_user&.id_document&.verified?
+    redirect_to settings_path, alert: t('private.settings.index.auth-verified') unless current_user&.id_document&.verified?
   end
 
   def auth_no_initial!
@@ -62,21 +63,21 @@ class ApplicationController < ActionController::Base
   end
 
   def is_admin?
-    current_user && current_user.admin?
+    current_user&.admin?
   end
 
   def two_factor_activated!
-    if not current_user.two_factors.activated?
+    unless current_user&.two_factors&.activated?
       redirect_to settings_path, alert: t('two_factors.auth.please_active_two_factor')
     end
   end
 
   def two_factor_auth_verified?
-    return false if not current_user.two_factors.activated?
+    return false unless current_user.two_factors.activated?
     return false if two_factor_failed_locked? && !simple_captcha_valid?
 
     two_factor = current_user.two_factors.by_type(params[:two_factor][:type])
-    return false if not two_factor
+    return false unless two_factor
 
     two_factor.assign_attributes params.require(:two_factor).permit(:otp)
     if two_factor.verify?

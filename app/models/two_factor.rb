@@ -29,7 +29,7 @@ class TwoFactor < ApplicationRecord
 
   class << self
     def by_type(type)
-      return if not SUBCLASS.include?(type.to_s)
+      return unless SUBCLASS.include?(type.to_s)
 
       klass = "two_factor/#{type}".camelize.constantize
       klass.find_or_create_by(type: klass.name)

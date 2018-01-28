@@ -10,7 +10,8 @@ describe Private::FundsController, type: :controller do
       get :index
     end
 
-    it { expect(response).to be_ok }
+    it { expect(response).not_to redirect_to(settings_path) }
+    it { expect(member.two_factors).to be_activated }
   end
 
   context "Verified user without two factor auth" do

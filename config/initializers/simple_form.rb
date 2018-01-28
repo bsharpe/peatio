@@ -24,7 +24,7 @@ SimpleForm.setup do |config|
     b.use :placeholder
 
     ## Optional extensions
-    # They are disabled unless you pass `f.input EXTENSION_NAME => :lookup`
+    # They are disabled if not you pass `f.input EXTENSION_NAME => :lookup`
     # to the input. If so, they will retrieve the values from the model
     # if any exists. If you want to enable the lookup for any of those
     # extensions by default, you can change `b.optional` to `b.use`.

@@ -37,7 +37,7 @@ describe Private::OrderAsksController, type: :controller do
     it "should cancel all my asks in current market" do
       o1 = create(:order_ask, member: member, currency: market)
       o2 = create(:order_ask, member: member, currency: Market.find(:ptsbtc))
-      member.should have(2).orders
+      expect(member).to have(2).orders
 
       post :clear, {market_id: market.id}, {member_id: member.id}
       assert_successful

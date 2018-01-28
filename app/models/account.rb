@@ -93,8 +93,8 @@ class Account < ApplicationRecord
 
   def unlock_and_sub_funds(amount, locked: ZERO, fee: ZERO, reason: nil, ref: nil)
     raise AccountError, "cannot unlock and subtract funds (amount: #{amount})" if (!amount.positive? || (amount > locked))
-    raise LockedError, "invalid lock amount" unless locked
-    raise LockedError, "invalid lock amount (amount: #{amount}, locked: #{locked}, self.locked: #{self.locked})" if ((locked <= 0) or (locked > self.locked))
+    raise Account::LockedError, "invalid lock amount" unless locked
+    raise Account::LockedError, "invalid lock amount (amount: #{amount}, locked: #{locked}, self.locked: #{self.locked})" if ((locked <= 0) or (locked > self.locked))
     change_balance_and_locked locked-amount, -locked
   end
 

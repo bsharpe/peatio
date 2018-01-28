@@ -153,7 +153,7 @@ describe Withdraw do
     it 'transitions to :almost_done after calling rpc but getting Exception' do
       allow(CoinRPC).to receive(:[]).and_return(@broken_rpc)
 
-      expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to raise_error(BalanceError)
+      expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to raise_error(Account::BalanceError)
 
       expect(subject.reload.almost_done?).to eq(true)
     end

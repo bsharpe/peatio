@@ -21,7 +21,7 @@ module Worker
         return unless withdraw.almost_done?
 
         balance = CoinRPC[withdraw.currency].getbalance.to_d
-        raise BalanceError, 'Insufficient coins' if balance < withdraw.sum
+        raise Account::BalanceError, 'Insufficient coins' if balance < withdraw.sum
 
         #fee = [withdraw.fee.to_f || withdraw.channel.try(:fee) || 0.0005, 0.1].min
         fee = [withdraw.fee.to_f || withdraw.channel.try(:fee) || 0.0002, 0.0001].min

@@ -29,8 +29,8 @@ module Audit
       subject { TransferAuditLog.audit!(deposit, member) }
 
       before do
-        deposit.stubs(:aasm_state_was).returns('submitted')
-        deposit.stubs(:aasm_state).returns('accepted')
+        allow(deposit).to receive(:aasm_state_was).and_return('submitted')
+        allow(deposit).to receive(:aasm_state).and_return('accepted')
       end
 
       it "should create the TransferAuditLog record" do

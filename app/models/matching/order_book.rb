@@ -28,7 +28,7 @@ module Matching
 
     def fill_top(trade_price, trade_volume, trade_funds)
       order = top
-      raise "No top order in empty book." unless order
+      raise OrderBook::NoTop, "No top order in empty book." unless order
 
       order.fill trade_price, trade_volume, trade_funds
       if order.filled?

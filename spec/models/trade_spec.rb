@@ -50,7 +50,7 @@ describe Trade, ".collect_side" do
 
   it "should add side attribute on trades" do
     results = Trade.for_member(ask.currency, member)
-    results.should have(2).trades
+    expect(results).to have(2).trades
     expect(results.find {|t| t.id == trades.first.id }.side).to eq 'ask'
     expect(results.find {|t| t.id == trades.last.id  }.side).to eq 'bid'
   end
@@ -61,12 +61,12 @@ describe Trade, ".collect_side" do
 
   it "should return 1 trade" do
     results = Trade.for_member(ask.currency, member, limit: 1)
-    results.should have(1).trade
+    expect(results).to have(1).trade
   end
 
   it "should return trades from specified time" do
     results = Trade.for_member(ask.currency, member, time_to: 30.hours.ago)
-    results.should have(1).trade
+    expect(results).to have(1).trade
     expect(results.first).to eq trades.first
   end
 end

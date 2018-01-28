@@ -7,8 +7,8 @@ describe DepositChannel do
     let(:dc2) { DepositChannel.new }
 
     it "sort DepositChannel" do
-      dc1.stubs(:sort_order).returns 1
-      dc2.stubs(:sort_order).returns 2
+      allow(dc1).to receive(:sort_order).and_return 1
+      allow(dc2).to receive(:sort_order).and_return 2
       expect([dc2, dc1].sort.first.sort_order).to eq(1)
     end
   end

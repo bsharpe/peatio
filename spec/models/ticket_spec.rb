@@ -49,9 +49,9 @@ describe Ticket do
 
   describe "#send_notification" do
     let(:ticket) { create(:ticket) }
-    let(:mailer) { mock() }
+    let(:mailer) { OpenStruct.new }
     before do
-      mailer.stubs(:deliver)
+      allow(mailer).to receive(:deliver)
       ticket
     end
 
@@ -60,7 +60,7 @@ describe Ticket do
     end
 
     it "should notify the admin" do
-      TicketMailer.expects(:admin_notification).with(ticket.id).returns(mailer)
+      expect(TicketMailer).to receive(:admin_notification).with(ticket.id).and_return(mailer)
     end
   end
 end

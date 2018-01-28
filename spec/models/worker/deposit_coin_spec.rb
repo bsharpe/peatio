@@ -36,13 +36,13 @@ describe Worker::DepositCoin do
     before do
       create(:btc_payment_address, address: 'mov9LqpntN18cuyzUDBoaS8vPY8pF421Y3')
       create(:btc_payment_address, address: 'mqRtfJSdgrbbgMPasq4j3br1G4h3AoJ4hE')
-      subject.stubs(:get_raw).returns(raw)
+      allow(subject).to receive(:get_raw).and_return(raw)
     end
 
     it "should deposit many accounts" do
-      lambda {
+      expect {
         subject.process payload, {}, {}
-      }.should change(Deposit, :count).by(2)
+      }.to change(Deposit, :count).by(2)
     end
   end
 

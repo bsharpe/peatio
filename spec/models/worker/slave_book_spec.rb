@@ -46,18 +46,18 @@ describe Worker::SlaveBook do
     it "should create new orderbook manager" do
       subject.process({action: 'add', order: low_ask.attributes}, {}, {})
       subject.process({action: 'new', market: market.id, side: 'ask'}, {}, {})
-      subject.get_depth(market, :ask).should be_empty
+      expect(subject.get_depth(market, :ask)).to be_empty
     end
 
     it "should remove an empty order" do
       subject.process({action: 'add', order: low_ask.attributes}, {}, {})
-      subject.get_depth(market, :ask).should_not be_empty
+      expect(subject.get_depth(market, :ask)).to_not be_empty
 
       # after matching, order volume could be ZERO
       attrs = low_ask.attributes.merge(volume: '0.0'.to_d)
       subject.process({action: 'remove', order: attrs}, {}, {})
 
-      subject.get_depth(market, :ask).should be_empty
+      expect(subject.get_depth(market, :ask)).to be_empty
     end
   end
 

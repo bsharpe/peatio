@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe APIv2::Orders do
+describe APIv2::Orders, type: :controller do
 
   let(:member) { create(:member) }
   let(:token)  { create(:api_token, member: member) }
@@ -21,13 +21,13 @@ describe APIv2::Orders do
     it "should validate market param" do
       signed_get '/api/v2/orders', params: {market: 'mtgox'}, token: token
       expect(response.code).to eq '400'
-      expect(JSON.parse(response.body)).to eq {"error" => {"code" => 1001,"message" => "market does not have a valid value"}}
+      expect(JSON.parse(response.body)).to eq ({"error" => {"code" => 1001,"message" => "market does not have a valid value"}})
     end
 
     it "should validate state param" do
       signed_get '/api/v2/orders', params: {market: 'btceur', state: 'test'}, token: token
       expect(response.code).to eq '400'
-      expect(JSON.parse(response.body)).to eq {"error" => {"code" => 1001,"message" => "state does not have a valid value"}}
+      expect(JSON.parse(response.body)).to eq ({"error" => {"code" => 1001,"message" => "state does not have a valid value"}})
     end
 
     it "should return active orders by default" do

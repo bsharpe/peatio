@@ -14,7 +14,7 @@ module APIv2
   end
 end
 
-describe APIv2::Mount do
+describe APIv2::Mount, type: :controller do
 
   it "should use auth and attack middleware" do
     expect(APIv2::Mount.middleware).to eq [[APIv2::Auth::Middleware], [Rack::Attack]]
@@ -30,7 +30,7 @@ describe APIv2::Mount do
     it "should render json error message" do
       get "/api/v2/broken"
       expect(response.code).to eq '400'
-      expect(JSON.parse(response.body)).to eq {'error' => {'code' => 2014310, 'message' => "MtGox bankrupt"}}
+      expect(JSON.parse(response.body)).to eq ({'error' => {'code' => 2014310, 'message' => "MtGox bankrupt"}})
     end
   end
 

@@ -85,10 +85,13 @@ gem 'simple_captcha2', require: 'simple_captcha'
 gem 'rest-client', '~> 1.6.8'
 
 ## MISC
-gem 'colorize'
-gem 'hirb'
-gem 'annotate'
-gem 'bootsnap'
+gem 'awesome_print'             # fancy object output for console
+gem 'bootsnap'                  # faster booting
+gem 'bundleup', require: false  # easy gem upgrading
+gem 'colorize'                  # colors for console output "test".yellow
+gem 'fast_blank'                # C-implementation of .blank?
+gem 'hirb'                      # model viewing in console
+gem 'ensurance'                 # Model.ensure(thing)
 
 group :development, :test do
   gem 'factory_bot_rails'

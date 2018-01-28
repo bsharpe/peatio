@@ -1,9 +1,9 @@
-def time_to_milliseconds(t=Time.now)
+def time_to_milliseconds(t = Time.current)
   (t.to_f*1000).to_i
 end
 
 def sign(secret_key, method, uri, params)
-  req = mock('request', request_method: method.to_s.upcase, path_info: uri)
+  req = OpenStruct.new(id: 'request', request_method: method.to_s.upcase, path_info: uri)
   auth = APIv2::Auth::Authenticator.new(req, params)
   APIv2::Auth::Utils.hmac_signature(secret_key, auth.payload)
 end
@@ -30,4 +30,8 @@ end
 
 def signed_delete(uri, opts={})
   signed_request :delete, uri, opts
+end
+
+RSpec.configure do |config|
+  config.include RSpec::Rails::RequestExampleGroup, type: :request, file_path: /spec\/api/
 end

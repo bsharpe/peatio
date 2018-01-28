@@ -54,14 +54,14 @@ describe Matching::Executor do
     end
 
     it "should set trend to down" do
-      market.expects(:latest_price).returns(11.to_d)
+      allow(market).to receive(:latest_price).and_return(11.to_d)
       trade = subject.execute!
 
       expect(trade.trend).to eq 'down'
     end
 
     it "should set trade used funds" do
-      market.expects(:latest_price).returns(11.to_d)
+      allow(market).to receive(:latest_price).and_return(11.to_d)
       trade = subject.execute!
       expect(trade.funds).to eq price*volume
     end
@@ -80,7 +80,7 @@ describe Matching::Executor do
     end
 
     it "should publish trade through amqp" do
-      AMQPQueue.expects(:publish)
+      allow(AMQPQueue).to receive(:publish)
       subject.execute!
     end
   end
@@ -92,7 +92,7 @@ describe Matching::Executor do
     it "should set bid to done only" do
       subject.execute!
 
-      ask.reload.state.should_not == Order::DONE
+      expect(ask.reload.state).to_not eq Order::DONE
       expect(bid.reload.state).to eq Order::DONE
     end
   end
@@ -105,7 +105,7 @@ describe Matching::Executor do
       subject.execute!
 
       expect(ask.reload.state).to eq Order::DONE
-      bid.reload.state.should_not == Order::DONE
+      expect(bid.reload.state).to_not eq Order::DONE
     end
   end
 

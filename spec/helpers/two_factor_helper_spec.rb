@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe TwoFactorHelper do
+describe TwoFactorHelper, type: :helper do
 
   describe '#two_factor_locked?' do
     context 'empty session' do

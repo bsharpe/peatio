@@ -41,7 +41,7 @@ class IdDocument < ApplicationRecord
   aasm do
     state :unverified, initial: true
     state :verifying
-    state :verified, initial: true
+    state :verified
 
     event :submit do
       transitions from: :unverified, to: :verifying

@@ -192,7 +192,7 @@ describe Matching::OrderBook do
     subject { Matching::OrderBook.new('btceur', :ask) }
 
     it "should raise error if there is no top order" do
-      expect { subject.fill_top '1.0'.to_d, '1.0'.to_d, '1.0'.to_d }.to raise_error(OrderBook::NoTop)
+      expect { subject.fill_top '1.0'.to_d, '1.0'.to_d, '1.0'.to_d }.to raise_error(OrderBookError::NoTop)
     end
 
     it "should complete fill the top market order" do

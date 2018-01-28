@@ -4,10 +4,10 @@ class Account::BalanceError < AccountError; end
 
 class OrderError < RuntimeError; end
 
-module OrderBook
-  class NoTop < RuntimeError; end
-  class TooShallow < RuntimeError; end
-  class VolumeTooLarge < RuntimeError; end
+module OrderBookError
+  class NoTop < OrderError; end
+  class TooShallow < OrderError; end
+  class VolumeTooLarge < OrderError; end
 end
 
 module Matching

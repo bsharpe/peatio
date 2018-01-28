@@ -182,8 +182,8 @@ class Order < ApplicationRecord
       expected_volume -= v
     end
 
-    raise OrderBook::TooShallow, "Market is not deep enough" unless expected_volume.zero?
-    raise OrderBook::VolumeTooLarge, "Volume too large" if (filled_at-start_from).abs/start_from > FUSE
+    raise OrderBookError::TooShallow, "Market is not deep enough" unless expected_volume.zero?
+    raise OrderBookError::VolumeTooLarge, "Volume too large" if (filled_at-start_from).abs/start_from > FUSE
 
     required_funds
   end

@@ -32,9 +32,9 @@ describe Worker::Matching do
     it "should match part of existing order" do
       order = create(:order_bid, price: '4001', volume: '8.0', member: bob)
 
-      AMQPQueue.expects(:enqueue)
+      expect(AMQPQueue).to receive(:enqueue)
         .with(:slave_book, {action: 'update', order: {id: existing.id, timestamp: existing.at, type: :ask, volume: '2.0'.to_d, price: existing.price, market: 'btceur', ord_type: 'limit'}}, anything)
-      AMQPQueue.expects(:enqueue)
+      expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: existing.id, bid_id: order.id, strike_price: '4001'.to_d, volume: '8.0'.to_d, funds: '32008'.to_d}, anything)
       subject.process({action: 'submit', order: order.to_matching_attributes}, {}, {})
     end
@@ -42,9 +42,9 @@ describe Worker::Matching do
     it "should match part of new order" do
       order = create(:order_bid, price: '4001', volume: '12.0', member: bob)
 
-      AMQPQueue.expects(:enqueue)
+      expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: existing.id, bid_id: order.id, strike_price: '4001'.to_d, volume: '10.0'.to_d, funds: '40010'.to_d}, anything)
-      AMQPQueue.expects(:enqueue).with(:slave_book, anything, anything).times(2)
+      expect(AMQPQueue).to receive(:enqueue).with(:slave_book, anything, anything).twice
       subject.process({action: 'submit', order: order.to_matching_attributes}, {}, {})
     end
   end
@@ -75,18 +75,18 @@ describe Worker::Matching do
     let!(:engine)    { Matching::Engine.new(market, mode: :run) }
 
     before do
-      engine.stubs(:orderbook).returns(orderbook)
-      ::Matching::Engine.stubs(:new).returns(engine)
+      allow(engine).to receive(:orderbook).and_return(orderbook)
+      allow(::Matching::Engine).to receive(:new).and_return(engine)
     end
 
     it "should create many trades" do
-      AMQPQueue.expects(:enqueue)
+      expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: bid3.id, strike_price: ask1.price, volume: ask1.volume, funds: '12009'.to_d}, anything).once
-      AMQPQueue.expects(:enqueue)
+      expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: bid3.id, strike_price: ask2.price, volume: ask2.volume, funds: '12006'.to_d}, anything).once
-      AMQPQueue.expects(:enqueue)
+      expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: ask4.id, bid_id: bid3.id, strike_price: bid3.price, volume: '2.0'.to_d, funds: '8006'.to_d}, anything).once
-      AMQPQueue.expects(:enqueue)
+      expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: ask4.id, bid_id: bid5.id, strike_price: ask4.price, volume: bid5.volume, funds: '12006'.to_d}, anything).once
 
       subject
@@ -102,7 +102,7 @@ describe Worker::Matching do
 
     it "should cancel existing order" do
       subject.process({action: 'cancel', order: existing.to_matching_attributes}, {}, {})
-      subject.engines[market.id].ask_orders.limit_orders.should be_empty
+      expect(subject.engines[market.id].ask_orders.limit_orders).to be_empty
     end
   end
 
@@ -119,7 +119,7 @@ describe Worker::Matching do
 
       it "should not start engine" do
         expect(subject.engines['btceur'].mode).to eq :dryrun
-        subject.engines['btceur'].queue.should have(1).trade
+        expect(subject.engines['btceur'].queue).to have(1).trade
       end
     end
 

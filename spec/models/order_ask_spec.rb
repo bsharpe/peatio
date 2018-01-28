@@ -59,7 +59,7 @@ describe OrderAsk do
 
     it "should raise error if volume is too large" do
       expect { OrderBid.new(volume: '30'.to_d, ord_type: 'market').compute_locked }.not_to raise_error
-      expect { OrderBid.new(volume: '31'.to_d, ord_type: 'market').compute_locked }.to raise_error(OrderBook::TooShallow)
+      expect { OrderBid.new(volume: '31'.to_d, ord_type: 'market').compute_locked }.to raise_error(OrderBookError::TooShallow)
     end
   end
 

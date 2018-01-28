@@ -32,7 +32,7 @@
 #
 
 class Order < ApplicationRecord
-  
+
   enumerize :bid, in: Currency.enumerize
   enumerize :ask, in: Currency.enumerize
   enumerize :currency, in: Market.enumerize, scope: true
@@ -182,8 +182,8 @@ class Order < ApplicationRecord
       expected_volume -= v
     end
 
-    raise "Market is not deep enough" unless expected_volume.zero?
-    raise "Volume too large" if (filled_at-start_from).abs/start_from > FUSE
+    raise OrderBook::TooShallow, "Market is not deep enough" unless expected_volume.zero?
+    raise OrderBook::VolumeTooLarge, "Volume too large" if (filled_at-start_from).abs/start_from > FUSE
 
     required_funds
   end

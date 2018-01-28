@@ -6,6 +6,8 @@ class OrderError < RuntimeError; end
 
 module OrderBook
   class NoTop < RuntimeError; end
+  class TooShallow < RuntimeError; end
+  class VolumeTooLarge < RuntimeError; end
 end
 
 module Matching

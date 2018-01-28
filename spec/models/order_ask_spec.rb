@@ -49,8 +49,8 @@ describe OrderAsk do
 
     before do
       global = Global.new('btceur')
-      global.stubs(:asks).returns(price_levels)
-      Global.stubs(:[]).returns(global)
+      allow(global).to receive(:asks).and_return(price_levels)
+      allow(Global).to receive(:[]).and_return(global)
     end
 
     it "should require a little" do
@@ -59,7 +59,7 @@ describe OrderAsk do
 
     it "should raise error if volume is too large" do
       expect { OrderBid.new(volume: '30'.to_d, ord_type: 'market').compute_locked }.not_to raise_error
-      expect { OrderBid.new(volume: '31'.to_d, ord_type: 'market').compute_locked }.to raise_error
+      expect { OrderBid.new(volume: '31'.to_d, ord_type: 'market').compute_locked }.to raise_error(OrderBook::TooShallow)
     end
   end
 

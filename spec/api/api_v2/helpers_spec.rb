@@ -15,7 +15,7 @@ module APIv2
 
 end
 
-describe APIv2::Helpers do
+describe APIv2::Helpers, type: :api do
 
   context "#authentic?" do
 

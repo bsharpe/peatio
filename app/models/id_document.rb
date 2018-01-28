@@ -19,7 +19,7 @@
 #
 
 class IdDocument < ApplicationRecord
-    include AASM
+  include AASM
   include AASM::Locking
 
   has_one :id_document_file, class_name: 'Asset::IdDocumentFile', as: :attachable

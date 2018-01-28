@@ -25,7 +25,7 @@ module Authentications
         post :create, data
         member.reload
         expect(member.email).to eq 'xman@xman.com'
-        member.activated.should be_false
+        member.activated.should eq(false)
       end
     end
 

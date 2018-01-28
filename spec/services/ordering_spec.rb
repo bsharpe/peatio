@@ -11,7 +11,7 @@ describe Ordering do
     end
 
     it "should return true on success" do
-      Ordering.new(order).submit.should be_true
+      Ordering.new(order).submit.should eq(true)
     end
 
     it "should set locked funds on order" do

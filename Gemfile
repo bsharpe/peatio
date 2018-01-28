@@ -9,34 +9,35 @@ gem "globalize", '< 5.1'
 
 # Data
 gem 'mysql2'
-gem 'redis-rails', '>= 5.0.2'
-gem 'aasm', '~> 3.4.0'
-gem 'enumerize', '~> 1.1.1'
-gem 'acts-as-taggable-on', '>= 3.0.1'
-gem 'kaminari', '>= 0.15.1'
+gem 'redis-rails'
+gem 'aasm'
+gem 'enumerize'
+gem 'acts-as-taggable-on'
+gem 'kaminari'
 gem 'paranoid2'
-gem 'paper_trail', '~> 3.0.1'
+gem 'paper_trail'
 gem 'marginalia'                  # show where queries are coming from in the logs
-gem 'active_hash', '~> 1.5.0'     # YAML-sourced data
+gem 'active_hash'                 # YAML-sourced data
 
 # Security
 gem 'rotp'
-gem 'bcrypt-ruby', '~> 3.1.2'
+gem 'bcrypt-ruby'
 
 # Background Processing
 gem 'amqp'
 gem 'bunny'
 gem 'pusher'
-gem 'eventmachine', '~> 1.0.4'
-gem 'em-websocket', '~> 0.5.1'
+gem 'eventmachine'
+gem 'em-websocket'
 gem 'daemons-rails'
 
 # API
 gem 'grape', '~> 0.7.0'
-gem 'grape-entity', '~> 0.4.2'
-gem 'grape-swagger', '~> 0.7.2'
+gem 'grape-entity'
+gem 'grape-swagger'
 gem 'json'
 gem 'jbuilder'
+gem 'rest-client'
 
 # Authentication
 gem 'doorkeeper'
@@ -52,6 +53,9 @@ gem 'figaro', github: 'laserlemon/figaro', branch: :master
 
 # Frontend
 gem 'puma'
+
+gem 'rack-attack'
+gem 'rack-cors', require: 'rack/cors'
 
 gem 'datagrid', '>= 1.5.7'
 gem 'http_accept_language'
@@ -71,22 +75,16 @@ gem 'bourbon'
 gem 'momentjs-rails', '>= 2.17.1'
 gem 'eco'
 gem 'browser', '~> 0.8.0'
-gem 'rbtree'
-gem 'liability-proof', '0.0.9'
-gem 'whenever'
-gem 'rack-attack'
-gem 'easy_table'
-gem 'phonelib'
-gem 'twilio-ruby', '~> 3.11'
-gem 'unread', github: 'peatio/unread'
-gem 'carrierwave', '~> 0.10.0'
 gem 'simple_captcha2', require: 'simple_captcha'
-gem 'rest-client'
+gem 'easy_table'
 
 ## MISC
-# gem 'hashie'
+gem 'liability-proof', github: 'peatio/liability-proof', branch: :master  # proves we really hold the bitcoins/money we claim to
+gem 'phonelib'                  # validates phone numbers
+gem 'twilio-ruby'
+gem 'unread', github: 'peatio/unread'
+gem 'carrierwave', '~> 0.10.0'  # storing documents online
 gem 'recursive-open-struct'
-
 gem 'awesome_print'             # fancy object output for console
 gem 'bootsnap'                  # faster booting
 gem 'bundleup', require: false  # easy gem upgrading
@@ -94,6 +92,8 @@ gem 'colorize'                  # colors for console output "test".yellow
 gem 'fast_blank'                # C-implementation of .blank?
 gem 'hirb'                      # model viewing in console
 gem 'ensurance'                 # Model.ensure(thing)
+gem 'whenever'                  # cron-like scheduling
+gem 'rbtree'                    # RedBlackTree sorted hash
 
 group :development, :test do
   gem 'factory_bot_rails'

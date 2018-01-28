@@ -7,6 +7,14 @@ GIT
       thor (~> 0.14)
 
 GIT
+  remote: git://github.com/peatio/liability-proof.git
+  revision: 97a78eee13a7f7a5cc73d13ae5d8bf16108885b3
+  branch: master
+  specs:
+    liability-proof (0.0.9)
+      awesome_print
+
+GIT
   remote: git://github.com/peatio/unread.git
   revision: b8fa0502e9558c93388a104bcbe20376cf43027d
   specs:
@@ -236,8 +244,6 @@ GEM
     kramdown (1.15.0)
     launchy (2.4.2)
       addressable (~> 2.3)
-    liability-proof (0.0.9)
-      awesome_print
     loofah (2.1.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -317,6 +323,7 @@ GEM
       rack
     rack-contrib (1.7.0)
       rack (~> 1.4)
+    rack-cors (1.0.2)
     rack-mount (0.8.3)
       rack (>= 1.0.0)
     rack-test (0.6.3)
@@ -479,13 +486,13 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm (~> 3.4.0)
-  active_hash (~> 1.5.0)
-  acts-as-taggable-on (>= 3.0.1)
+  aasm
+  active_hash
+  acts-as-taggable-on
   amqp
   angularjs-rails
   awesome_print
-  bcrypt-ruby (~> 3.1.2)
+  bcrypt-ruby
   better_errors
   binding_of_caller
   bootsnap
@@ -507,10 +514,10 @@ DEPENDENCIES
   doorkeeper
   easy_table
   eco
-  em-websocket (~> 0.5.1)
+  em-websocket
   ensurance
-  enumerize (~> 1.1.1)
-  eventmachine (~> 1.0.4)
+  enumerize
+  eventmachine
   factory_bot_rails
   faker
   fast_blank
@@ -519,16 +526,16 @@ DEPENDENCIES
   globalize (< 5.1)
   gon (~> 5.2.0)
   grape (~> 0.7.0)
-  grape-entity (~> 0.4.2)
-  grape-swagger (~> 0.7.2)
+  grape-entity
+  grape-swagger
   hirb
   http_accept_language
   jbuilder
   jquery-rails (>= 3.1.4)
   json
-  kaminari (>= 0.15.1)
+  kaminari
   launchy
-  liability-proof (= 0.0.9)
+  liability-proof!
   mails_viewer
   marginalia
   meta_request
@@ -537,7 +544,7 @@ DEPENDENCIES
   omniauth
   omniauth-identity
   omniauth-weibo-oauth2
-  paper_trail (~> 3.0.1)
+  paper_trail
   paranoid2
   phonelib
   poltergeist
@@ -546,12 +553,13 @@ DEPENDENCIES
   pusher
   quiet_assets
   rack-attack
+  rack-cors
   rails (~> 4.2)
   rails-i18n
   rails-observers
   rbtree
   recursive-open-struct
-  redis-rails (>= 5.0.2)
+  redis-rails
   responders
   rest-client
   rotp
@@ -567,7 +575,7 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   timecop
-  twilio-ruby (~> 3.11)
+  twilio-ruby
   uglifier (>= 2.7.2)
   unread!
   whenever

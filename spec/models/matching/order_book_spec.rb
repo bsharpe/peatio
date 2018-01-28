@@ -51,22 +51,22 @@ describe Matching::OrderBook do
       subject.add o1
       subject.add o2
 
-      subject.limit_orders.keys.should have(1).price_level
+      expect(subject.limit_orders.keys).to have(1).price_level
       expect(subject.limit_orders.values.first).to eq [o1, o2]
     end
 
     it "should broadcast add event" do
       order = Matching.mock_limit_order(type: :ask)
 
-      AMQPQueue.expects(:enqueue).with(:slave_book, {action: 'new', market: 'btceur', side: :ask}, {persistent: false})
-      AMQPQueue.expects(:enqueue).with(:slave_book, {action: 'add', order: order.attributes}, {persistent: false})
+      expect(AMQPQueue).to receive(:enqueue).with(:slave_book, {action: 'new', market: 'btceur', side: :ask}, {persistent: false})
+      expect(AMQPQueue).to receive(:enqueue).with(:slave_book, {action: 'add', order: order.attributes}, {persistent: false})
       subject.add order
     end
 
     it "should not broadcast add event" do
       order = Matching.mock_limit_order(type: :ask)
 
-      AMQPQueue.expects(:enqueue).with(:slave_book, {action: 'add', order: order.attributes}, {persistent: false}).never
+      expect(AMQPQueue).to receive(:enqueue).with(:slave_book, {action: 'add', order: order.attributes}, {persistent: false}).never
       Matching::OrderBook.new('btceur', :ask, broadcast: false).add order
     end
   end
@@ -79,7 +79,7 @@ describe Matching::OrderBook do
       order = Matching.mock_market_order(type: :ask)
       subject.add order
       subject.remove order
-      subject.market_orders.should be_empty
+      expect(subject.market_orders).to be_empty
     end
 
     it "should remove limit order" do
@@ -89,19 +89,19 @@ describe Matching::OrderBook do
       subject.add o2
       subject.remove o1.dup # dup so it's not the same object, but has same id
 
-      subject.limit_orders.values.first.should have(1).order
+      expect(subject.limit_orders.values.first).to have(1).order
     end
 
     it "should remove price level if its only limit order removed" do
       order = Matching.mock_limit_order(type: :ask)
       subject.add order
       subject.remove order.dup
-      subject.limit_orders.should be_empty
+      expect(subject.limit_orders).to be_empty
     end
 
     it "should return nil if order is not found" do
       order = Matching.mock_limit_order(type: :ask)
-      subject.remove(order).should be_nil
+      expect(subject.remove(order)).to be_nil
     end
 
     it "should return order in book" do
@@ -137,7 +137,7 @@ describe Matching::OrderBook do
 
     it "should return nil if there's no limit order" do
       book = Matching::OrderBook.new('btceur', :ask)
-      book.best_limit_price.should be_nil
+      expect(book.best_limit_price).to be_nil
     end
   end
 
@@ -154,7 +154,7 @@ describe Matching::OrderBook do
 
     it "should return nil for empty book" do
       book = Matching::OrderBook.new('btceur', :ask)
-      book.top.should be_nil
+      expect(book.top).to be_nil
     end
 
     it "should find ask order with lowest price" do
@@ -199,8 +199,8 @@ describe Matching::OrderBook do
       subject.add Matching.mock_limit_order(type: :ask, volume: '1.0'.to_d)
       subject.add Matching.mock_market_order(type: :ask, volume: '1.0'.to_d)
       subject.fill_top '1.0'.to_d, '1.0'.to_d, '1.0'.to_d
-      subject.market_orders.should be_empty
-      subject.limit_orders.should have(1).order
+      expect(subject.market_orders).to be_empty
+      expect(subject.limit_orders).to have(1).order
     end
 
     it "should partial fill the top market order" do
@@ -208,20 +208,20 @@ describe Matching::OrderBook do
       subject.add Matching.mock_market_order(type: :ask, volume: '1.0'.to_d)
       subject.fill_top '1.0'.to_d, '0.6'.to_d, '0.6'.to_d
       expect(subject.market_orders.first.volume).to eq '0.4'.to_d
-      subject.limit_orders.should have(1).order
+      expect(subject.limit_orders).to have(1).order
     end
 
     it "should remove the price level if top order is the only order in level" do
       subject.add Matching.mock_limit_order(type: :ask, volume: '1.0'.to_d)
       subject.fill_top '1.0'.to_d, '1.0'.to_d, '1.0'.to_d
-      subject.limit_orders.should be_empty
+      expect(subject.limit_orders).to be_empty
     end
 
     it "should remove order from level" do
       subject.add Matching.mock_limit_order(type: :ask, volume: '1.0'.to_d)
       subject.add Matching.mock_limit_order(type: :ask, volume: '1.0'.to_d)
       subject.fill_top '1.0'.to_d, '1.0'.to_d, '1.0'.to_d
-      subject.limit_orders.values.first.should have(1).order
+      expect(subject.limit_orders.values.first).to have(1).order
     end
 
     it "should fill top order with volume" do

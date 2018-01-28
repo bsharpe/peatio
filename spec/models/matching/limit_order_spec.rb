@@ -6,27 +6,27 @@ describe Matching::LimitOrder do
     it "should throw invalid order error for empty attributes" do
       expect {
         Matching::LimitOrder.new({type: '', price: '', volume: ''})
-      }.to raise_error(Matching::InvalidOrderError)
+      }.to raise_error(ArgumentError)
     end
 
     it "should initialize market" do
-        Matching.mock_limit_order(type: :bid).market.should be_instance_of(Market)
+        expect(Matching.mock_limit_order(type: :bid).market).to be_instance_of(Market)
     end
   end
 
   context "crossed?" do
     it "should cross at lower or equal price for bid order" do
       order = Matching.mock_limit_order(type: :bid, price: '10.0'.to_d)
-      order.crossed?('9.0'.to_d).should be_true
-      order.crossed?('10.0'.to_d).should be_true
-      order.crossed?('11.0'.to_d).should be_false
+      expect(order.crossed?('9.0'.to_d)).to eq(true)
+      expect(order.crossed?('10.0'.to_d)).to eq(true)
+      expect(order.crossed?('11.0'.to_d)).to eq(false)
     end
 
     it "should cross at higher or equal price for ask order" do
       order = Matching.mock_limit_order(type: :ask, price: '10.0'.to_d)
-      order.crossed?('9.0'.to_d).should be_false
-      order.crossed?('10.0'.to_d).should be_true
-      order.crossed?('11.0'.to_d).should be_true
+      expect(order.crossed?('9.0'.to_d)).to eq(false)
+      expect(order.crossed?('10.0'.to_d)).to eq(true)
+      expect(order.crossed?('11.0'.to_d)).to eq(true)
     end
   end
 end

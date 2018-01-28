@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe APIv2::Tickers do
+describe APIv2::Tickers, type: :api do
 
   describe "GET /api/v2/tickers" do
     it "returns ticker of all markets" do
       get "/api/v2/tickers"
       assert_successful
-      json_data['btceur']['at'].should_not be_nil
+      expect(json_data['btceur']['at']).to_not be_nil
       expect(json_data['btceur']['ticker']).to eq({"buy"=>"0.0", "sell"=>"0.0", "low"=>"0.0", "high"=>"0.0", "last"=>"0.0", "vol"=>"0.0"})
     end
   end

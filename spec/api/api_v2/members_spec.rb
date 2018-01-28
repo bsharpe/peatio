@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe APIv2::Members do
+describe APIv2::Members, type: :api do
 
   let(:member) do
     create(:verified_member).tap {|m|
@@ -11,7 +11,7 @@ describe APIv2::Members do
   let(:token)  { create(:api_token, member: member) }
 
   describe "GET /members/me" do
-    before { Currency.stubs(:codes).returns(%w(eur btc)) }
+    before { allow(Currency).to receive(:codes).and_return(%w(eur btc)) }
 
     it "should require auth params" do
       get '/api/v2/members/me'
@@ -32,7 +32,7 @@ describe APIv2::Members do
       result = json_data
       expect(result['sn']).to eq member.sn
       expect(result['activated']).to eq true
-      result['accounts'].should =~ [
+      expect(result['accounts']).to eq [
         {"currency" => "eur", "balance" => "2014.47", "locked" => "0.0"},
         {"currency" => "btc", "balance" =>"12.13",    "locked" => "3.14"}
       ]

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe APIv2::OrderBooks do
+describe APIv2::OrderBooks, type: :api do
 
   describe "GET /api/v2/order_book" do
     before do
@@ -12,18 +12,16 @@ describe APIv2::OrderBooks do
       get '/api/v2/order_book', market: 'btceur'
       assert_successful
 
-      result = json_data
-      result['asks'].should have(5).asks
-      result['bids'].should have(5).bids
+      expect(json_data['asks'].size).to eq 5
+      expect(json_data['bids'].size).to eq 5
     end
 
     it "should return limited asks and bids" do
       get '/api/v2/order_book', market: 'btceur', asks_limit: 1, bids_limit: 1
       assert_successful
 
-      result = json_data
-      result['asks'].should have(1).asks
-      result['bids'].should have(1).bids
+      expect(json_data['asks'].size).to eq 1
+      expect(json_data['bids'].size).to eq 1
     end
   end
 
@@ -32,17 +30,16 @@ describe APIv2::OrderBooks do
     let(:bids) { [['90', '3.0'], ['50', '1.0']] }
 
     before do
-      global = mock("global", asks: asks, bids: bids)
-      Global.stubs(:[]).returns(global)
+      global = OpenStruct.new(id: "global", asks: asks, bids: bids)
+      allow(Global).to receive(:[]).and_return(global)
     end
 
     it "should sort asks and bids from highest to lowest" do
       get '/api/v2/depth', market: 'btceur'
       assert_successful
 
-      result = json_data
-      expect(result['asks']).to eq asks.reverse
-      expect(result['bids']).to eq bids
+      expect(json_data['asks']).to eq asks.reverse
+      expect(json_data['bids']).to eq bids
     end
   end
 

@@ -26,8 +26,8 @@ describe APIv2::Entities::Order do
       create(:trade, ask: order, volume: '8.0', price: '12')
       create(:trade, ask: order, volume: '0.99', price: '12.56')
 
-      json = APIv2::Entities::Order.represent(order, type: :full).serializable_hash 
-      json[:trades].should have(2).trades
+      json = APIv2::Entities::Order.represent(order, type: :full).serializable_hash
+      expect(json[:trades]).to have(2).trades
     end
   end
 

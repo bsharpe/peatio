@@ -49,6 +49,9 @@ gem 'cancancan'
 # ENV Vars
 gem 'figaro', github: 'laserlemon/figaro', branch: :master
 
+# Frontend
+gem 'puma'
+
 gem 'hashie'
 
 gem 'datagrid', '>= 1.5.7'

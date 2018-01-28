@@ -303,6 +303,7 @@ GEM
     pry-rails (0.3.2)
       pry (>= 0.9.10)
     public_suffix (3.0.0)
+    puma (3.11.2)
     pusher (0.12.0)
       httpclient (~> 2.3.0)
       multi_json (~> 1.0)
@@ -541,6 +542,7 @@ DEPENDENCIES
   phonelib (~> 0.3.5)
   poltergeist
   pry-rails
+  puma
   pusher
   quiet_assets
   rack-attack (~> 4.3.1)

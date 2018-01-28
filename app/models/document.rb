@@ -14,7 +14,7 @@
 #
 
 class Document < ApplicationRecord
-  TRANSLATABLE_ATTR = [:title, :desc, :keywords, :body]
+  TRANSLATABLE_ATTR = [:title, :desc, :keywords, :body].freeze
   translates *TRANSLATABLE_ATTR
 
   def to_param
@@ -25,13 +25,13 @@ class Document < ApplicationRecord
     Rails.configuration.i18n.available_locales.each do |locale|
       locale = locale.to_s
       define_method "#{locale.underscore}_#{attr}=" do |value|
-        with_locale locale do
+        with_locale(locale) do
           self.send("#{attr}=", value)
         end
       end
 
       define_method "#{locale.underscore}_#{attr}" do
-        with_locale locale do
+        with_locale(locale) do
           self.send("#{attr}")
         end
       end

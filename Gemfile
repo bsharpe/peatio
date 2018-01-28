@@ -105,6 +105,8 @@ group :development, :test do
   gem 'quiet_assets'
   gem 'mails_viewer'
   gem 'timecop'
+  gem 'spring'
+  gem 'spring-commands-rspec'
   # gem 'dotenv-rails'
   # gem 'byebug'
 end

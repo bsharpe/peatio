@@ -21,7 +21,7 @@ describe TwoFactor::Sms do
     subject { two_factor }
 
     it "should generate 6 random digits" do
-      subject.otp_secret.should =~ /^\d{6}$/
+      expect(subject.otp_secret).to match /^\d{6}$/
     end
   end
 

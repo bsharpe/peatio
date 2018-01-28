@@ -6,12 +6,12 @@ describe Ordering do
 
   describe "ordering service can submit order" do
     before do
-      order.stubs(:hold_account).returns(account)
-      AMQPQueue.expects(:enqueue).with(:matching, anything)
+      allow(order).to receive(:hold_account).and_return(account)
+      expect(AMQPQueue).to receive(:enqueue).with(:matching, anything)
     end
 
     it "should return true on success" do
-      Ordering.new(order).submit.should eq(true)
+      expect(Ordering.new(order).submit).to eq(true)
     end
 
     it "should set locked funds on order" do
@@ -28,11 +28,11 @@ describe Ordering do
 
   describe "ordering service can cancel order" do
     before do
-      order.stubs(:hold_account).returns(account)
+      allow(order).to receive(:hold_account).and_return(account)
     end
 
     it "should soft cancel order" do
-      AMQPQueue.expects(:enqueue).with(:matching, action: 'cancel', order: order.to_matching_attributes)
+      expect(AMQPQueue).to receive(:enqueue).with(:matching, action: 'cancel', order: order.to_matching_attributes)
       Ordering.new(order).cancel
     end
 

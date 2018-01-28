@@ -9,13 +9,13 @@ describe WithdrawMailer do
     end
 
     it "renders the headers" do
-      mail.subject.should eq("[Сoinagewallet] Your withdraw state update")
-      mail.to.should eq([withdraw.member.email])
-      mail.from.should eq([ENV['SYSTEM_MAIL_FROM']])
+      expect(mail.subject).to eq("[Cryex24] Your withdraw state update")
+      expect(mail.to).to eq([withdraw.member.email])
+      expect(mail.from).to eq([ENV['SYSTEM_MAIL_FROM']])
     end
 
     it "renders the body" do
-      mail.body.encoded.should match("canceled")
+      expect(mail.body.encoded).to match("canceled")
     end
   end
 
@@ -27,13 +27,13 @@ describe WithdrawMailer do
     end
 
     it "renders the headers" do
-      mail.subject.should eq("[Сoinagewallet] Your withdraw state update")
-      mail.to.should eq([withdraw.member.email])
-      mail.from.should eq([ENV['SYSTEM_MAIL_FROM']])
+      expect(mail.subject).to eq("[Cryex24] Your withdraw state update")
+      expect(mail.to).to eq([withdraw.member.email])
+      expect(mail.from).to eq([ENV['SYSTEM_MAIL_FROM']])
     end
 
     it "renders the body" do
-      mail.body.encoded.should match("submitted")
+      expect(mail.body.encoded).to match("submitted")
     end
   end
 
@@ -48,13 +48,13 @@ describe WithdrawMailer do
     end
 
     it "renders the headers" do
-      mail.subject.should eq("[Сoinagewallet] Your withdraw state update")
-      mail.to.should eq([withdraw.member.email])
-      mail.from.should eq([ENV['SYSTEM_MAIL_FROM']])
+      expect(mail.subject).to eq("[Cryex24] Your withdraw state update")
+      expect(mail.to).to eq([withdraw.member.email])
+      expect(mail.from).to eq([ENV['SYSTEM_MAIL_FROM']])
     end
 
     it "renders the body" do
-      mail.body.encoded.should match("complete")
+      expect(mail.body.encoded).to match("complete")
     end
   end
 end

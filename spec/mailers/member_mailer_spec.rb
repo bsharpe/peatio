@@ -6,13 +6,13 @@ describe MemberMailer do
     let(:mail) { MemberMailer.notify_signin(member.id) }
 
     it "renders the headers" do
-      mail.subject.should eq("[CoinxPro] You have just signed in")
-      mail.to.should eq([member.email])
-      mail.from.should eq([ENV['SYSTEM_MAIL_FROM']])
+      expect(mail.subject).to eq("[Cryex24] You have just signed in")
+      expect(mail.to).to eq([member.email])
+      expect(mail.from).to eq([ENV['SYSTEM_MAIL_FROM']])
     end
 
     it "renders the body" do
-      mail.body.encoded.should match("signed in")
+      expect(mail.body.encoded).to match("signed in")
     end
   end
 

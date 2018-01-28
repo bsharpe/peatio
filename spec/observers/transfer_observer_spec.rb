@@ -5,7 +5,7 @@ describe TransferObserver do
     let!(:member) { create(:member) }
     let!(:deposit) { create(:deposit, aasm_state: 'submitted')}
     before do
-      TransferObserver.any_instance.stubs(:current_user).returns(member)
+      allow_any_instance_of(TransferObserver).to receive(:current_user).and_return(member)
     end
 
     subject { deposit.update_attributes(aasm_state: 'accepted')}

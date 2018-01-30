@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "routes for trade", type: :routing do
+RSpec.describe "routes for trade", type: :routing do
 
   it "routes /markets/xxxyyy to the trade controller" do
     expect(Market).to receive(:find_by_id).with('xxxyyy').and_return(

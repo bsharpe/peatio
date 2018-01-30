@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Auth::Authenticator do
+RSpec.describe APIv2::Auth::Authenticator do
   Authenticator = APIv2::Auth::Authenticator
 
   let(:token) { create(:api_token) }

@@ -1,4 +1,4 @@
-# require 'spec_helper'
+# require 'rails_helper'
 #
 # describe 'withdraw' do
 #   let!(:identity) { create :identity }
@@ -9,7 +9,7 @@
 #   end
 #
 #   before do
-#     Withdraw.any_instance.stubs(:examine).returns(true)
+#     Withdraw.any_instance.stubs(:verify).returns(true)
 #     CoinRPC.any_instance.stubs(:validateaddress).returns({isvalid: true, ismine: false})
 #
 #     btc_account = member.get_account(:btc)

@@ -15,7 +15,8 @@
 
 FactoryBot.define do
   factory :ticket do
-    sequence(:content) { |n| "Content #{n}" }
     author
+    sequence(:title)   { |c| "Title #{c}" }
+    sequence(:content) { |n| "Content #{n}" }
   end
 end

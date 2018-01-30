@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe 'google_auths', type: :routing do
+RSpec.describe 'google_auths', type: :routing do
   describe 'get /verify/google_auth' do
     it { expect(get('/verify/google_auth')).to be_routable }
   end

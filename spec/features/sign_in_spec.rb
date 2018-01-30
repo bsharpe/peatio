@@ -1,4 +1,4 @@
-# require 'spec_helper'
+# require 'rails_helper'
 #
 # describe 'Sign in' do
 #   let!(:identity) { create :identity }

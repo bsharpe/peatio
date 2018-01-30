@@ -1,12 +1,12 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Matching::LimitOrder do
+RSpec.describe Matching::LimitOrder do
 
   context "initialize" do
     it "should throw invalid order error for empty attributes" do
       expect {
         Matching::LimitOrder.new({type: '', price: '', volume: ''})
-      }.to raise_error(ArgumentError)
+      }.to raise_error(Matching::InvalidOrderError)
     end
 
     it "should initialize market" do

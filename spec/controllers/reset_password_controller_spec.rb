@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe ResetPasswordsController, type: :controller do
+RSpec.describe ResetPasswordsController, type: :controller do
   before do
     get :new
   end

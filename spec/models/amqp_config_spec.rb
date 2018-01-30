@@ -1,11 +1,11 @@
-require 'spec_helper'
+require 'rails_helper'
 
 module Worker
   class Test
   end
 end
 
-describe AMQPConfig do
+RSpec.describe AMQPConfig do
 
   let(:config) do
     {

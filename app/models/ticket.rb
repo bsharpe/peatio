@@ -13,7 +13,6 @@
 
 class Ticket < ApplicationRecord
   include AASM
-  include AASM::Locking
   acts_as_readable on: :created_at
 
   after_commit :send_notification, on: [:create]
@@ -26,7 +25,7 @@ class Ticket < ApplicationRecord
   scope :open, -> { where(aasm_state: :open) }
   scope :close, -> { where(aasm_state: :closed) }
 
-  aasm whiny_transitions: false do
+  aasm whiny_transitions: false, requires_lock: true do
     state :open
     state :closed
 
@@ -46,8 +45,8 @@ class Ticket < ApplicationRecord
   private
 
   def send_notification
-    TicketMailer.author_notification(self.id).deliver
-    TicketMailer.admin_notification(self.id).deliver
+    TicketMailer.author_notification(self).deliver
+    TicketMailer.admin_notification(self).deliver
   end
 
 end

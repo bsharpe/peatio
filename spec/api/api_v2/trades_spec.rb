@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Trades, type: :api do
+RSpec.describe APIv2::Trades, type: :api do
 
   let(:member) do
     create(:verified_member).tap {|m|

@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Matching::PriceLevel do
+RSpec.describe Matching::PriceLevel do
 
   subject  { Matching::PriceLevel.new('1.0'.to_d) }
   let(:o1) { Matching.mock_limit_order(type: :ask) }

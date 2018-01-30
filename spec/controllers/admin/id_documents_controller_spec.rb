@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Admin::IdDocumentsController, type: :controller do
+RSpec.describe Admin::IdDocumentsController, type: :controller do
   let(:member) { create(:admin_member) }
   before {
     session[:member_id] = member.id

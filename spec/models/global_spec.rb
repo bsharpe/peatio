@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Global do
+RSpec.describe Global do
   let(:global) { Global['btceur'] }
 end
 

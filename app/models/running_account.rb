@@ -21,7 +21,7 @@
 #
 
 class RunningAccount < ApplicationRecord
-  include Currencible
+  include HasCurrencies
 
   CATEGORY = {
     withdraw_fee:         0,

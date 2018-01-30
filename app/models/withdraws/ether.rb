@@ -20,10 +20,4 @@
 #  type       :string(255)
 #
 
-module Withdraws
-  class Ether < ::Withdraw
-    include ::AasmAbsolutely
-    include ::Withdraws::Coinable
-    include ::FundSourceable
-  end
-end
+class Withdraws::Ether < Withdraws::Crypto; end

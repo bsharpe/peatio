@@ -11,7 +11,7 @@
 #
 
 class PaymentAddress < ApplicationRecord
-  include Currencible
+  include HasCurrencies
   belongs_to :account
 
   after_commit :gen_address, on: :create

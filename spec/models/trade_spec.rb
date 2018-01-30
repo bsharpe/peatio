@@ -25,9 +25,9 @@
 #  index_trades_on_currency       (currency)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Trade, ".latest_price" do
+RSpec.describe Trade, ".latest_price" do
   context "no trade" do
     it { expect(Trade.latest_price(:btceur)).to be_d "0.0" }
   end
@@ -38,7 +38,7 @@ describe Trade, ".latest_price" do
   end
 end
 
-describe Trade, ".collect_side" do
+RSpec.describe Trade, ".collect_side" do
   let(:member) { create(:member) }
   let(:ask)    { create(:order_ask, member: member) }
   let(:bid)    { create(:order_bid, member: member) }
@@ -71,7 +71,7 @@ describe Trade, ".collect_side" do
   end
 end
 
-describe Trade, "#for_notify" do
+RSpec.describe Trade, "#for_notify" do
   let(:order_ask) { create(:order_ask) }
   let(:order_bid) { create(:order_bid) }
   let(:trade) { create(:trade, ask: order_ask, bid: order_bid) }

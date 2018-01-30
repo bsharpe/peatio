@@ -21,15 +21,15 @@
 #  index_api_tokens_on_secret_key  (secret_key) UNIQUE
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIToken do
+RSpec.describe APIToken, type: :model do
 
   let(:token) { create(:api_token, scopes: '') }
 
   it "should generate keys before validation on create" do
-    expect(token.access_key.size).to eq 40
-    expect(token.secret_key.size).to eq 40
+    expect(token.access_key.size).to_not be_nil
+    expect(token.secret_key.size).to_not be_nil
   end
 
   it "should not change keys on update" do
@@ -94,7 +94,7 @@ describe APIToken do
   end
 
   it "should destroy dependent oauth access token" do
-    app =Doorkeeper::Application.create!(name: 'test', uid: 'foo', secret: 'bar', redirect_uri: 'http://test.host/oauth/callback')
+    app =Doorkeeper::Application.create!(name: 'test', uid: 'foo', secret: 'bar', redirect_uri: 'https://test.host/oauth/callback')
     access_token = Doorkeeper::AccessToken.create!(application_id: app.id, resource_owner_id: create(:member).id, scopes: 'profile', expires_in: 1.week)
 
     token.update_attributes oauth_access_token_id: access_token.id

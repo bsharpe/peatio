@@ -14,7 +14,7 @@
 #
 
 class Proof < ApplicationRecord
-  include Currencible
+  include HasCurrencies
 
   has_many :partial_trees
 

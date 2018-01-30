@@ -16,9 +16,9 @@
 #  index_tokens_on_type_and_token_and_expire_at_and_is_used  (type,token,expire_at,is_used)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Token::Activation do
+RSpec.describe Token::Activation do
   let(:member) { create :member }
   let(:activation) { create :activation, member: member }
 

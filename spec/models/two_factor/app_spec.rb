@@ -11,9 +11,9 @@
 #  refreshed_at   :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe TwoFactor::App do
+RSpec.describe TwoFactor::App do
   let(:member) { create :member }
   let(:app) { member.app_two_factor  }
 

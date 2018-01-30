@@ -1,4 +1,4 @@
-# require 'spec_helper'
+# require 'rails_helper'
 #
 # describe 'Sign up', js: true do
 #

@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Matching::OrderBook do
+RSpec.describe Matching::OrderBook do
 
   context "#find" do
     subject { Matching::OrderBook.new('btceur', :ask) }

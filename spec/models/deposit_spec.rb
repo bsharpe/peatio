@@ -26,26 +26,24 @@
 #  index_deposits_on_txid_and_txout  (txid,txout)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Deposit do
-  let(:deposit ) { create(:deposit, amount: 100.to_d) }
-
+RSpec.describe Deposit do
   it 'should compute fee' do
-    expect(deposit.fee).to eql 0.to_d
-    expect(deposit.amount).to eql 100.to_d
+    deposit = build_stubbed(:deposit, amount: 100)
+    expect(deposit.fee).to eql 0
+    expect(deposit.amount).to eql 100
   end
 
   context 'when deposit fee 10%' do
-    let(:deposit) { create(:deposit, amount: 100.to_d) }
-
     before do
-      allow_any_instance_of(Deposit).to receive(:calc_fee).and_return([90, 10])
+      allow_any_instance_of(Deposit).to receive(:calc_fee).and_return([777, 10])
     end
 
     it 'should compute fee' do
-      expect(deposit.fee).to eql 10.to_d
-      expect(deposit.amount).to eql 90.to_d
+      deposit = build_stubbed(:deposit, amount: 777)
+      expect(deposit.fee).to eql(10)
+      expect(deposit.amount).to eql(777)
     end
   end
 end

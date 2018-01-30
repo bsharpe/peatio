@@ -27,11 +27,12 @@
 #
 
 class Deposit < ApplicationRecord
+  include Wisper::ActiveRecord::Publisher
+
   STATES = [:submitting, :cancelled, :submitted, :rejected, :accepted, :checked, :warning].freeze
 
   include AASM
-  include AASM::Locking
-  include Currencible
+  include HasCurrencies
 
   has_paper_trail on: [:update, :destroy]
 
@@ -45,24 +46,19 @@ class Deposit < ApplicationRecord
 
   belongs_to :member
   belongs_to :account
+  has_one :fund_source, as: :owner
 
-  validates_presence_of \
-    :amount, :account, \
-    :member, :currency
+  validates_presence_of :amount, :account, :member, :currency
   validates_numericality_of :amount, greater_than: 0
 
-  scope :recent, -> { order('id DESC')}
+  scope :recent, -> { order(created_at: :desc) }
 
-  after_update :sync_update
-  after_create :sync_create
-  after_destroy :sync_destroy
-
-  aasm :whiny_transitions => false do
-    state :submitting, initial: true, before_enter: :set_fee
+  aasm :whiny_transitions => false, requires_lock: true do
+    state :submitting, initial: true, before_enter: :set_fee # FIXME: This happens *before* db load
     state :cancelled
     state :submitted
     state :rejected
-    state :accepted, after_commit: [:do, :send_mail, :send_sms]
+    state :accepted
     state :checked
     state :warning
 
@@ -80,6 +76,7 @@ class Deposit < ApplicationRecord
 
     event :accept do
       transitions from: :submitted, to: :accepted
+      after :do
     end
 
     event :check do
@@ -117,9 +114,9 @@ class Deposit < ApplicationRecord
     self.class.channel
   end
 
-  def update_confirmations(data)
-    update_column(:confirmations, data)
-  end
+  # def update_confirmations(data)
+  #   update_column(:confirmations, data)
+  # end
 
   def txid_text
     txid && txid.truncate(40)
@@ -128,44 +125,15 @@ class Deposit < ApplicationRecord
   private
 
   def do
-    account.lock!.plus_funds amount, reason: Account::DEPOSIT, ref: self
-  end
-
-  def send_mail
-    DepositMailer.accepted(self.id).deliver if self.accepted?
-  end
-
-  def send_sms
-    return true unless member.sms_two_factor.activated?
-
-    sms_message = I18n.t('sms.deposit_done', email: member.email,
-                                             currency: currency_text,
-                                             time: I18n.l(Time.now),
-                                             amount: amount,
-                                             balance: account.balance)
-
-    AMQPQueue.enqueue(:sms_notification, phone: member.phone_number, message: sms_message)
+    Account::AddFunds.(account: account, amount: amount, reason: Account::DEPOSIT, reference: self)
   end
 
   def set_fee
-    amount, fee = calc_fee
-    self.amount = amount
-    self.fee = fee
+    self.amount = calc_fee.first
+    self.fee = calc_fee.last
   end
 
   def calc_fee
-    [amount, 0]
-  end
-
-  def sync_update
-    ::Pusher["private-#{member.sn}"].trigger_async('deposits', { type: 'update', id: self.id, attributes: self.changes_attributes_as_json })
-  end
-
-  def sync_create
-    ::Pusher["private-#{member.sn}"].trigger_async('deposits', { type: 'create', attributes: self.as_json })
-  end
-
-  def sync_destroy
-    ::Pusher["private-#{member.sn}"].trigger_async('deposits', { type: 'destroy', id: self.id })
+    [amount || 0, 0]
   end
 end

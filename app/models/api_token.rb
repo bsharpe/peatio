@@ -23,31 +23,34 @@
 
 class APIToken < ApplicationRecord
   paranoid
+  has_secure_token :access_key
+  has_secure_token :secret_key
 
-  belongs_to :member
-  belongs_to :oauth_access_token, class_name: 'Doorkeeper::AccessToken', dependent: :destroy
-
+  ## -- ATTRIBUTES
   serialize :trusted_ip_list
 
-  validates_presence_of :access_key, :secret_key
+  ## -- RELATIONSHIPS
+  belongs_to :member
+  belongs_to :oauth_access_token, class_name: Doorkeeper::AccessToken.name, dependent: :destroy, optional: true
 
-  before_validation :generate_keys, on: :create
+  ## -- SCOPES
+  scope :user_requested,  -> { where(oauth_access_token_id: nil) }
+  scope :oauth_requested, -> { where.not(oauth_access_token_id: nil) }
 
-  scope :user_requested,  -> { where('oauth_access_token_id IS NULL') }
-  scope :oauth_requested, -> { where('oauth_access_token_id IS NOT NULL') }
-
+  ## — CLASS METHODS
   def self.from_oauth_token(token)
-    return nil if not token && token.token.present?
+    return nil unless token&.token&.present?
     access_key, secret_key = token.token.split(':')
-    find_by_access_key access_key
+    self.find_by_access_key(access_key)
   end
 
+  ## — INSTANCE METHODS
   def to_oauth_token
     [access_key, secret_key].join(':')
   end
 
   def expired?
-    expire_at && expire_at < Time.now
+    expire_at.to_f < Time.current.to_f
   end
 
   def in_scopes?(ary)
@@ -70,18 +73,6 @@ class APIToken < ApplicationRecord
 
   def scopes
     self[:scopes] ? self[:scopes].split(/\s+/) : []
-  end
-
-  private
-
-  def generate_keys
-    begin
-      self.access_key = APIv2::Auth::Utils.generate_access_key
-    end while APIToken.where(access_key: access_key).any?
-
-    begin
-      self.secret_key = APIv2::Auth::Utils.generate_secret_key
-    end while APIToken.where(secret_key: secret_key).any?
   end
 
 end

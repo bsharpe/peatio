@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe AMQPQueue do
+RSpec.describe AMQPQueue do
   let(:config) {
       {
         connect:   { host: '127.0.0.1' },
@@ -15,8 +15,8 @@ describe AMQPQueue do
       }.with_indifferent_access
   }
 
-  let(:default_exchange) { OpenStruct.new(id: 'default exchange') }
-  let(:channel) { OpenStruct.new(default_exchange: default_exchange) }
+  let(:default_exchange) { double('default exchange') }
+  let(:channel) { double(default_exchange: default_exchange) }
 
   before do
     allow(AMQPConfig).to receive(:data).and_return(config)
@@ -32,7 +32,7 @@ describe AMQPQueue do
   end
 
   it "should publish message on selected exchange" do
-    exchange = OpenStruct.new(id: 'test exchange')
+    exchange = double('test exchange')
     expect(channel).to receive(:fanout).with('testx').and_return(exchange)
     expect(exchange).to receive(:publish).with(JSON.dump(data: 'hello'), {})
     AMQPQueue.publish(:testx, data: 'hello')

@@ -1,4 +1,4 @@
-# require 'spec_helper'
+# require 'rails_helper'
 #
 # feature 'show account info', js: true do
 #   let(:identity) { create :identity }

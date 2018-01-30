@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe DepositChannel do
+RSpec.describe DepositChannel do
 
   context "#sort" do
     let(:dc1) { DepositChannel.new }

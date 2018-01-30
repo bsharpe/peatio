@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Verify::GoogleAuthsController, type: :controller do
+RSpec.describe Verify::GoogleAuthsController, type: :controller do
   let(:member) { create :member }
   before { session[:member_id] = member.id }
 

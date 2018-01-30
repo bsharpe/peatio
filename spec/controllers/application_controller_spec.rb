@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe ApplicationController, type: :controller do
+RSpec.describe ApplicationController, type: :controller do
   describe "CoinRPC::ConnectionRefusedError handling" do
     controller do
       def index

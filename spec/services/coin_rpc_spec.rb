@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe CoinRPC do
+RSpec.describe CoinRPC do
   describe '#http_post_request' do
     it 'raises custom error on connection refused' do
       allow_any_instance_of(Net::HTTP).to receive(:request).and_raise(Errno::ECONNREFUSED)

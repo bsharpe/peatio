@@ -53,8 +53,8 @@ class Member < ApplicationRecord
 
   before_create :build_default_id_document
   after_create  :touch_accounts
-  after_update :resend_activation
-  after_update :sync_update
+  after_update  :resend_activation
+  after_update  :sync_update
 
   class << self
     def from_auth(auth_hash)
@@ -159,11 +159,11 @@ class Member < ApplicationRecord
   end
 
   def gravatar
-    "//gravatar.com/avatar/" + Digest::MD5.hexdigest(email.strip.downcase) + "?d=retro"
+    "//gravatar.com/avatar/" + Digest::MD5.hexdigest(email) + "?d=retro"
   end
 
   def initial?
-    name? and !name.empty?
+    name? && !name.empty?
   end
 
   def get_account(currency)
@@ -195,12 +195,12 @@ class Member < ApplicationRecord
   end
 
   def auth_with?(name)
-    auth(name).present?
+    authentications.where(provider: name).exists?
   end
 
   def remove_auth(name)
     identity.destroy if name == 'identity'
-    auth(name).destroy
+    auth(name).destroy``
   end
 
   def send_activation

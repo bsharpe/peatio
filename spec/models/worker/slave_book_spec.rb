@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Worker::SlaveBook do
+RSpec.describe Worker::SlaveBook do
 
   subject { Worker::SlaveBook.new(false) }
 

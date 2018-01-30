@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe WithdrawMailer do
+RSpec.describe WithdrawMailer do
   describe "withdraw_state" do
     let(:withdraw) { create :satoshi_withdraw }
     let(:mail) do
@@ -9,7 +9,7 @@ describe WithdrawMailer do
     end
 
     it "renders the headers" do
-      expect(mail.subject).to eq("[Cryex24] Your withdraw state update")
+      expect(mail.subject).to eq("[BananEx] Your withdraw state update")
       expect(mail.to).to eq([withdraw.member.email])
       expect(mail.from).to eq([ENV['SYSTEM_MAIL_FROM']])
     end
@@ -27,7 +27,7 @@ describe WithdrawMailer do
     end
 
     it "renders the headers" do
-      expect(mail.subject).to eq("[Cryex24] Your withdraw state update")
+      expect(mail.subject).to eq("[BananEx] Your withdraw state update")
       expect(mail.to).to eq([withdraw.member.email])
       expect(mail.from).to eq([ENV['SYSTEM_MAIL_FROM']])
     end
@@ -48,7 +48,7 @@ describe WithdrawMailer do
     end
 
     it "renders the headers" do
-      expect(mail.subject).to eq("[Cryex24] Your withdraw state update")
+      expect(mail.subject).to eq("[BananEx] Your withdraw state update")
       expect(mail.to).to eq([withdraw.member.email])
       expect(mail.from).to eq([ENV['SYSTEM_MAIL_FROM']])
     end

@@ -32,42 +32,45 @@
 #
 
 class Order < ApplicationRecord
+  include Wisper::ActiveRecord::Publisher
+
+  ## -- ATTRIBUTES
+  attr_accessor :total
 
   enumerize :bid, in: Currency.enumerize
   enumerize :ask, in: Currency.enumerize
   enumerize :currency, in: Market.enumerize, scope: true
   enumerize :state, in: {:wait => 100, :done => 200, :cancel => 0}, scope: true
 
-  ORD_TYPES = %w(market limit)
+  ORD_TYPES = %w(market limit).freeze
   enumerize :ord_type, in: ORD_TYPES, scope: true
 
-  SOURCES = %w(Web APIv2 debug)
+  SOURCES = %w(Web APIv2 debug).freeze
   enumerize :source, in: SOURCES, scope: true
 
-  after_commit :trigger
+  ## -- VALIDATIONS
   before_validation :fix_number_precision, on: :create
 
   validates_presence_of :ord_type, :volume, :origin_volume, :locked, :origin_locked
   validates_numericality_of :origin_volume, :greater_than => 0
 
-  validates_numericality_of :price, greater_than: 0, allow_nil: false,
-    if: "ord_type == 'limit'"
-  validate :market_order_validations, if: "ord_type == 'market'"
+  validates_numericality_of :price, greater_than: 0, allow_nil: false, if: -> { ord_type == 'limit' }
+  validate :market_order_validations, if: -> { ord_type == 'market' }
 
   WAIT = 'wait'
   DONE = 'done'
   CANCEL = 'cancel'
 
-  ATTRIBUTES = %w(id at market kind price state state_text volume origin_volume)
+  ## -- RELATIONSHIPS
+  belongs_to :member, optional: true
 
-  belongs_to :member
-  attr_accessor :total
-
+  ## -- SCOPES
   scope :done, -> { with_state(:done) }
   scope :active, -> { with_state(:wait) }
   scope :position, -> { group("price").pluck(:price, 'sum(volume)') }
   scope :best_price, ->(currency) { where(ord_type: 'limit').active.with_currency(currency).matching_rule.position }
 
+  ## — INSTANCE METHODS
   def funds_used
     origin_locked - locked
   end
@@ -78,15 +81,6 @@ class Order < ApplicationRecord
 
   def config
     @config ||= Market.find(currency)
-  end
-
-  def trigger
-    return unless member
-
-    json = Jbuilder.encode do |json|
-      json.(self, *ATTRIBUTES)
-    end
-    member.trigger('order', json)
   end
 
   def strike(trade)

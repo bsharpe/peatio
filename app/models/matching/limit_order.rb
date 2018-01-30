@@ -1,4 +1,3 @@
-require_relative 'constants'
 
 module Matching
   class LimitOrder
@@ -54,7 +53,7 @@ module Matching
 
     def valid?(attrs)
       return false unless [:ask, :bid].include?(type)
-      id && timestamp && market && price > ZERO
+      id && timestamp && market && price.positive?
     end
 
     def attributes

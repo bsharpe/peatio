@@ -20,10 +20,4 @@
 #  type       :string(255)
 #
 
-module Withdraws
-  class Tritiumcoin < ::Withdraw
-    include ::AasmAbsolutely
-    include ::Withdraws::Coinable
-    include ::FundSourceable
-  end
-end
+class Withdraws::Tritiumcoin < Withdraws::Crypto; end

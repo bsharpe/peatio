@@ -15,7 +15,7 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  currency        :integer
-#  fun             :integer
+#  operation       :integer
 #
 # Indexes
 #
@@ -26,11 +26,11 @@
 #
 
 class AccountVersion < ApplicationRecord
-  include Currencible
+  include HasCurrencies
 
   HISTORY = [Account::STRIKE_ADD, Account::STRIKE_SUB, Account::STRIKE_FEE, Account::DEPOSIT, Account::WITHDRAW, Account::FIX]
 
-  enumerize :fun, in: Account::FUNS
+  enumerize :operation, in: Account::OPS
 
   REASON_CODES = {
     Account::UNKNOWN => 0,
@@ -49,7 +49,8 @@ class AccountVersion < ApplicationRecord
   enumerize :reason, in: REASON_CODES, scope: true
 
   belongs_to :account
-  belongs_to :modifiable, polymorphic: true
+  belongs_to :member, optional: true
+  belongs_to :modifiable, polymorphic: true, optional: true
 
   scope :history, -> { with_reason(*HISTORY).reverse_order }
 
@@ -64,7 +65,7 @@ class AccountVersion < ApplicationRecord
 
     attrs[:created_at] = Time.now
     attrs[:updated_at] = attrs[:created_at]
-    attrs[:fun]        = Account::FUNS[attrs[:fun]]
+    attrs[:operation]  = Account::OPS[attrs[:operation]]
     attrs[:reason]     = REASON_CODES[attrs[:reason]]
     attrs[:currency]   = Currency.enumerize[attrs[:currency]]
 

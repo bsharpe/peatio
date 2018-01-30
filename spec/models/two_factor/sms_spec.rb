@@ -11,9 +11,9 @@
 #  refreshed_at   :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe TwoFactor::Sms do
+RSpec.describe TwoFactor::Sms do
   let(:member) { create :member }
   let(:two_factor) { member.sms_two_factor }
 

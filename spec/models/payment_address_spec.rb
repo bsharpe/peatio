@@ -10,9 +10,9 @@
 #  currency   :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe PaymentAddress do
+RSpec.describe PaymentAddress do
 
   context ".create" do
     it "generate address after commit" do
@@ -21,7 +21,6 @@ describe PaymentAddress do
       expect(AMQPQueue).to receive(:enqueue)
         .with(:deposit_coin_address, {payment_address_id: address.id, currency: address.currency}, {persistent: true})
       expect(address).to be_valid
-      address.run_callbacks(:commit)
     end
   end
 

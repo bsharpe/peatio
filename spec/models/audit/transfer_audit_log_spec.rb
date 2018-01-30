@@ -18,31 +18,29 @@
 #  index_audit_logs_on_operator_id                      (operator_id)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-module Audit
-  describe TransferAuditLog do
-    describe ".audit!" do
-      let(:deposit) { create(:deposit) }
-      let(:member) { create(:member) }
+RSpec.describe Audit::TransferAuditLog, type: :model do
+  describe ".audit!" do
+    let(:deposit) { create(:deposit) }
+    let(:member) { create(:member) }
 
-      subject { TransferAuditLog.audit!(deposit, member) }
+    subject { Audit::TransferAuditLog.audit!(deposit, member) }
 
-      before do
-        allow(deposit).to receive(:aasm_state_was).and_return('submitted')
-        allow(deposit).to receive(:aasm_state).and_return('accepted')
-      end
-
-      it "should create the TransferAuditLog record" do
-        expect { subject }.to change{ TransferAuditLog.count }.by(1)
-      end
-
-      its(:operator) { should == member }
-      its(:auditable) { should == deposit }
-      its(:source_state) { should == 'submitted' }
-      its(:target_state) { should == 'accepted' }
-
+    before do
+      allow(deposit).to receive(:aasm_state_was).and_return('submitted')
+      allow(deposit).to receive(:aasm_state).and_return('accepted')
     end
-  end
 
+    it "should create the TransferAuditLog record" do
+      expect { subject }.to change{ Audit::TransferAuditLog.count }.by(1)
+    end
+
+    its(:operator) { should == member }
+    its(:auditable) { should == deposit }
+    its(:source_state) { should == 'submitted' }
+    its(:target_state) { should == 'accepted' }
+
+  end
 end
+

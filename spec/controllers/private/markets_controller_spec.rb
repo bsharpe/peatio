@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Private::MarketsController, type: :controller do
+RSpec.describe Private::MarketsController, type: :controller do
   let(:member) { create :member }
   before { session[:member_id] = member.id }
 

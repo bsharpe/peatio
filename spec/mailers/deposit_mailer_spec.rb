@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe DepositMailer do
+RSpec.describe DepositMailer do
 
   describe "accepted" do
     let(:deposit) { create :deposit }

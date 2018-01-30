@@ -20,10 +20,8 @@
 #  type       :string(255)
 #
 
-module Withdraws
-  class Bank < ::Withdraw
-    include ::AasmAbsolutely
-    include ::Withdraws::Bankable
-    include ::FundSourceable
-  end
+class Withdraws::Bank < Withdraw
+  delegate :name, to: :member, prefix: true
+
+  alias_attribute :remark, :id
 end

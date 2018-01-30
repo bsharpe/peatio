@@ -1,12 +1,12 @@
 require "spec_helper"
 
-describe MemberMailer do
+RSpec.describe MemberMailer do
   describe "notify_signin" do
     let(:member) { create :member }
     let(:mail) { MemberMailer.notify_signin(member.id) }
 
     it "renders the headers" do
-      expect(mail.subject).to eq("[Cryex24] You have just signed in")
+      expect(mail.subject).to eq("[BananEx] You have just signed in")
       expect(mail.to).to eq([member.email])
       expect(mail.from).to eq([ENV['SYSTEM_MAIL_FROM']])
     end

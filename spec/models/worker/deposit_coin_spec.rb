@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Worker::DepositCoin do
+RSpec.describe Worker::DepositCoin do
 
   subject { Worker::DepositCoin.new }
 

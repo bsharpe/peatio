@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Private::FundsController, type: :controller do
+RSpec.describe Private::FundsController, type: :controller do
 
   context "Verified user with two factor" do
     let(:member) { create(:member, :activated, :verified, :app_two_factor_activated) }

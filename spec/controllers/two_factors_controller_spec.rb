@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe TwoFactorsController, type: :controller do
+RSpec.describe TwoFactorsController, type: :controller do
   describe 'GET :show' do
     let(:member) { create :member, :sms_two_factor_activated }
     before { session[:member_id] = member.id }

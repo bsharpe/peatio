@@ -1,4 +1,4 @@
-class UnreadMigration < ActiveRecord::Migration
+class UnreadMigrationOld < ActiveRecord::Migration
   def self.up
     create_table :read_marks, :force => true do |t|
       t.integer  :readable_id

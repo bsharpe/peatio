@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Entities::Order do
+RSpec.describe APIv2::Entities::Order do
 
   let(:order)  { create(:order_ask, currency: 'btceur', price: '12.326'.to_d, volume: '3.14', origin_volume: '12.13') }
 

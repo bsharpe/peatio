@@ -13,9 +13,9 @@
 #  balance    :string(30)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Proof do
+RSpec.describe Proof do
   describe '#asset_sum' do
     it 'aggregates address balances' do
       proof = Proof.new(addresses: [

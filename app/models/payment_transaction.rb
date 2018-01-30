@@ -24,10 +24,9 @@
 #
 
 class PaymentTransaction < ApplicationRecord
-  
+
   include AASM
-  include AASM::Locking
-  include Currencible
+  include HasCurrencies
 
   STATE = [:unconfirm, :confirming, :confirmed]
   enumerize :aasm_state, in: STATE, scope: true
@@ -41,7 +40,7 @@ class PaymentTransaction < ApplicationRecord
 
   after_update :sync_update
 
-  aasm :whiny_transitions => false do
+  aasm :whiny_transitions => false, requires_lock: true do
     state :unconfirm, initial: true
     state :confirming, after_commit: :deposit_accept
     state :confirmed, after_commit: :deposit_accept
@@ -70,7 +69,7 @@ class PaymentTransaction < ApplicationRecord
 
   def deposit_accept
     if deposit.may_accept?
-      deposit.accept! 
+      deposit.accept!
     end
   end
 

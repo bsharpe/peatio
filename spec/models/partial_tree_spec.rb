@@ -11,8 +11,8 @@
 #  sum        :string(255)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe PartialTree do
+RSpec.describe PartialTree do
   pending "add some examples to (or delete) #{__FILE__}"
 end

@@ -1,4 +1,3 @@
-require_relative 'constants'
 
 module Matching
   class MarketOrder

@@ -1,4 +1,4 @@
-# require 'spec_helper'
+# require 'rails_helper'
 #
 # describe '2-step verification' do
 #   let!(:identity) { create :identity }

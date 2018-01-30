@@ -1,5 +1,3 @@
-require_relative 'constants'
-
 module Matching
   class Executor
 

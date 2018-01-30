@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Entities::Trade do
+RSpec.describe APIv2::Entities::Trade do
 
   let(:trade) { create(:trade, ask: create(:order_ask), bid: create(:order_bid)) }
 

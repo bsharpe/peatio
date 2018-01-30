@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Entities::Member do
+RSpec.describe APIv2::Entities::Member do
 
   let(:member) { create(:verified_member) }
 

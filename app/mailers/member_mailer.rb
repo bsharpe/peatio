@@ -1,4 +1,4 @@
-class MemberMailer < BaseMailer
+class MemberMailer < ApplicationMailer
 
   def notify_signin(member_id)
     set_mail(member_id)

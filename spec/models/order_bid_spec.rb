@@ -31,9 +31,9 @@
 #  index_orders_on_state                (state)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe OrderBid do
+RSpec.describe OrderBid do
 
   subject { create(:order_bid) }
 

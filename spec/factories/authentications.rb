@@ -22,10 +22,10 @@
 
 FactoryBot.define do
   factory :authentication do
-    provider "MyString"
-    uid "MyString"
-    token "MyString"
-    secret "MyString"
-    member_id 1
+    provider "Provider"
+    uid { SecureRandome.uuid }
+    token { SecureRandome.uuid }
+    secret { SecureRandome.uuid }
+    member
   end
 end

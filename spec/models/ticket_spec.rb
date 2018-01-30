@@ -11,9 +11,9 @@
 #  updated_at :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Ticket do
+RSpec.describe Ticket do
   describe "Validation" do
     context "Both title and content is empty" do
       subject { Ticket.new }
@@ -49,7 +49,7 @@ describe Ticket do
 
   describe "#send_notification" do
     let(:ticket) { create(:ticket) }
-    let(:mailer) { OpenStruct.new }
+    let(:mailer) { double }
     before do
       allow(mailer).to receive(:deliver)
       ticket

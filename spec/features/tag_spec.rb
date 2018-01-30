@@ -1,4 +1,4 @@
-# require 'spec_helper'
+# require 'rails_helper'
 #
 # describe 'member tags' do
 #   let!(:identity) { create :identity }

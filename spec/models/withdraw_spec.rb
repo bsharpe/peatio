@@ -20,9 +20,9 @@
 #  type       :string(255)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Withdraw do
+RSpec.describe Withdraw do
 
   context '#fix_precision' do
     it "should round down to max precision" do
@@ -34,15 +34,14 @@ describe Withdraw do
   context 'fund source' do
     it "should strip trailing spaces in fund_uid" do
       fund_source = create(:btc_fund_source, uid: 'test   ')
-      @withdraw = create(:satoshi_withdraw, fund_source_id: fund_source.id)
+      @withdraw = create(:satoshi_withdraw, fund_source: fund_source)
       expect(@withdraw.fund_uid).to eq 'test'
     end
   end
 
   context 'bank withdraw' do
     describe "#audit!" do
-      subject { create(:bank_withdraw) }
-      before  { subject.submit! }
+      subject { create(:bank_withdraw) { |bw| bw.submit! } }
 
       it "should accept withdraw with clean history" do
         subject.audit!
@@ -65,11 +64,7 @@ describe Withdraw do
 
   context 'coin withdraw' do
     describe '#audit!' do
-      subject { create(:satoshi_withdraw) }
-
-      before do
-        subject.submit!
-      end
+      subject { create(:satoshi_withdraw) { |sw| sw.submit! } }
 
       it "should be rejected if address is invalid" do
         allow(CoinRPC).to receive(:[]).and_return(double('rpc', validateaddress: {isvalid: false}))
@@ -115,11 +110,11 @@ describe Withdraw do
       end
 
       it "generate right sn" do
-        expect(@withdraw.sn).to eq('13100718180001')
+        expect(@withdraw.sn).to eq('1310071818000001')
       end
 
       it 'alias withdraw_id to sn' do
-        expect(@withdraw.withdraw_id).to eq('13100718180001')
+        expect(@withdraw.withdraw_id).to eq('1310071818000001')
       end
     end
 
@@ -172,7 +167,8 @@ describe Withdraw do
       allow(CoinRPC).to receive(:[]).and_return(@broken_rpc)
       begin
         Worker::WithdrawCoin.new.process({id: subject.id}, {}, {})
-      rescue
+      rescue Account::BalanceError
+        # ignore failure
       end
       allow(CoinRPC).to receive(:[]).and_return(double())
 
@@ -185,88 +181,85 @@ describe Withdraw do
   end
 
   context 'aasm_state' do
-    subject { create(:bank_withdraw, sum: 1000) }
-
-    before do
-      allow(subject).to receive(:send_withdraw_confirm_email)
-    end
+    let(:bank_withdraw) { create(:bank_withdraw, sum: 1000) }
 
     it 'initializes with state :submitting' do
-      expect(subject.submitting?).to eq(true)
+      expect(bank_withdraw.submitting?).to eq(true)
     end
 
     it 'transitions to :submitted after calling #submit!' do
-      subject.submit!
-
-      expect(subject.submitted?).to eq(true)
-      expect(subject.sum).to eq subject.account.locked
-      expect(subject.sum).to eq subject.account_versions.last.locked
+      bank_withdraw.submit!
+      expect(bank_withdraw.submitted?).to eq(true)
+      account = bank_withdraw.account
+      expect(bank_withdraw.sum).to eq(account.locked)
+      expect(bank_withdraw.sum).to eq(account.versions.last.locked)
     end
 
     it 'transitions to :rejected after calling #reject!' do
-      subject.submit!
-      subject.accept!
-      subject.reject!
+      bank_withdraw.submit!
+      bank_withdraw.accept!
+      bank_withdraw.reject!
 
-      expect(subject.rejected?).to eq(true)
+      expect(bank_withdraw.rejected?).to eq(true)
     end
 
     context :process do
       before do
-        subject.submit!
-        subject.accept!
+        bank_withdraw.submit!
+        bank_withdraw.accept!
       end
 
       it 'transitions to :processing after calling #process! when withdrawing fiat currency' do
-        allow(subject).to receive(:coin?).and_return(false)
+        allow(bank_withdraw).to receive(:coin?).and_return(false)
 
-        subject.process!
+        bank_withdraw.process!
 
-        expect(subject.processing?).to eq(true)
+        expect(bank_withdraw.processing?).to eq(true)
       end
 
       it 'transitions to :failed after calling #fail! when withdrawing fiat currency' do
-        allow(subject).to receive(:coin?).and_return(false)
+        allow(bank_withdraw).to receive(:coin?).and_return(false)
 
-        subject.process!
+        bank_withdraw.process!
 
-        expect { subject.fail! }.to_not change{subject.account.amount}
+        expect { bank_withdraw.fail! }.to_not change{bank_withdraw.account.amount}
 
-        expect(subject.failed?).to eq(true)
+        expect(bank_withdraw.failed?).to eq(true)
       end
 
       it 'transitions to :processing after calling #process!' do
-        expect(subject).to receive(:send_coins!)
+        expect(bank_withdraw).to receive(:send_coins!)
+        expect(bank_withdraw).to receive(:send_email)
 
-        subject.process!
+        bank_withdraw.process!
 
-        expect(subject.processing?).to eq(true)
+        expect(bank_withdraw.processing?).to eq(true)
       end
     end
 
     context :cancel do
       it 'transitions to :canceled after calling #cancel!' do
-        subject.cancel!
+        bank_withdraw.cancel!
 
-        expect(subject.canceled?).to eq(true)
-        expect(subject.account.locked).to eq 0
+        expect(bank_withdraw.canceled?).to eq(true)
+        expect(bank_withdraw.account.locked).to eq 0
       end
 
       it 'transitions from :submitted to :canceled after calling #cancel!' do
-        subject.submit!
-        subject.cancel!
+        bank_withdraw.submit!
+        bank_withdraw.cancel!
 
-        expect(subject.canceled?).to eq(true)
-        expect(subject.account.locked).to eq 0
+        expect(bank_withdraw.canceled?).to eq(true)
+        expect(bank_withdraw.account.locked).to eq 0
       end
 
       it 'transitions from :accepted to :canceled after calling #cancel!' do
-        subject.submit!
-        subject.accept!
-        subject.cancel!
+        bank_withdraw.submit!
+        bank_withdraw.accept!
+        bank_withdraw.cancel!
 
-        expect(subject.canceled?).to eq(true)
-        expect(subject.account.locked).to eq 0
+        expect(bank_withdraw.canceled?).to eq(true)
+        expect(bank_withdraw.account.locked).to eq 0
       end
     end
   end

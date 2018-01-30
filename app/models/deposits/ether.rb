@@ -25,12 +25,4 @@
 #
 #  index_deposits_on_txid_and_txout  (txid,txout)
 #
-
-module Deposits
-  class Ether < ::Deposit
-    include ::AasmAbsolutely
-    include ::Deposits::Coinable
-
-    validates_uniqueness_of :txout, scope: :txid
-  end
-end
+class Deposits::Ether < Deposits::Crypto; end

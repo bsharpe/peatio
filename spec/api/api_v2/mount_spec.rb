@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 module APIv2
   class Mount
@@ -14,7 +14,7 @@ module APIv2
   end
 end
 
-describe APIv2::Mount, type: :api do
+RSpec.describe APIv2::Mount, type: :api do
 
   it "should use auth and attack middleware" do
     expect(APIv2::Mount.middleware).to eq [[APIv2::Auth::Middleware], [Rack::Attack]]

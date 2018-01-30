@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Orders, type: :api do
+RSpec.describe APIv2::Orders, type: :api do
 
   let(:member) { create(:member) }
   let(:token)  { create(:api_token, member: member) }

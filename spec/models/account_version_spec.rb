@@ -15,7 +15,7 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  currency        :integer
-#  fun             :integer
+#  operation       :integer
 #
 # Indexes
 #
@@ -25,9 +25,9 @@
 #  index_account_versions_on_modifiable_id_and_modifiable_type  (modifiable_id,modifiable_type)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe AccountVersion do
+RSpec.describe AccountVersion do
 
   let(:member)  { create(:member) }
   let(:account) { member.get_account(:btc) }

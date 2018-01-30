@@ -18,9 +18,9 @@
 #  aasm_state         :string(255)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe IdDocument do
+RSpec.describe IdDocument do
   let(:member) { create(:member) }
   subject { member.id_document }
 

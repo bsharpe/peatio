@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Auth::Utils do
+RSpec.describe APIv2::Auth::Utils do
 
   context '.generate_access_key' do
     it "should be a string longer than 40 characters" do

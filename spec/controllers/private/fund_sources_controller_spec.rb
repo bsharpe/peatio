@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Private::FundSourcesController, type: :controller do
+RSpec.describe Private::FundSourcesController, type: :controller do
   let(:member) { create(:member) }
   before { session[:member_id] = member.id }
 
@@ -62,7 +62,7 @@ describe Private::FundSourcesController, type: :controller do
 
 end
 
-describe 'routes for FundSources', type: :routing do
+RSpec.describe 'routes for FundSources', type: :routing do
   it { expect(post: '/fund_sources').to be_routable }
   it { expect(put: '/fund_sources/1').to be_routable }
   it { expect(delete: '/fund_sources/1').to be_routable }

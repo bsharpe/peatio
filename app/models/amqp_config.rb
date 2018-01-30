@@ -1,5 +1,9 @@
 class AMQPConfig
   class <<self
+    def data=(values)
+      @data ||= values.with_indifferent_access
+    end
+
     def data
       @data ||= YAML.load_file(Rails.root.join('config', 'amqp.yml')).with_indifferent_access
     end

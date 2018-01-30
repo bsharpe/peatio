@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Matching::OrderBookManager do
+RSpec.describe Matching::OrderBookManager do
 
   context ".build_order" do
     it "should build limit order" do

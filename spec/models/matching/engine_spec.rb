@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Matching::Engine do
+RSpec.describe Matching::Engine do
 
   let(:market) { Market.find('btceur') }
   let(:price)  { 10.to_d }

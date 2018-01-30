@@ -1,4 +1,4 @@
-class TokenMailer < BaseMailer
+class TokenMailer < ApplicationMailer
 
   def reset_password(email, token)
     @token_url = edit_reset_password_url(token)

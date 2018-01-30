@@ -1,4 +1,4 @@
-class SystemMailer < BaseMailer
+class SystemMailer < ApplicationMailer
 
   default from: ENV["SYSTEM_MAIL_FROM"],
           to:   ENV["SYSTEM_MAIL_TO"]

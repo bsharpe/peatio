@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Ordering do
+RSpec.describe Ordering do
   let(:order) { create(:order_bid, volume: '1.23456789', price: '1.23456789') }
   let(:account) { create(:account, balance: 100.to_d, locked: 100.to_d) }
 

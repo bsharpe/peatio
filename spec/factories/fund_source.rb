@@ -5,11 +5,9 @@ FactoryBot.define do
     is_locked false
     currency 'btc'
 
-    member { create(:member) }
-
     trait :eur do
-      extra 'bc'
-      uid '123412341234'
+      extra 'bank of euros'
+      uid { SecureRandom.hex(10) }
       currency 'eur'
     end
 

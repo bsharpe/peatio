@@ -1,4 +1,4 @@
-class WithdrawMailer < BaseMailer
+class WithdrawMailer < ApplicationMailer
 
   def submitted(withdraw_id)
     set_mail(withdraw_id)

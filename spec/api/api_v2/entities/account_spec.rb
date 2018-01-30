@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Entities::Account do
+RSpec.describe APIv2::Entities::Account do
 
   let(:account) { create(:account_btc) }
 

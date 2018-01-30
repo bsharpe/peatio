@@ -23,9 +23,9 @@
 #  index_payment_transactions_on_type            (type)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe PaymentTransaction do
+RSpec.describe PaymentTransaction do
   it "expect state transfer" do
     tx = create(:payment_transaction, deposit: create(:deposit))
     allow(tx).to receive(:refresh_confirmations)

@@ -28,9 +28,9 @@
 
 module Deposits
   class Bank < ::Deposit
-    include ::AasmAbsolutely
-    include ::Deposits::Bankable
-    include ::FundSourceable
+    validates :amount, presence: true
+
+    delegate :accounts, to: :channel
 
     def charge!(txid)
       with_lock do

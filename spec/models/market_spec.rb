@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Market do
+RSpec.describe Market do
 
   context 'visible market' do
     it { expect(Market.all.count).to eq(1) }

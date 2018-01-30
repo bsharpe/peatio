@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Auth::Middleware, type: :api do
+RSpec.describe APIv2::Auth::Middleware, type: :api do
 
   class TestApp < Grape::API
     helpers APIv2::Helpers

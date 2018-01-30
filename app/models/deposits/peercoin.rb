@@ -25,12 +25,5 @@
 #
 #  index_deposits_on_txid_and_txout  (txid,txout)
 #
+class Deposits::Peercoin < Deposits::Crypto; end
 
-module Deposits
-  class Peercoin < ::Deposit
-    include ::AasmAbsolutely
-    include ::Deposits::Coinable
-
-    validates_uniqueness_of :txout, scope: :txid
-  end
-end

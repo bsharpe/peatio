@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Matching::MarketOrder do
+RSpec.describe Matching::MarketOrder do
 
   context "initialize" do
     it "should not allow price attribute" do

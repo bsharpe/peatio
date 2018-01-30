@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 module APIv2
 
@@ -15,7 +15,7 @@ module APIv2
 
 end
 
-describe APIv2::Helpers, type: :api do
+RSpec.describe APIv2::Helpers, type: :api do
 
   context "#authentic?" do
 

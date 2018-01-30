@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Tickers, type: :api do
+RSpec.describe APIv2::Tickers, type: :api do
 
   describe "GET /api/v2/tickers" do
     it "returns ticker of all markets" do

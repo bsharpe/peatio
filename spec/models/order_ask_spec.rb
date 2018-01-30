@@ -31,9 +31,9 @@
 #  index_orders_on_state                (state)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe OrderAsk do
+RSpec.describe OrderAsk do
 
   subject { create(:order_ask) }
 

@@ -9,7 +9,9 @@ end
 Peatio::Application.routes.draw do
   use_doorkeeper
 
-  root 'welcome#index'
+  draw :admin
+
+  mount APIv2::Mount => APIv2::Mount::PREFIX
 
   if Rails.env.development?
     mount MailsViewer::Engine => '/mails'
@@ -122,8 +124,5 @@ Peatio::Application.routes.draw do
     end
   end
 
-  draw :admin
-
-  mount APIv2::Mount => APIv2::Mount::PREFIX
-
+  root 'welcome#index'
 end

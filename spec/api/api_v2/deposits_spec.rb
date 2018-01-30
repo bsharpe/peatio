@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::Deposits, type: :api do
+RSpec.describe APIv2::Deposits, type: :api do
 
   let(:member) { create(:member) }
   let(:other_member) { create(:member) }

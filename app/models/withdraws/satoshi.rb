@@ -19,11 +19,4 @@
 #  sum        :decimal(32, 16)  default(0.0), not null
 #  type       :string(255)
 #
-
-module Withdraws
-  class Satoshi < ::Withdraw
-    include ::AasmAbsolutely
-    include ::Withdraws::Coinable
-    include ::FundSourceable
-  end
-end
+class Withdraws::Satoshi < Withdraws::Crypto; end

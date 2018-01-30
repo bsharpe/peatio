@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Doorkeeper::AccessToken do
+RSpec.describe Doorkeeper::AccessToken do
 
   let(:app) { Doorkeeper::Application.create!(name: 'test', uid: 'foo', secret: 'bar', redirect_uri: 'http://test.host/oauth/callback') }
   let(:member) { create(:member) }

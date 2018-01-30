@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Bank do
+RSpec.describe Bank do
   context '#with_currency' do
     it { expect(Bank.with_currency(:eur)).not_to be_empty }
   end

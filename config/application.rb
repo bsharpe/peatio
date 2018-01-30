@@ -1,11 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 # Pick the frameworks you want:
-require "active_record/railtie"
-require "action_controller/railtie"
-require "action_mailer/railtie"
-require "sprockets/railtie"
-# require "rails/test_unit/railtie"
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -13,6 +9,10 @@ Bundler.require(:default, Rails.env)
 
 module Peatio
   class Application < Rails::Application
+    config.load_defaults 5.1
+
+    config.active_job.queue_adapter = :sucker_punch
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -48,7 +48,5 @@ module Peatio
       g.test_framework     :rspec
     end
 
-    # Observer configuration
-    config.active_record.observers = :transfer_observer
   end
 end

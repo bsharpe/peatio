@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  include SimpleCaptcha::ControllerHelpers
+  # include SimpleCaptcha::ControllerHelpers
   include TwoFactorHelper
 
   def currency

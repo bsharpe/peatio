@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe Matching::Executor do
+RSpec.describe Matching::Executor do
 
   let(:alice)  { who_is_billionaire }
   let(:bob)    { who_is_billionaire }

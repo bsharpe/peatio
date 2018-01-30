@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe APIv2::OrderBooks, type: :api do
+RSpec.describe APIv2::OrderBooks, type: :api do
 
   describe "GET /api/v2/order_book" do
     before do

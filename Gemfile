@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby '2.4.2'
+
 # Framework
 gem 'rails', '~> 4.2'
 gem 'rails-i18n'
@@ -111,6 +113,7 @@ group :development, :test do
   gem 'spring-commands-rspec'
   # gem 'dotenv-rails'
   # gem 'byebug'
+  gem 'annotate'
 end
 
 group :test do

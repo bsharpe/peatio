@@ -19,7 +19,7 @@ class Account
     protected
 
     def create_record_of_change(operation, balance_delta, locked_delta = 0)
-      puts "Account[#{context.account.id}] #{operation} Amt[#{balance_delta}] Locked[#{locked_delta}] Fee[#{context.fee}]".yellow
+      # puts "Account[#{context.account.id}] #{operation} Amt[#{balance_delta}] Locked[#{locked_delta}] Fee[#{context.fee}]".yellow
       account = context.account
       account.transaction do
         account.balance += balance_delta

@@ -39,7 +39,7 @@ RSpec.describe AccountVersion do
     # `unlock_and_sub_funds('5.0'.to_d, locked: '8.0'.to_d, fee: ZERO)`
     let(:attrs) do
       { account_id: account.id,
-        fun: :unlock_and_sub_funds,
+        operation: :unlock_and_sub_funds,
         fee: Account::ZERO,
         reason: Account::UNKNOWN,
         amount: '15.0'.to_d,

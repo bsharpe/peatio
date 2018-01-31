@@ -10,6 +10,9 @@
 #
 
 class Document < ApplicationRecord
+  attribute :title
+  attribute :body
+
   TRANSLATABLE_ATTR = [:title, :desc, :keywords, :body].freeze
   translates *TRANSLATABLE_ATTR
 

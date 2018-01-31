@@ -77,6 +77,23 @@ RSpec.describe Account, type: :model do
       }.to change{account.balance}.by(10)
     end
 
+    it "should set reason" do
+      expect {
+        context = Account::AddFunds.call(account: account, amount: 10)
+        expect(context.success?).to eq(true)
+      }.to change{account.balance}.by(10)
+      expect(account.versions.last.reason).to eq(Account::UNKNOWN)
+    end
+
+    it "should set reference" do
+      ref = build_stubbed(:order_bid)
+      expect {
+        context = Account::AddFunds.call(account: account, amount: 10, reference: ref)
+        expect(context.success?).to eq(true)
+      }.to change{account.balance}.by(10)
+      expect(account.versions.last.modifiable_id).to eq(ref.id)
+    end
+
     it "should NOT add NEGATIVE funds" do
       context = Account::AddFunds.call(account: account, amount: -10, fee: 0.1, reason: Account::DEPOSIT)
       expect(context.success?).to eq(false)
@@ -139,19 +156,6 @@ RSpec.describe Account, type: :model do
 
   end
 
-  it "expect to set reason" do
-    subject.plus_funds(1.0)
-    expect(subject.versions.last.reason.to_sym).to eql Account::UNKNOWN
-  end
-
-  it "expect to set ref" do
-    ref = double(id: 1)
-
-    subject.plus_funds(1.0, ref: ref)
-
-    expect(subject.versions.last.modifiable_id).to eq(1)
-  end
-
   describe "double operation" do
     let(:amount) { 10 }
     let(:account) { create(:account) }
@@ -179,87 +183,99 @@ RSpec.describe Account, type: :model do
   describe "#versions" do
     let(:account) { create(:account) }
 
-    context 'when account add funds' do
-      before do
-        Account::AddFunds.(account: account, amount: 10, reason: Account::DEPOSIT)
-      end
+    it 'when account add funds' do
+      Account::AddFunds.(account: account, amount: 10, reason: Account::DEPOSIT)
+      version = account.versions.last
 
-      it { expect( account.versions.last.reason.withdraw?).to eq(true) }
-      it { expect( account.versions.last.locked).to eq(0) }
-      it { expect( account.versions.last.balance).to eq(10) }
-      it { expect( account.versions.last.amount).to eq(110) }
-      it { expect( account.versions.last.fee).to eq(0) }
-      it { expect( account.versions.last.fun).to eq 'plus_funds' }
+      expect( version.reason).to eq(Account::DEPOSIT)
+      expect( version.locked).to eq(0)
+      expect( version.balance).to eq(10)
+      expect( version.amount).to eq(110)
+      expect( version.fee).to eq(0)
+      expect( version.operation).to eq :plus_funds
     end
 
-    context 'when account add funds with fee' do
-      subject { account.plus_funds(10, fee: 1, reason: Account::WITHDRAW).versions.last }
+    it 'when account add funds with fee' do
+      Account::AddFunds.(account: account, amount: 10, fee: 1, reason: Account::WITHDRAW)
+      version = account.versions.last
 
-      it { expect(subject.reason.withdraw?).to eq(true) }
-      it { expect(subject.locked).to eq(0) }
-      it { expect(subject.balance).to eq(10) }
-      it { expect(subject.amount).to eq(110) }
-      it { expect(subject.fee).to eq(1) }
-      it { expect(subject.fun).to eq 'plus_funds' }
+      expect(version.reason).to eq(Account::WITHDRAW)
+      expect(version.locked).to eq(0)
+      expect(version.balance).to eq(10)
+      expect(version.amount).to eq(110)
+      expect(version.fee).to eq(1)
+      expect(version.operation).to eq :plus_funds
     end
 
-    context 'when account sub funds' do
-      subject { account.sub_funds(10, reason: Account::WITHDRAW).versions.last }
-      it { expect(subject.reason.withdraw?).to eq(true) }
-      it { expect(subject.locked).to eq(0) }
-      it { expect(subject.balance).to eq(-10) }
-      it { expect(subject.amount).to eq(90) }
-      it { expect(subject.fee).to eq(0) }
-      it { expect(subject.fun).to eq 'sub_funds' }
+    it 'when account sub funds' do
+      Account::SubFunds.(account: account, amount: 10, reason: Account::WITHDRAW)
+      version = account.versions.last
+
+      expect(version.reason).to eq(Account::WITHDRAW)
+      expect(version.locked).to eq(0)
+      expect(version.balance).to eq(-10)
+      expect(version.amount).to eq(90)
+      expect(version.fee).to eq(0)
+      expect(version.operation).to eq :sub_funds
     end
 
-    context 'when account sub funds with fee' do
-      subject { account.sub_funds(10, fee: 1, reason: Account::WITHDRAW).versions.last }
-      it { expect(subject.reason.withdraw?).to eq(true) }
-      it { expect(subject.locked).to eq(0) }
-      it { expect(subject.balance).to eq(-10) }
-      it { expect(subject.amount).to eq(90) }
-      it { expect(subject.fee).to eq(1) }
-      it { expect(subject.fun).to eq 'sub_funds' }
+    it 'when account sub funds with fee' do
+      Account::SubFunds.(account: account, amount: 10, fee: 1, reason: Account::WITHDRAW)
+      version = account.versions.last
+
+      expect(version.reason).to eq(Account::WITHDRAW)
+      expect(version.locked).to eq(0)
+      expect(version.balance).to eq(-10)
+      expect(version.amount).to eq(90)
+      expect(version.fee).to eq(1)
+      expect(version.operation).to eq :sub_funds
     end
 
-    context 'when account lock funds' do
-      subject { account.lock_funds(10, reason: Account::WITHDRAW).versions.last }
-      it { expect(subject.reason.withdraw?).to eq(true) }
-      it { expect(subject.locked).to eq(10) }
-      it { expect(subject.balance).to eq(-10) }
-      it { expect(subject.amount).to eq(100.0) }
+    it 'when account lock funds' do
+      Account::LockFunds.(account: account, amount: 10, reason: Account::WITHDRAW_LOCK)
+      version = account.versions.last
+
+      expect(version.reason).to eq(Account::WITHDRAW_LOCK)
+      expect(version.locked).to eq(10)
+      expect(version.balance).to eq(-10)
+      expect(version.amount).to eq(100.0)
     end
 
-    context 'when account unlock funds' do
-      let(:account) { create(:account, locked: 10) }
-      subject { account.unlock_funds(10, reason: Account::WITHDRAW).versions.last }
-      it { expect(subject.reason.withdraw?).to eq(true) }
-      it { expect(subject.locked).to eq(-10) }
-      it { expect(subject.balance).to eq(10) }
-      it { expect(subject.amount).to eq(110) }
+    it 'when account unlock funds' do
+      account = create(:account, locked: 10)
+      Account::UnlockFunds.(account: account, amount: 10, reason: Account::WITHDRAW_UNLOCK)
+      version = account.versions.last
+
+      expect(version.reason).to eq(Account::WITHDRAW_UNLOCK)
+      expect(version.locked).to eq(-10)
+      expect(version.balance).to eq(10)
+      expect(version.amount).to eq(110)
     end
 
-    context 'when account unlock and sub funds' do
-      let(:account) { create(:account, balance: 10, locked: 10) }
-      subject { account.unlock_and_sub_funds(10, locked: 10, reason: Account::WITHDRAW).versions.last }
-      it { expect(subject.reason.withdraw?).to eq(true) }
-      it { expect(subject.locked).to eq(-10) }
-      it { expect(subject.balance).to eq(0) }
-      it { expect(subject.amount).to be_d 10 }
-      it { expect(subject.fee).to eq(0) }
-      it { expect(subject.fun).to eq 'unlock_and_sub_funds' }
+    it 'when account unlock and sub funds' do
+      account = create(:account, balance: 10, locked: 10)
+      Account::UnlockAndSubtractFunds.(account: account, amount: 10, locked: 10, reason: Account::WITHDRAW)
+      version = account.versions.last
+
+      expect(version.reason).to eq(Account::WITHDRAW)
+      expect(version.locked).to eq(-10)
+      expect(version.balance).to eq(0)
+      expect(version.amount).to be_d 10
+      expect(version.fee).to eq(0)
+      expect(version.operation).to eq :unlock_and_subtract_funds
     end
 
-    context 'when account unlock and sub funds with fee' do
-      let(:account) { create(:account, balance: 10, locked: 10) }
-      subject { account.unlock_and_sub_funds(10, fee: 1, locked: 10, reason: Account::WITHDRAW).versions.last }
-      it { expect(subject.reason.withdraw?).to eq(true) }
-      it { expect(subject.locked).to eq(-10) }
-      it { expect(subject.balance).to eq(0) }
-      it { expect(subject.amount).to be_d 10 }
-      it { expect(subject.fee).to eq(1) }
-      it { expect(subject.fun).to eq 'unlock_and_sub_funds' }
+    it 'when account unlock and sub funds with fee' do
+      account = create(:account, balance: 10, locked: 10)
+      Account::UnlockAndSubtractFunds.(account: account, amount: 10, locked: 10, fee: 1, reason: Account::WITHDRAW)
+      version = account.versions.last
+
+      expect(version.reason).to eq(Account::WITHDRAW)
+      expect(version.locked).to eq(-10)
+      expect(version.balance).to eq(0)
+      expect(version.amount).to be_d 10
+      expect(version.fee).to eq(1)
+      expect(version.operation).to eq :unlock_and_subtract_funds
     end
   end
 
@@ -281,13 +297,13 @@ RSpec.describe Account, type: :model do
 
     context "account with account versions" do
       before do
-        account.plus_funds(100.0)
-        account.sub_funds(1.0)
-        account.plus_funds(12.0)
-        account.lock_funds(12.0)
-        account.unlock_funds(1.0)
-        account.lock_funds(1.0)
-        account.lock_funds(1.0)
+        Account::AddFunds.(account: account, amount: 100)
+        Account::SubFunds.(account: account, amount: 1)
+        Account::AddFunds.(account: account, amount: 12)
+        Account::LockFunds.(account: account, amount: 12)
+        Account::UnlockFunds.(account: account, amount: 1)
+        Account::LockFunds.(account: account, amount: 1)
+        Account::LockFunds.(account: account, amount: 1)
       end
 
       it "returns true" do
@@ -295,88 +311,73 @@ RSpec.describe Account, type: :model do
       end
 
       it "returns false when account balance doesn't match versions" do
-        allow(account).to receive(:member).and_return(member)
         account.update_attribute(:balance, 5000)
         expect(account.verify).to eq(false)
       end
 
       it "returns false when account versions were changed" do
-        account.versions.load.sample.update_attribute(:amount, 50.to_d)
+        version = account.versions.load.sample
+        version.update_attribute(:balance, 777)
         expect(account.verify).to eq(false)
       end
-    end
-  end
-
-  describe "#change_balance_and_locked" do
-    it "should update balance and locked funds in memory" do
-      subject.change_balance_and_locked -10, 10
-      expect(subject.balance).to eq(0)
-      expect(subject.locked).to eq(20)
-    end
-
-    it "should update balance and locked funds in db" do
-      subject.change_balance_and_locked -10, 10
-      subject.reload
-      expect(subject.balance).to eq(0)
-      expect(subject.locked).to eq(20)
     end
   end
 
   describe "after callback" do
     it "should create account version associated to account change" do
       expect {
-        subject.unlock_and_sub_funds(1.0, locked: 2.0)
+        Account::UnlockAndSubtractFunds.(account: subject, amount: 1, locked: 2 )
       }.to change(AccountVersion, :count).by(1)
 
       v = AccountVersion.last
 
       expect(v.member_id).to eq subject.member_id
       expect(v.account).to eq subject
-      expect(v.fun).to eq 'unlock_and_sub_funds'
-      expect(v.reason).to eq 'unknown'
+      expect(v.operation).to eq :unlock_and_subtract_funds
+      expect(v.reason).to eq Account::UNKNOWN
       expect(v.amount).to eq subject.amount
       expect(v.balance).to eq 1.0
       expect(v.locked).to eq -2.0
     end
 
-    it "should retry the whole transaction on stale object error" do
-      subject.update(balance: subject.balance + 3, locked: subject.locked - 8)
-
-      expect {
-        expect {
-          ActiveRecord::Base.transaction do
-            create(:order_ask) # any other statements should be executed
-            subject.unlock_and_sub_funds(1.0, locked: 2.0)
-          end
-        }.to change(OrderAsk, :count).by(1)
-      }.to change(AccountVersion, :count).by(1)
-
-      v = AccountVersion.last
-      expect(v.amount).to eq 14.0
-      expect(v.balance).to eq 1.0
-      expect(v.locked).to eq -2.0
-    end
+    # it "should retry the whole transaction on stale object error" do
+    #   subject.update(balance: subject.balance + 3, locked: subject.locked - 8)
+    #
+    #   expect {
+    #     expect {
+    #       ActiveRecord::Base.transaction do
+    #         create(:order_ask) # any other statements should be executed
+    #         subject.unlock_and_sub_funds(1.0, locked: 2.0)
+    #       end
+    #     }.to change(OrderAsk, :count).by(1)
+    #   }.to change(AccountVersion, :count).by(1)
+    #
+    #   v = AccountVersion.last
+    #   expect(v.amount).to eq 14.0
+    #   expect(v.balance).to eq 1.0
+    #   expect(v.locked).to eq -2.0
+    # end
   end
 
-  describe "concurrent lock_funds" do
-    it "should raise error on the second lock_funds" do
-      account1 = Account.find subject.id
-      account2 = Account.find subject.id
-
-      expect(subject.reload.balance).to eq BigDecimal.new('10')
-
-      expect do
-        ActiveRecord::Base.transaction do
-          account1.lock_funds 8, reason: Account::ORDER_SUBMIT
-        end
-        ActiveRecord::Base.transaction do
-          account2.lock_funds 8, reason: Account::ORDER_SUBMIT
-        end
-      end.to raise_error(ActiveRecord::RecordInvalid)
-
-      expect(subject.reload.balance).to eq BigDecimal.new('2')
-    end
-  end
+  # describe "concurrent lock_funds" do
+  #   it "should raise error on the second lock_funds" do
+  #     account1 = Account.find subject.id
+  #     account2 = Account.find subject.id
+  #
+  #     expect(subject.reload.balance).to eq BigDecimal.new('10')
+  #
+  #     expect do
+  #       ActiveRecord::Base.transaction do
+  #         Account::LockFunds.(account: account1, amount: 8, reason: Account::ORDER_SUBMIT)
+  #       end
+  #       ActiveRecord::Base.transaction do
+  #         Account::LockFunds.(account: account2, amount: 8, reason: Account::ORDER_SUBMIT)
+  #       end
+  #     end.to raise_error(ActiveRecord::RecordInvalid)
+  #
+  #     expect(subject.reload.balance).to eq 2
+  #   end
+  # end
 
   describe ".enabled" do
     let!(:account1) { create(:account, currency: Currency.first.code,   member: nil)}

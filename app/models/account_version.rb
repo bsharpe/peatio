@@ -107,5 +107,13 @@ class AccountVersion < ApplicationRecord
     amount_change < 0 ? amount_change : nil
   end
 
+  def reason
+    super&.to_sym
+  end
+
+  def operation
+    super&.to_sym
+  end
+
   alias :template :detail_template
 end

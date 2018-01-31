@@ -16,7 +16,7 @@ FactoryBot.define do
           locked: 0,
           fee: 0,
           currency: a.currency,
-          fun: Account::OPS[:plus_funds]
+          operation: Account::OPS[:plus_funds]
           )
       end
     end
@@ -45,7 +45,7 @@ FactoryBot.define do
           locked: 0,
           fee: 0,
           currency: a.currency,
-          fun: Account::OPS[:plus_funds]
+          operation: Account::OPS[:plus_funds]
           )
       end
     end

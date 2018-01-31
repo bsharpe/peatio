@@ -108,13 +108,14 @@ RSpec.describe Member do
   end
 
   describe "#unread_messages" do
-    let!(:user) { create(:member) }
+    let!(:member) { create(:member) }
+    it "should known about unread items" do
+      ticket = create(:ticket, author: member)
+      comment = create(:comment, ticket: ticket)
 
-    let!(:ticket) { create(:ticket, author: user) }
-    let!(:comment) { create(:comment, ticket: ticket) }
-
-    specify { expect(user.unread_comments.count).to eq 1 }
-
+      expect(Ticket.unread_by(member).count).to eq(1)
+      expect(Comment.unread_by(member).count).to eq(1)
+    end
   end
 
   describe "#identity" do
@@ -126,9 +127,7 @@ RSpec.describe Member do
 
   describe 'Member.search' do
     before do
-      create(:member)
-      create(:member)
-      create(:member)
+      create_list(:member, 3)
     end
 
     describe 'search without any condition' do

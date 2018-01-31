@@ -1,33 +1,31 @@
 require 'rails_helper'
 
-module Authentications
-  describe EmailsController, type: :controller do
-    let(:member) { create(:member, email: nil, activated: false) }
-    before { session[:member_id] = member.id }
+RSpec.describe Authentications::EmailsController, type: :controller do
+  let(:member) { create(:member, email: nil, activated: false) }
+  before { session[:member_id] = member.id }
 
-    describe 'GET new' do
-      subject { get :new }
+  describe 'GET new' do
+    subject { get :new }
 
-      it { should be_success }
+    it { should be_success }
 
-      it  do
-        get :new
-        expect(flash[:info]).to eq t('authentications.emails.new.setup_email')
-      end
+    it  do
+      get :new
+      expect(flash[:info]).to eq t('authentications.emails.new.setup_email')
     end
-
-    describe 'POST create' do
-      let(:data) {
-        { email: { address: 'xman@xman.com', user_id: '2' } }
-      }
-
-      it "should update current_user's email" do
-        post :create, data
-        member.reload
-        expect(member.email).to eq 'xman@xman.com'
-        expect(member.activated).to eq(false)
-      end
-    end
-
   end
+
+  describe 'POST create' do
+    let(:data) {
+      { email: { address: 'xman@xman.com', user_id: '2' } }
+    }
+
+    it "should update current_user's email" do
+      post :create, data
+      member.reload
+      expect(member.email).to eq 'xman@xman.com'
+      expect(member.activated).to eq(false)
+    end
+  end
+
 end

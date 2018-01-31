@@ -23,9 +23,9 @@
 FactoryBot.define do
   factory :authentication do
     provider "Provider"
-    uid { SecureRandome.uuid }
-    token { SecureRandome.uuid }
-    secret { SecureRandome.uuid }
+    uid { SecureRandom.uuid }
+    token { SecureRandom.uuid }
+    secret { SecureRandom.uuid }
     member
   end
 end

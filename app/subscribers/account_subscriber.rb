@@ -13,7 +13,7 @@ class AccountSubscriber
   def sync(object)
     return unless object.member
 
-    ::Pusher["private-#{object.member.sn}"].trigger_async('accounts', {
+    ::Pusher["private-#{object.member.uid}"].trigger_async('accounts', {
       type: 'update',
       id: object.id,
         attributes: {

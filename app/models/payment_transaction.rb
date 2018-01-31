@@ -77,7 +77,7 @@ class PaymentTransaction < ApplicationRecord
 
   def sync_update
     if self.confirmations_changed?
-      ::Pusher["private-#{deposit.member.sn}"].trigger_async('deposits', { type: 'update', id: self.deposit.id, attributes: {confirmations: self.confirmations}})
+      ::Pusher["private-#{deposit.member.uid}"].trigger_async('deposits', { type: 'update', id: self.deposit.id, attributes: {confirmations: self.confirmations}})
     end
   end
 end

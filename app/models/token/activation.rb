@@ -17,6 +17,8 @@
 #
 
 class Token::Activation < ::Token
+  belongs_to :member
+
   after_create :send_token
 
   def confirm!

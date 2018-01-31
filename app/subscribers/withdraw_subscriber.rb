@@ -1,18 +1,18 @@
 class WithdrawSubscriber
   def after_create(object)
     object.generate_serial_number
-    ::Pusher["private-#{object.member.sn}"].trigger_async('withdraws', { type: 'create', attributes: object.as_json })
+    ::Pusher["private-#{object.member.uid}"].trigger_async('withdraws', { type: 'create', attributes: object.as_json })
   end
 
   def after_update(object, changes, current_user)
     if changes.keys.include?('aasm_state')
       Audit::TransferAuditLog.audit!(object, current_user)
     end
-    ::Pusher["private-#{object.member.sn}"].trigger_async('withdraws', { type: 'update', id: object.id, attributes: changes })
+    ::Pusher["private-#{object.member.uid}"].trigger_async('withdraws', { type: 'update', id: object.id, attributes: changes })
   end
 
   def after_destroy(object_data)
-    ::Pusher["private-#{object.member.sn}"].trigger_async('withdraws', { type: 'destroy', id: object_data[:id] })
+    ::Pusher["private-#{object.member.uid}"].trigger_async('withdraws', { type: 'destroy', id: object_data[:id] })
   end
 
   def send_mail(object)

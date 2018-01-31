@@ -8,7 +8,7 @@ RSpec.describe APIv2::Entities::Member do
 
   before { allow(Currency).to receive(:codes).and_return(%w(eur btc)) }
 
-  its(:sn)        { should == member.sn }
+  its(:sn)        { should == member.uid }
   its(:name)      { should == member.name }
   its(:email)     { should == member.email }
   its(:activated) { should == true }

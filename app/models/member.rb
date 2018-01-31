@@ -3,7 +3,7 @@
 # Table name: members
 #
 #  id           :integer          not null, primary key
-#  sn           :string(255)
+#  uid          :string(255)
 #  display_name :string(255)
 #  email        :string(255)
 #  identity_id  :integer
@@ -19,20 +19,24 @@
 #
 
 class Member < ApplicationRecord
+  include Wisper::ActiveRecord::Publisher
+
+  has_secure_token :uid
   acts_as_reader
 
   has_many :orders
   has_many :accounts
   has_many :payment_addresses, through: :accounts
-  has_many :trades, -> {}
+  has_many :trades
   has_many :withdraws
-  has_many :fund_sources
+  has_many :fund_sources, as: :owner
   has_many :deposits
   has_many :api_tokens
   has_many :two_factors
-  has_many :tickets, foreign_key: 'author_id'
-  has_many :comments, foreign_key: 'author_id'
+  has_many :tickets, foreign_key: :author_id
+  has_many :comments, foreign_key: :author_id
   has_many :signup_histories
+  has_many :token_activations, class_name: Token::Activation.name
 
   has_one :id_document, dependent: :destroy
 
@@ -45,22 +49,17 @@ class Member < ApplicationRecord
   delegate :full_name,  to: :id_document, allow_nil: true
   delegate :verified?,  to: :id_document, prefix: true, allow_nil: true
 
-  before_validation :sanitize, :generate_sn
+  before_validation :sanitize
 
-  validates :sn, presence: true
   validates :display_name, uniqueness: true, allow_blank: true
   validates :email, email: true, uniqueness: true, allow_nil: true
-
-  before_create :build_default_id_document
-  after_create  :touch_accounts
-  after_update  :resend_activation
-  after_update  :sync_update
 
   class << self
     def from_auth(auth_hash)
       locate_auth(auth_hash) || locate_email(auth_hash) || create_from_auth(auth_hash)
     end
 
+    # FIXME: This is sooo bad. Do NOT do this.
     def current
       Thread.current[:user]
     end
@@ -69,6 +68,7 @@ class Member < ApplicationRecord
       Thread.current[:user] = user
     end
 
+    # FIXME: Switch to a real role-management system, like Rolify
     def admins
       Figaro.env.admin.split(',')
     end
@@ -102,27 +102,28 @@ class Member < ApplicationRecord
     end
 
     def locate_email(auth_hash)
-      return nil if auth_hash['info']['email'].blank?
-      member = self.find_by_email(auth_hash['info']['email'].downcase.squish)
+      auth_email = auth_hash['info']['email']&.downcase&.squish
+      return nil if auth_email.blank?
+      member = self.find_by_email(auth_email)
       return nil unless member
       member.add_auth(auth_hash)
       member
     end
 
     def create_from_auth(auth_hash)
-      member = self.create(
-        email: auth_hash['info']['email'].downcase.squish,
+      member = Member.new(
         nickname: auth_hash['info']['nickname'],
         activated: false)
       member.add_auth(auth_hash)
-      member.send_activation if auth_hash['provider'] == 'identity'
+      member.save!
+      member.update(email: auth_hash['info']['email'])
       member
     end
   end
 
 
   def create_auth_for_identity(identity)
-    self.authentications.create(provider: 'identity', uid: identity.id)
+    self.authentications.create(provider: :identity, uid: identity.id)
   end
 
   def trades
@@ -143,7 +144,9 @@ class Member < ApplicationRecord
   end
 
   def add_auth(auth_hash)
-    authentications.build_auth(auth_hash).save
+    auth = Authentication.build_auth(auth_hash)
+    auth.member = self
+    auth.save!
   end
 
   def trigger(event, data)
@@ -151,19 +154,17 @@ class Member < ApplicationRecord
   end
 
   def notify(event, data)
-    ::Pusher["private-#{sn}"].trigger_async event, data
+    ::Pusher["private-#{uid}"].trigger_async event, data
   end
 
   def to_s
-    "#{name || email} - #{sn}"
+    result = "#{name}"
+    result << " <#{email}>" if email
+    "#{result} - #{uid}"
   end
 
   def gravatar
-    "//gravatar.com/avatar/" + Digest::MD5.hexdigest(email) + "?d=retro"
-  end
-
-  def initial?
-    name? && !name.empty?
+    "//gravatar.com/avatar/#{Digest::MD5.hexdigest(email)}?d=retro"
   end
 
   def get_account(currency)
@@ -176,35 +177,23 @@ class Member < ApplicationRecord
 
     account
   end
-  alias :ac :get_account
-
-  def touch_accounts
-    less = Currency.codes - self.accounts.map(&:currency).map(&:to_sym)
-    less.each do |code|
-      self.accounts.create(currency: code, balance: 0, locked: 0)
-    end
-  end
 
   def identity
-    authentication = authentications.find_by(provider: 'identity')
+    authentication = authentications.for_provider(:identity).first
     authentication ? Identity.find(authentication.uid) : nil
   end
 
   def auth(name)
-    authentications.where(provider: name).first
+    authentications.for_provider(name).first
   end
 
   def auth_with?(name)
-    authentications.where(provider: name).exists?
+    authentications.for_provider(name).exists?
   end
 
   def remove_auth(name)
     identity.destroy if name == 'identity'
-    auth(name).destroy``
-  end
-
-  def send_activation
-    Token::Activation.create(member: self)
+    auth(name).destroy
   end
 
   def send_password_changed_notification
@@ -245,26 +234,7 @@ class Member < ApplicationRecord
   private
 
   def sanitize
-    self.email.try(:downcase!)
+    self.email = self.email&.downcase&.squish
   end
 
-  def generate_sn
-    self.sn and return
-    begin
-      self.sn = "PEA#{ROTP::Base32.random_base32(8).upcase}TIO"
-    end while Member.where(:sn => self.sn).any?
-  end
-
-  def build_default_id_document
-    build_id_document
-    true
-  end
-
-  def resend_activation
-    self.send_activation if self.email_changed?
-  end
-
-  def sync_update
-    ::Pusher["private-#{sn}"].trigger_async('members', { type: 'update', id: self.id, attributes: self.changes_attributes_as_json })
-  end
 end

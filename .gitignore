@@ -52,3 +52,4 @@ tags
 .byebug_history
 doc/til.md
 spec/examples.txt
+/x/**/*

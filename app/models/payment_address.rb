@@ -42,7 +42,7 @@ class PaymentAddress < ApplicationRecord
   end
 
   def trigger_deposit_address
-    ::Pusher["private-#{account.member.sn}"].trigger_async('deposit_address', {type: 'create', attributes: as_json})
+    ::Pusher["private-#{account.member.uid}"].trigger_async('deposit_address', {type: 'create', attributes: as_json})
   end
 
   def self.construct_memo(obj)

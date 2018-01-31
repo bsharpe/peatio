@@ -39,7 +39,7 @@ module APIv2
       requires :currency, type: String, values: Currency.all.map(&:code), desc: "The account to which you want to deposit. Available values: #{Currency.all.map(&:code).join(', ')}"
     end
     get "/deposit_address" do
-      current_user.ac(params[:currency]).payment_address.to_json
+      current_user.get_account(params[:currency]).payment_address.to_json
     end
   end
 end

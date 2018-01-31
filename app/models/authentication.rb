@@ -24,20 +24,20 @@ class Authentication < ApplicationRecord
   validates :provider, presence: true, uniqueness: { scope: :member_id }
   validates :uid,      presence: true, uniqueness: { scope: :provider }
 
-  class << self
-    def locate(auth)
-      uid      = auth['uid'].to_s
-      provider = auth['provider']
-      find_by_provider_and_uid provider, uid
-    end
+  scope :for_provider, ->(provider) { where(provider: provider) }
 
-    def build_auth(auth)
-      new \
-        uid:      auth['uid'],
-        provider: auth['provider'],
-        token:    auth['credentials'].try(:[], 'token'),
-        secret:   auth['credentials'].try(:[], 'secret'),
-        nickname: auth['info'].try(:[], 'nickname')
-    end
+  def self.locate(auth)
+    self.where(provider: auth['provider'], uid: auth['uid'].to_s).first
   end
+
+  def self.build_auth(auth)
+    self.new(
+      uid:      auth['uid'] || auth['info'].try(:[], 'email'),
+      provider: auth['provider'],
+      token:    auth['credentials'].try(:[], 'token'),
+      secret:   auth['credentials'].try(:[], 'secret'),
+      nickname: auth['info'].try(:[], 'nickname')
+    )
+  end
+
 end

@@ -4,7 +4,7 @@ def deposit admin_identity, member, amount
 
     # this part is handled by a google extension
     query = {deposit: { txid: "deposit_#{Time.now.to_i}",
-              sn: member.sn,
+              sn: member.uid,
               fund_uid: identity.email,
               fund_extra: member.name,
               amount: amount }}

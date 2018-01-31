@@ -3,7 +3,7 @@
 # Table name: members
 #
 #  id           :integer          not null, primary key
-#  sn           :string(255)
+#  uid          :string(255)
 #  display_name :string(255)
 #  email        :string(255)
 #  identity_id  :integer
@@ -23,13 +23,6 @@ require 'rails_helper'
 RSpec.describe Member do
   let(:member) { build(:member) }
   subject { member }
-
-  describe 'sn' do
-    subject(:member) { create(:member) }
-    it { expect(member.sn).to_not be_nil }
-    it { expect(member.sn).to_not be_empty }
-    it { expect(member.sn).to match /^PEA.*TIO$/ }
-  end
 
   describe 'before_create' do
     it "should unify email" do
@@ -51,11 +44,11 @@ RSpec.describe Member do
   describe 'build id_document before create' do
     it 'create id_document for the member' do
       member.save
-      expect(member.reload.id_document).to_not be_blank
+      expect(member.id_document).to_not be_blank
     end
   end
 
-  describe 'send activation after create' do
+  describe 'send activation after' do
     let(:auth_hash) {
       {
         'provider' => 'identity',
@@ -120,8 +113,6 @@ RSpec.describe Member do
     let!(:ticket) { create(:ticket, author: user) }
     let!(:comment) { create(:comment, ticket: ticket) }
 
-    before { ReadMark.delete_all }
-
     specify { expect(user.unread_comments.count).to eq 1 }
 
   end
@@ -171,8 +162,9 @@ RSpec.describe Member do
     end
 
     describe 'search by wallet address' do
-      let(:fund_source) { create(:btc_fund_source) }
-      let(:member) { fund_source.member }
+      let(:member) { create(:member) }
+      let(:fund_source) { create(:btc_fund_source, owner: member) }
+
       subject { Member.search(field: 'wallet_address', term: fund_source.uid) }
 
       it { expect(subject.count).to eq(1) }

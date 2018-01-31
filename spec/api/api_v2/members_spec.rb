@@ -30,7 +30,7 @@ RSpec.describe APIv2::Members, type: :api do
       assert_successful
 
       result = json_data
-      expect(result['sn']).to eq member.sn
+      expect(result['sn']).to eq member.uid
       expect(result['activated']).to eq true
       expect(result['accounts']).to eq [
         {"currency" => "eur", "balance" => "2014.47", "locked" => "0.0"},

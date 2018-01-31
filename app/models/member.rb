@@ -19,7 +19,6 @@
 #
 
 class Member < ApplicationRecord
-  acts_as_taggable
   acts_as_reader
 
   has_many :orders

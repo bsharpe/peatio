@@ -61,8 +61,6 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    acts-as-taggable-on (5.0.0)
-      activerecord (>= 4.2.8)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     amq-protocol (1.9.2)
@@ -491,7 +489,6 @@ PLATFORMS
 DEPENDENCIES
   aasm
   active_hash
-  acts-as-taggable-on
   amqp
   angularjs-rails
   annotate

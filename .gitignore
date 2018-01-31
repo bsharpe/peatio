@@ -48,3 +48,7 @@ tags
 .DS_Store
 .agignore
 *~
+
+.byebug_history
+doc/til.md
+spec/examples.txt

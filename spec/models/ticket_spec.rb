@@ -21,12 +21,12 @@ RSpec.describe Ticket do
     end
 
     context "Title is empty" do
-      subject { Ticket.new(content: 'xman is here') }
+      subject { Ticket.new(content: 'xman is here', author: build_stubbed(:member)) }
       it { should be_valid }
     end
 
     context "Content is empty" do
-      subject { Ticket.new(title: 'xman is here') }
+      subject { Ticket.new(title: 'xman is here', author: build_stubbed(:member)) }
       it { should be_valid }
     end
 
@@ -35,13 +35,13 @@ RSpec.describe Ticket do
   describe "#title_for_display" do
     let(:text) { 'alsadkjf aslkdjf aslkdjfla skdjf alsdkjf dlsakjf lasdkjf sadkfasdf xx' }
     context "title is present" do
-      let(:ticket) { create(:ticket, title: text)}
+      let(:ticket) { create(:ticket, title: text, author: build_stubbed(:member)) }
       subject{ ticket }
       its(:title_for_display) { should == "alsadkjf aslkdjf aslkdjfla skdjf alsdkjf dlsakjf lasdkjf ..." }
     end
 
     context "title is blank" do
-      let(:ticket) { create(:ticket, content: text) }
+      let(:ticket) { create(:ticket, content: text, author: build_stubbed(:member), title: nil) }
       subject{ ticket }
       its(:title_for_display) { should == "alsadkjf aslkdjf aslkdjfla skdjf alsdkjf dlsakjf lasdkjf ..." }
     end
@@ -60,7 +60,7 @@ RSpec.describe Ticket do
     end
 
     it "should notify the admin" do
-      expect(TicketMailer).to receive(:admin_notification).with(ticket.id).and_return(mailer)
+      expect(TicketMailer).to receive(:admin_notification).with(ticket).and_return(mailer)
     end
   end
 end

@@ -9,7 +9,7 @@ RSpec.describe APIv2::Entities::Order do
 
     its(:id)               { should == order.id }
     its(:price)            { should == order.price }
-    its(:avg_price)        { should == ::Trade::ZERO }
+    its(:avg_price)        { should == ZERO }
     its(:volume)           { should == order.origin_volume }
     its(:remaining_volume) { should == order.volume }
     its(:executed_volume)  { should == (order.origin_volume - order.volume)}

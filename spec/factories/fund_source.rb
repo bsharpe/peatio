@@ -6,7 +6,7 @@ FactoryBot.define do
     currency 'btc'
 
     trait :eur do
-      extra 'bank of euros'
+      extra 'Bank of China'
       uid { SecureRandom.hex(10) }
       currency 'eur'
     end

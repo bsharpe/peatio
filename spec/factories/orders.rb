@@ -33,28 +33,30 @@
 
 FactoryBot.define do
   factory :order_bid do
+    member
     bid :eur
     ask :btc
     currency :btceur
     state :wait
     source 'Web'
-    ord_type 'limit'
-    price { '1'.to_d }
-    volume { '1'.to_d }
+    ord_type :limit
+    price 1
+    volume 1
     origin_volume { volume }
-    locked { price.to_d*volume.to_d }
+    locked { (price.to_f * volume.to_f) }
     origin_locked { locked }
   end
 
   factory :order_ask do
+    member
     bid :eur
     ask :btc
     currency :btceur
     state :wait
     source 'Web'
-    ord_type 'limit'
-    price { '1'.to_d }
-    volume { '1'.to_d }
+    ord_type :limit
+    price 1
+    volume 1
     origin_volume { volume }
     locked { volume }
     origin_locked { locked }

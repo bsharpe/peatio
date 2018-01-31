@@ -4,9 +4,9 @@ module Matching
     def initialize(payload)
       @payload = payload
       @market  = Market.find payload[:market_id]
-      @price   = BigDecimal.new payload[:strike_price]
-      @volume  = BigDecimal.new payload[:volume]
-      @funds   = BigDecimal.new payload[:funds]
+      @price   = payload[:strike_price].to_d
+      @volume  = payload[:volume].to_d
+      @funds   = payload[:funds].to_d
     end
 
     def execute!
@@ -44,11 +44,15 @@ module Matching
     end
 
     def create_trade_and_strike_orders
+      ActiveRecord::Base.logger = Logger.new(STDOUT)
+      ActiveRecord::Base.logger.level = :debug
       ActiveRecord::Base.transaction do
         @ask = OrderAsk.lock(true).find(@payload[:ask_id])
         @bid = OrderBid.lock(true).find(@payload[:bid_id])
 
-        raise TradeExecutionError.new({ask: @ask, bid: @bid, price: @price, volume: @volume, funds: @funds}) unless valid?
+        unless valid?
+          raise TradeExecutionError.new({ask: @ask, bid: @bid, price: @price, volume: @volume, funds: @funds})
+        end
 
         @trade = Trade.create!(ask_id: @ask.id, ask_member_id: @ask.member_id,
                                bid_id: @bid.id, bid_member_id: @bid.member_id,
@@ -60,10 +64,10 @@ module Matching
       end
 
       # TODO: temporary fix, can be removed after pusher -> polling refactoring
-      if @trade.ask_member_id == @trade.bid_member_id
-        @ask.hold_account.reload.trigger
-        @bid.hold_account.reload.trigger
-      end
+      # if @trade.ask_member_id == @trade.bid_member_id
+      #   @ask.hold_account.reload.trigger
+      #   @bid.hold_account.reload.trigger
+      # end
     end
 
     def publish_trade

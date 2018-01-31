@@ -101,26 +101,38 @@ RSpec.describe Order, "#done" do
     it "order_bid done" do
       trade = build_stubbed(:trade, volume: strike_volume, price: strike_price)
 
-      expect(hold_account).to receive(:unlock_and_sub_funds).with(
-        strike_volume * strike_price, locked: strike_volume * strike_price,
-        reason: Account::STRIKE_SUB, ref: trade)
+      expect(::Account::UnlockAndSubtractFunds).to receive(:call).with(
+        account: hold_account,
+        amount: strike_volume * strike_price,
+        locked: strike_volume * strike_price,
+        reason: Account::STRIKE_SUB,
+        reference: trade).and_call_original
 
-      expect(expect_account).to receive(:plus_funds).with(
-        strike_volume - strike_volume * bid_fee,
-        hash_including(:reason => Account::STRIKE_ADD, :ref => trade))
+      expect(::Account::AddFunds).to receive(:call).with(
+        account: expect_account,
+        amount: strike_volume - (strike_volume * bid_fee),
+        reason: Account::STRIKE_ADD,
+        fee: (strike_volume * bid_fee),
+        reference: trade).and_call_original
 
       order_bid.strike(trade)
     end
 
     it "order_ask done" do
       trade = build_stubbed(:trade, volume: strike_volume, price: strike_price)
-      expect(hold_account).to receive(:unlock_and_sub_funds).with(
-        strike_volume, locked: strike_volume,
-        reason: Account::STRIKE_SUB, ref: trade)
 
-      expect(expect_account).to receive(:plus_funds).with(
-        strike_volume * strike_price - strike_volume * strike_price * ask_fee,
-        hash_including(:reason => Account::STRIKE_ADD, :ref => trade))
+      expect(::Account::UnlockAndSubtractFunds).to receive(:call).with(
+        account: hold_account,
+        amount: strike_volume, locked: strike_volume,
+        reason: Account::STRIKE_SUB,
+        reference: trade).and_call_original
+
+      expect(::Account::AddFunds).to receive(:call).with(
+        account: expect_account,
+        amount: (strike_volume * strike_price) - (strike_volume * strike_price * ask_fee),
+        reason: Account::STRIKE_ADD,
+        fee: (strike_volume * strike_price) * ask_fee,
+        reference: trade).and_call_original
 
       order_ask.strike(trade)
     end
@@ -183,17 +195,25 @@ RSpec.describe Order, "#done" do
         it "should unlock not used funds" do
           trade = build_stubbed(:trade, volume: strike_volume, price: strike_price)
 
-          expect(hold_account).to receive(:unlock_and_sub_funds).with(
-            strike_volume * strike_price, locked: strike_volume * strike_price,
-            reason: Account::STRIKE_SUB, ref: trade)
+          expect(::Account::UnlockAndSubtractFunds).to receive(:call).with(
+            account: hold_account,
+            amount: strike_volume * strike_price,
+            locked: strike_volume * strike_price,
+            reason: Account::STRIKE_SUB,
+            reference: trade).and_call_original
 
-          expect(expect_account).to receive(:plus_funds).with(
-            strike_volume - strike_volume * bid_fee,
-            hash_including(:reason => Account::STRIKE_ADD, :ref => trade))
+          expect(::Account::AddFunds).to receive(:call).with(
+            account: expect_account,
+            amount: strike_volume - (strike_volume * bid_fee),
+            reason: Account::STRIKE_ADD,
+            fee: (strike_volume * bid_fee),
+            reference: trade).and_call_original
 
-          expect(hold_account).to receive(:unlock_funds).with(
-            strike_volume * (order.price - strike_price),
-            reason: Account::ORDER_FULLFILLED, ref: trade)
+          expect(::Account::UnlockFunds).to receive(:call).with(
+            account: hold_account,
+            amount: strike_volume * (order.price - strike_price),
+            reason: Account::ORDER_FULLFILLED,
+            reference: trade).and_call_original
 
           order_bid.strike(trade)
         end

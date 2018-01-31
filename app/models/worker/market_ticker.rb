@@ -45,9 +45,9 @@ module Worker
       high_trade = initialize_market_high(market.id)
 
       @tickers[market.id] = {
-        low:  low_trade.try(:price)   || ::Trade::ZERO,
-        high: high_trade.try(:price)  || ::Trade::ZERO,
-        last: trades.last.try(:price) || ::Trade::ZERO
+        low:  low_trade.try(:price)   || ZERO,
+        high: high_trade.try(:price)  || ZERO,
+        last: trades.last.try(:price) || ZERO
       }
       Rails.cache.write "peatio:#{market.id}:ticker", @tickers[market.id]
     end

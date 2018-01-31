@@ -84,19 +84,30 @@ class Order < ApplicationRecord
   end
 
   def strike(trade)
-    raise OrderError, "Cannot strike on cancelled or done order. id: #{id}, state: #{state}" unless state == Order::WAIT
+    raise OrderError, "Cannot strike on CANCELLED or DONE order. id: #{id}, state: #{state.to_s.upcase}" unless state == Order::WAIT
 
-    real_sub, add = get_account_changes trade
-    real_fee      = add * fee
-    real_add      = add - real_fee
+    real_sub  = subtract_funds(trade)
+    add       = add_funds(trade)
+    real_fee  = add * self.fee.to_d
+    real_add  = add - real_fee
 
-    hold_account.unlock_and_sub_funds \
-      real_sub, locked: real_sub,
-      reason: Account::STRIKE_SUB, ref: trade
+    context = Account::UnlockAndSubtractFunds.call(
+      account: hold_account,
+      amount: real_sub,
+      locked: real_sub,
+      reason: Account::STRIKE_SUB,
+      reference: trade
+      )
+    raise AccountError.new(context.error) if context.fail?
 
-    expect_account.plus_funds \
-      real_add, fee: real_fee,
-      reason: Account::STRIKE_ADD, ref: trade
+    context = Account::AddFunds.call(
+      account: expect_account,
+      amount: real_add,
+      fee: real_fee,
+      reason: Account::STRIKE_ADD,
+      reference: trade
+      )
+    raise AccountError.new(context.error) if context.fail?
 
     self.volume         -= trade.volume
     self.locked         -= real_sub
@@ -106,9 +117,14 @@ class Order < ApplicationRecord
     if volume.zero?
       self.state = Order::DONE
 
-      # unlock not used funds
-      hold_account.unlock_funds locked,
-        reason: Account::ORDER_FULLFILLED, ref: trade unless locked.zero?
+      # unlock unused funds
+      if locked.positive?
+        Account::UnlockFunds.call(
+          account: hold_account,
+          amount: locked,
+          reason: Account::ORDER_FULLFILLED,
+          reference: trade)
+      end
     elsif ord_type == 'market' && locked.zero?
       # partially filled market order has run out its locked fund
       self.state = Order::CANCEL

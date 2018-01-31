@@ -1,17 +1,17 @@
 class DepositSubscriber
   def after_create(object)
-    ::Pusher["private-#{member.sn}"].trigger_async('deposits', { type: 'create', attributes: object.as_json })
+    ::Pusher["private-#{object.member.sn}"].trigger_async('deposits', { type: 'create', attributes: object.as_json })
   end
 
   def after_update(object, changes, current_user)
     if changes.keys.include(:aasm_state)
       Audit::TransferAuditLog.audit!(object, current_user)
     end
-    ::Pusher["private-#{member.sn}"].trigger_async('deposits', { type: 'update', id: object.id, attributes: changes })
+    ::Pusher["private-#{object.member.sn}"].trigger_async('deposits', { type: 'update', id: object.id, attributes: changes })
   end
 
   def after_destroy(object_data)
-    ::Pusher["private-#{member.sn}"].trigger_async('deposits', { type: 'destroy', id: object_data[:id] })
+    ::Pusher["private-#{object.member.sn}"].trigger_async('deposits', { type: 'destroy', id: object_data[:id] })
   end
 
   def deposit_made(object)

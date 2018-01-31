@@ -41,6 +41,14 @@ class OrderAsk < Order
     [trade.volume, trade.funds]
   end
 
+  def subtract_funds(trade)
+    trade.volume
+  end
+
+  def add_funds(trade)
+    trade.funds
+  end
+
   def hold_account
     member.get_account(ask)
   end
@@ -50,7 +58,7 @@ class OrderAsk < Order
   end
 
   def avg_price
-    return ::Trade::ZERO if funds_used.zero?
+    return ZERO if funds_used.zero?
     config.fix_number_precision(:bid, funds_received / funds_used)
   end
 

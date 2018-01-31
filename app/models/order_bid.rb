@@ -41,6 +41,14 @@ class OrderBid < Order
     [trade.funds, trade.volume]
   end
 
+  def subtract_funds(trade)
+    trade.funds
+  end
+
+  def add_funds(trade)
+    trade.volume
+  end
+
   def hold_account
     member.get_account(bid)
   end
@@ -50,7 +58,7 @@ class OrderBid < Order
   end
 
   def avg_price
-    return ::Trade::ZERO if funds_received.zero?
+    return ZERO if funds_received.zero?
     config.fix_number_precision(:bid, funds_used / funds_received)
   end
 

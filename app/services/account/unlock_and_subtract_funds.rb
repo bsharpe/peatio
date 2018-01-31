@@ -6,15 +6,15 @@ class Account
     end
 
     def call
-      amount = context.amount
       account = context.account
+      amount = context.amount
       locked = context.locked
 
       if !amount.positive? || (amount > locked)
-        context.fail!(messaage: "cannot unlock and subtract funds (amount: #{amount})")
+        context.fail!(error: "cannot unlock and subtract funds (amount: #{amount})")
       end
       if locked.negative? || (locked > account.locked)
-        context.fail!(message: "invalid lock amount (amount: #{amount}, locked: #{locked}, account.locked: #{account.locked})")
+        context.fail!(error: "invalid lock amount (amount: #{amount}, locked: #{locked}, account.locked: #{account.locked})")
       end
 
       balance_delta = locked - amount

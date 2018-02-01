@@ -168,14 +168,8 @@ class Member < ApplicationRecord
   end
 
   def get_account(currency)
-    account = accounts.with_currency(currency.to_sym).first
-
-    if account.nil?
-      touch_accounts
-      account = accounts.with_currency(currency.to_sym).first
-    end
-
-    account
+    raise RuntimeError, "Unknown Currency(#{currency})" unless Currency.find_by_code(currency)
+    self.accounts.with_currency(currency.to_sym).first_or_create
   end
 
   def identity

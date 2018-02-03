@@ -5,6 +5,11 @@ class Currency < ActiveYamlBase
   field :visible, default: true
 
   self.singleton_class.send :alias_method, :all_with_invisible, :all
+
+  def self.find_by_code(code)
+    super(code.to_s)
+  end
+
   def self.all
     all_with_invisible.select(&:visible)
   end
@@ -35,7 +40,7 @@ class Currency < ActiveYamlBase
   end
 
   def fiat?
-    not coin?
+    !coin?
   end
 
   def balance_cache_key

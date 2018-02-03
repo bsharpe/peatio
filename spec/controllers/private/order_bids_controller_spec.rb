@@ -4,7 +4,7 @@ RSpec.describe Private::OrderBidsController, type: :controller do
 
   let(:member) do
     create(:member).tap {|m|
-      m.get_account('eur').update_attributes(balance: '30000')
+      m.account('eur').update_attributes(balance: '30000')
     }
   end
 

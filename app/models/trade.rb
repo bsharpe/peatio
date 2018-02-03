@@ -31,12 +31,14 @@ class Trade < ApplicationRecord
   enumerize :trend, in: {:up => 1, :down => 0}
   enumerize :currency, in: Market.enumerize, scope: true
 
-  belongs_to :market, class_name: 'Market', foreign_key: 'currency'
-  belongs_to :ask, class_name: 'OrderAsk', foreign_key: 'ask_id'
-  belongs_to :bid, class_name: 'OrderBid', foreign_key: 'bid_id'
+  belongs_to :market, class_name: Market.name, foreign_key: :currency
+  belongs_to :ask, class_name: OrderAsk.name, foreign_key: :ask_id
+  belongs_to :bid, class_name: OrderBid.name, foreign_key: :bid_id
 
-  belongs_to :ask_member, class_name: 'Member', foreign_key: 'ask_member_id'
-  belongs_to :bid_member, class_name: 'Member', foreign_key: 'bid_member_id'
+  belongs_to :ask_member, class_name: Member.name, foreign_key: :ask_member_id
+  belongs_to :bid_member, class_name: Member.name, foreign_key: :bid_member_id
+
+  before_validation :setup_ids
 
   validates_presence_of :price, :volume, :funds
 
@@ -48,8 +50,7 @@ class Trade < ApplicationRecord
 
   class << self
     def latest_price(currency)
-      with_currency(currency).order(:id).reverse_order
-        .limit(1).first.try(:price) || "0.0".to_d
+      with_currency(currency).order(id: :desc).first.try(:price) || ZERO
     end
 
     def filter(market, timestamp, from, to, limit, order)
@@ -70,28 +71,40 @@ class Trade < ApplicationRecord
   end
 
   def trigger_notify
-    ask.member.notify 'trade', for_notify('ask')
-    bid.member.notify 'trade', for_notify('bid')
+    # ask.member.notify 'trade', for_notify('ask')
+    # bid.member.notify 'trade', for_notify('bid')
   end
 
-  def for_notify(kind=nil)
-    {
-      id:     id,
-      kind:   kind || side,
-      at:     created_at.to_i,
-      price:  price.to_s  || ZERO,
-      volume: volume.to_s || ZERO,
-      market: currency
-    }
+  def check_trade?
+    return :ask_price_too_high   if ask.ord_type == 'limit' && ask.price > self.price
+    return :bid_price_too_low    if bid.ord_type == 'limit' && bid.price < self.price
+    return :mismatched_currency  if ask.currency != bid.currency
+    return :volume_too_low       if !(self.funds > ZERO && [ask.volume, bid.volume].min >= self.volume)
   end
 
-  def for_global
-    {
-      tid:    id,
-      type:   trend == 'down' ? 'sell' : 'buy',
-      date:   created_at.to_i,
-      price:  price.to_s || ZERO,
-      amount: volume.to_s || ZERO
-    }
+  # def for_notify(kind=nil)
+  #   {
+  #     id:     id,
+  #     kind:   kind || side,
+  #     at:     created_at.to_i,
+  #     price:  price.to_s  || ZERO,
+  #     volume: volume.to_s || ZERO,
+  #     market: currency
+  #   }
+  # end
+  #
+  # def for_global
+  #   {
+  #     tid:    id,
+  #     type:   trend == 'down' ? 'sell' : 'buy',
+  #     date:   created_at.to_i,
+  #     price:  price.to_s || ZERO,
+  #     amount: volume.to_s || ZERO
+  #   }
+  # end
+
+  def setup_ids
+    self.ask_member_id ||= self.ask.member_id
+    self.bid_member_id ||= self.bid.member_id
   end
 end

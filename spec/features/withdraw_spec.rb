@@ -12,9 +12,9 @@
 #     Withdraw.any_instance.stubs(:verify).returns(true)
 #     CoinRPC.any_instance.stubs(:validateaddress).returns({isvalid: true, ismine: false})
 #
-#     btc_account = member.get_account(:btc)
+#     btc_account = member.account(:btc)
 #     btc_account.update_attributes balance: 1000
-#     eur_account = member.get_account(:eur)
+#     eur_account = member.account(:eur)
 #     #eur_account.update_attributes balance: 0
 #
 #     @label = 'common address'

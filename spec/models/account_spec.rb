@@ -6,11 +6,11 @@
 #  member_id                       :integer
 #  currency                        :integer
 #  balance                         :decimal(32, 16)  default(0.0)
-#  locked                          :decimal(32, 16)
+#  locked                          :decimal(32, 16)  default(0.0)
 #  created_at                      :datetime
 #  updated_at                      :datetime
-#  in                              :decimal(32, 16)
-#  out                             :decimal(32, 16)
+#  in                              :decimal(32, 16)  default(0.0)
+#  out                             :decimal(32, 16)  default(0.0)
 #  default_withdraw_fund_source_id :integer
 #
 # Indexes
@@ -335,7 +335,7 @@ RSpec.describe Account, type: :model do
       expect(v.account).to eq subject
       expect(v.operation).to eq :unlock_and_subtract_funds
       expect(v.reason).to eq Account::UNKNOWN
-      expect(v.amount).to eq subject.amount
+      expect(v.amount).to eq subject.total_amount
       expect(v.balance).to eq 1.0
       expect(v.locked).to eq -2.0
     end

@@ -80,8 +80,8 @@ RSpec.describe Order, "#done" do
   let(:order) { order_bid }
   let(:order_bid) { create(:order_bid, price: "1.2".to_d, volume: "10.0".to_d) }
   let(:order_ask) { create(:order_ask, price: "1.2".to_d, volume: "10.0".to_d) }
-  let(:hold_account) { create(:account, member_id: 1, locked: "100.0".to_d, balance: "0.0".to_d) }
-  let(:expect_account) { create(:account, member_id: 2, locked: "0.0".to_d, balance: "0.0".to_d) }
+  let(:hold_account) { create(:account, member_id: 1, locked: "100.0".to_d, balance: ZERO) }
+  let(:expect_account) { create(:account, member_id: 2, locked: ZERO, balance: ZERO) }
 
   before do
     allow(order_bid).to receive(:hold_account).and_return(hold_account)
@@ -271,16 +271,16 @@ RSpec.describe Order, "related accounts" do
   context OrderAsk do
     it "should hold btc and expect eur" do
       ask = create(:order_ask, member: alice)
-      expect(ask.hold_account).to eq alice.get_account(:btc)
-      expect(ask.expect_account).to eq alice.get_account(:eur)
+      expect(ask.hold_account).to eq alice.account(:btc)
+      expect(ask.expect_account).to eq alice.account(:eur)
     end
   end
 
   context OrderBid do
     it "should hold eur and expect btc" do
       bid = create(:order_bid, member: bob)
-      expect(bid.hold_account).to eq bob.get_account(:eur)
-      expect(bid.expect_account).to eq bob.get_account(:btc)
+      expect(bid.hold_account).to eq bob.account(:eur)
+      expect(bid.expect_account).to eq bob.account(:btc)
     end
   end
 end

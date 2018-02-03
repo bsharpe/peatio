@@ -9,6 +9,10 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
+# Indexes
+#
+#  index_comments_on_created_at  (created_at)
+#
 
 require 'rails_helper'
 

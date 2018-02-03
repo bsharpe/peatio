@@ -1,7 +1,8 @@
 class Account
   class AddFunds < Account::BaseOperation
     before do
-      context.fee ||= ZERO
+      context.fee    ||= ZERO
+      context.locked ||= ZERO
     end
 
     def call

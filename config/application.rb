@@ -44,7 +44,6 @@ module Peatio
       g.orm                :active_record
       g.template_engine    :erb
       g.stylesheets        false
-      g.factory_bot        dir: 'spec/factories/'
       g.test_framework     :rspec
     end
 

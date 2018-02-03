@@ -40,20 +40,11 @@ class Ordering
   end
 
   def do_cancel(order)
-    AMQPQueue.enqueue(:matching, action: 'cancel', order: order.to_matching_attributes)
+    AMQPQueue.enqueue(:matching, action: 'cancel', order: order.to_global_id)
   end
 
   def do_cancel!(order)
-    account = order.hold_account
-    order   = Order.find(order.id).lock!
-
-    if order.state == Order::WAIT
-      order.state = Order::CANCEL
-      account.unlock_funds(order.locked, reason: Account::ORDER_CANCEL, ref: order)
-      order.save!
-    else
-      raise CancelOrderError, "Only active order can be cancelled. id: #{order.id}, state: #{order.state}"
-    end
+    order.cancel!
   end
 
 end

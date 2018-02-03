@@ -8,10 +8,14 @@ module Matching
       @id         = attrs[:id]
       @timestamp  = attrs[:timestamp]
       @type       = attrs[:type].to_sym
-      @volume     = attrs[:volume].to_d
-      @price      = attrs[:price].to_d
-      @market     = Market.find attrs[:market]
+      @market     = Market.find(attrs[:market])
 
+      begin
+        @volume     = BigDecimal.new(attrs[:volume])
+        @price      = BigDecimal.new(attrs[:price])
+      rescue ArgumentError
+        raise InvalidOrderError.new(attrs)
+      end
       raise InvalidOrderError.new(attrs) unless valid?(attrs)
     end
 

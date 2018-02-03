@@ -59,7 +59,7 @@
 # RSpec.describe AccountVersion do
 #
 #   let(:member)  { create(:member) }
-#   let(:account) { member.get_account(:btc) }
+#   let(:account) { member.account(:btc) }
 #
 #   before { account.update_attributes(locked: '10.0'.to_d, balance: '10.0'.to_d) }
 #

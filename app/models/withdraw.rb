@@ -50,12 +50,12 @@ class Withdraw < ApplicationRecord
 
   validates_with WithdrawBlacklistValidator
 
-  validates :amount, :fee, :account, :currency, :member, presence: true
+  validates :currency, presence: true
 
-  validates :fee, numericality: {greater_than_or_equal_to: 0}
-  validates :amount, numericality: {greater_than: 0}
+  validates :fee,    numericality: {greater_than_or_equal_to: 0}, presence: true
+  validates :amount, numericality: {greater_than: 0}, presence: true
 
-  validates :sum, presence: true, numericality: {greater_than: 0}, on: :create
+  validates :sum,  numericality: {greater_than: 0}, on: :create, presence: true
   validates :txid, uniqueness: true, allow_nil: true, on: :update
 
   validate :ensure_account_balance, on: :create
@@ -187,17 +187,14 @@ class Withdraw < ApplicationRecord
   end
 
   def lock_funds
-    puts "lock_funds(#{sum}, #{Account::WITHDRAW_LOCK})".yellow
     Account::LockFunds.(account: account, amount: sum, reason: Account::WITHDRAW_LOCK, reference: self)
   end
 
   def unlock_funds
-    puts "unlock_funds(#{sum}, #{Account::WITHDRAW_UNLOCK})".yellow
     Account::UnlockFunds.(account: account, amount: sum, reason: Account::WITHDRAW_UNLOCK, reference: self)
   end
 
   def unlock_and_sub_funds
-    puts "unlock_and_sub_funds(#{sum}, fee: #{fee}, #{Account::WITHDRAW})".yellow
     Account::UnlockAndSubtractFunds.(account: account, amount: sum, locked: sum, fee: fee, reason: Account::WITHDRAW, reference: self)
   end
 
@@ -206,8 +203,7 @@ class Withdraw < ApplicationRecord
   end
 
   def send_email
-    puts "send_email".yellow
-    # broadcast(:send_email, self)
+    broadcast(:send_email, self)
   end
 
   def send_sms
@@ -242,7 +238,7 @@ class Withdraw < ApplicationRecord
   end
 
   def set_account
-    self.account = member&.get_account(currency)
+    self.account = member&.account(currency)
   end
 
   def normalize

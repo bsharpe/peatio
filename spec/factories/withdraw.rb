@@ -4,22 +4,11 @@ FactoryBot.define do
     sum 10
     currency :btc
 
-    account do
-      member.get_account(:btc).tap do |a|
-        a.balance = 50
-        a.save(validate: false)
-
-        a.versions.create!(
-          member: a.member,
-          balance: a.balance,
-          amount: a.balance,
-          locked: 0,
-          fee: 0,
-          currency: a.currency,
-          operation: Account::OPS[:plus_funds]
-          )
-      end
-    end
+    account {
+      account = member.account(:btc)
+      Account::AddFunds.(account: account, amount: 50, reason: Account::DEPOSIT)
+      account
+    }
 
     after(:build) do |x|
       # allow(x).to receive(:validate_address).and_return(true)
@@ -33,22 +22,11 @@ FactoryBot.define do
     currency :eur
     sum 1000
 
-    account do
-      member.get_account(:eur).tap do |a|
-        a.balance = 50000
-        a.save(validate: false)
-
-        a.versions.create!(
-          member: a.member,
-          balance: a.balance,
-          amount: a.balance,
-          locked: 0,
-          fee: 0,
-          currency: a.currency,
-          operation: Account::OPS[:plus_funds]
-          )
-      end
-    end
+    account {
+      account = member.account(:eur)
+      Account::AddFunds.(account: account, amount: 50_000, reason: Account::DEPOSIT)
+      account
+    }
 
     after(:build) do |x|
       x.fund_source ||= build(:eur_fund_source, owner: x)

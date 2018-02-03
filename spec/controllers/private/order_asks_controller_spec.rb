@@ -4,7 +4,7 @@ RSpec.describe Private::OrderAsksController, type: :controller do
 
   let(:member) do
     create(:member).tap {|m|
-      m.get_account('btc').update_attributes(balance: '20')
+      m.account('btc').update_attributes(balance: '20')
     }
   end
 

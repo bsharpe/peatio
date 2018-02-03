@@ -10,10 +10,11 @@ module OrderBookError
   class VolumeTooLarge < OrderError; end
 end
 
+class TradeExecutionError < StandardError; end
+
 module Matching
   class DoubleSubmitError   < StandardError; end
   class InvalidOrderError   < StandardError; end
   class NotEnoughVolume     < StandardError; end
   class ExceedSumLimit      < StandardError; end
-  class TradeExecutionError < StandardError; end
 end

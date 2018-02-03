@@ -1,10 +1,9 @@
 class Order
-  class Execute
+  class Strike
     include Interactor
     include Interactor::Contracts
 
     expects do
-      required(:order).filled
     end
 
     def call

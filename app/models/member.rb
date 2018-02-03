@@ -167,9 +167,10 @@ class Member < ApplicationRecord
     "//gravatar.com/avatar/#{Digest::MD5.hexdigest(email)}?d=retro"
   end
 
-  def get_account(currency)
-    raise RuntimeError, "Unknown Currency(#{currency})" unless Currency.find_by_code(currency)
-    self.accounts.with_currency(currency.to_sym).first_or_create
+  def account(code)
+    currency = Currency.find_by_code(code.to_s.downcase)
+    raise(RuntimeError, "Unknown Currency(#{code})") unless currency
+    self.accounts.with_currency(currency.code).first_or_create
   end
 
   def identity

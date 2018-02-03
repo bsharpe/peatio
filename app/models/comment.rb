@@ -9,6 +9,10 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
+# Indexes
+#
+#  index_comments_on_created_at  (created_at)
+#
 
 class Comment < ApplicationRecord
   include Wisper::ActiveRecord::Publisher

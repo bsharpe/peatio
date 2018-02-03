@@ -10,6 +10,10 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
+# Indexes
+#
+#  index_tickets_on_created_at  (created_at)
+#
 
 require 'rails_helper'
 

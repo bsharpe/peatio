@@ -96,8 +96,8 @@ RSpec.describe APIv2::Orders, type: :api do
 
   describe "POST /api/v2/orders/multi" do
     before do
-      member.get_account(:btc).update_attributes(balance: 100)
-      member.get_account(:eur).update_attributes(balance: 100000)
+      member.account(:btc).update_attributes(balance: 100)
+      member.account(:eur).update_attributes(balance: 100000)
     end
 
     it "should create a sell order and a buy order" do
@@ -142,7 +142,7 @@ RSpec.describe APIv2::Orders, type: :api do
 
   describe "POST /api/v2/orders" do
     it "should create a sell order" do
-      member.get_account(:btc).update_attributes(balance: 100)
+      member.account(:btc).update_attributes(balance: 100)
 
       expect {
         signed_post '/api/v2/orders', token: token, params: {market: 'btceur', side: 'sell', volume: '12.13', price: '2014'}
@@ -152,7 +152,7 @@ RSpec.describe APIv2::Orders, type: :api do
     end
 
     it "should create a buy order" do
-      member.get_account(:eur).update_attributes(balance: 100000)
+      member.account(:eur).update_attributes(balance: 100000)
 
       expect {
         signed_post '/api/v2/orders', token: token, params: {market: 'btceur', side: 'buy', volume: '12.13', price: '2014'}
@@ -162,7 +162,7 @@ RSpec.describe APIv2::Orders, type: :api do
     end
 
     it "should set order source to APIv2" do
-      member.get_account(:eur).update_attributes(balance: 100000)
+      member.account(:eur).update_attributes(balance: 100000)
       signed_post '/api/v2/orders', token: token, params: {market: 'btceur', side: 'buy', volume: '12.13', price: '2014'}
       expect(OrderBid.last.source).to eq 'APIv2'
     end
@@ -193,7 +193,7 @@ RSpec.describe APIv2::Orders, type: :api do
 
     context "succesful" do
       before do
-        member.get_account(:eur).update_attributes(locked: order.price*order.volume)
+        member.account(:eur).update_attributes(locked: order.price*order.volume)
       end
 
       it "should cancel specified order" do
@@ -222,8 +222,8 @@ RSpec.describe APIv2::Orders, type: :api do
       create(:order_ask, currency: 'btceur', price: '12.326', volume: '3.14', origin_volume: '12.13', member: member)
       create(:order_bid, currency: 'btceur', price: '12.326', volume: '3.14', origin_volume: '12.13', member: member)
 
-      member.get_account(:btc).update_attributes(locked: '5')
-      member.get_account(:eur).update_attributes(locked: '50')
+      member.account(:btc).update_attributes(locked: '5')
+      member.account(:eur).update_attributes(locked: '50')
     end
 
     it "should cancel all my orders" do

@@ -27,7 +27,7 @@ module Deposits
     def fetch
       Rails.logger.info(current_user.inspect)
       Rails.logger.info(channel.inspect)
-      @account = current_user.get_account(channel.currency)
+      @account = current_user.account(channel.currency)
       @model = model_kls
       @fund_sources = current_user.fund_sources.with_currency(channel.currency)
       @assets = model_kls.where(member: current_user).order(:id).reverse_order.limit(10)

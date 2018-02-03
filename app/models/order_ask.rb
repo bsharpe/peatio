@@ -33,7 +33,7 @@
 
 class OrderAsk < Order
 
-  has_many :trades, foreign_key: 'ask_id'
+  has_many :trades, foreign_key: :ask_id
 
   scope :matching_rule, -> { order('price ASC, created_at ASC') }
 
@@ -50,11 +50,11 @@ class OrderAsk < Order
   end
 
   def hold_account
-    member.get_account(ask)
+    member.account(ask)
   end
 
   def expect_account
-    member.get_account(bid)
+    member.account(bid)
   end
 
   def avg_price
@@ -67,7 +67,9 @@ class OrderAsk < Order
     when 'limit'
       volume
     when 'market'
-      estimate_required_funds(Global[currency].bids) {|p, v| v}
+      estimate_required_funds(Global[currency].bids) {|_, v| v}
+    else
+      raise ArgumentError, "Unknown Order Type(#{ord_type})"
     end
   end
 

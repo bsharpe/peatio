@@ -5,10 +5,10 @@
 #   let(:other_member) { create :member }
 #   let(:member) { create :member, email: identity.email}
 #   let!(:bid_account) do
-#     member.get_account('eur').tap { |a| a.update_attributes locked: 400, balance: 1000 }
+#     member.account('eur').tap { |a| a.update_attributes locked: 400, balance: 1000 }
 #   end
 #   let!(:ask_account) do
-#     member.get_account('btc').tap { |a| a.update_attributes locked: 400, balance: 2000 }
+#     member.account('btc').tap { |a| a.update_attributes locked: 400, balance: 2000 }
 #   end
 #   let!(:ask_order) { create :order_ask, price: '23.6', member: member }
 #   let!(:bid_order) { create :order_bid, price: '21.3' }

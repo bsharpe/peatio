@@ -1,6 +1,6 @@
 class MemberSubscriber
   def after_create(object)
-    touch_accounts(object)
+    # touch_accounts(object)
     object.create_id_document
   end
 

@@ -1,8 +1,8 @@
 def who_is_billionaire
   member = create(:member)
-  member.get_account(:btc).update_attributes(
+  member.account(:btc).update_attributes(
     locked: '1000000000.0'.to_d, balance: '1000000000.0'.to_d)
-  member.get_account(:eur).update_attributes(
+  member.account(:eur).update_attributes(
     locked: '1000000000.0'.to_d, balance: '1000000000.0'.to_d)
   member
 end

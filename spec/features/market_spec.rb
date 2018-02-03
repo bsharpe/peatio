@@ -5,13 +5,13 @@
 #   let!(:member) { create :member, :activated, email: identity.email  }
 #
 #   let!(:bid_account) do
-#     member.get_account('eur').tap { |a|
+#     member.account('eur').tap { |a|
 #       a.plus_funds 1000
 #       a.save!
 #     }
 #   end
 #   let!(:ask_account) do
-#     member.get_account('btc').tap { |a|
+#     member.account('btc').tap { |a|
 #       a.plus_funds 2000
 #       a.save!
 #     }

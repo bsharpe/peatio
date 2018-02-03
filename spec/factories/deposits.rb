@@ -29,7 +29,7 @@
 FactoryBot.define do
   factory :deposit do
     member
-    account { member.get_account(currency) }
+    account { member.account(currency) }
     currency { 'btc' }
     fund_uid { Faker::Lorem.characters }
     fund_extra { Faker::Lorem.characters }

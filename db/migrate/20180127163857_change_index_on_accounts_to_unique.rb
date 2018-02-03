@@ -1,4 +1,4 @@
-class ChangeIndexOnAccountsToUnique < ActiveRecord::Migration
+class ChangeIndexOnAccountsToUnique < ActiveRecord::Migration[4.2]
   def up
     remove_index :accounts, [:member_id, :currency] rescue nil
     add_index :accounts, [:member_id, :currency], unique: true

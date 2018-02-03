@@ -33,13 +33,9 @@
 
 class OrderBid < Order
 
-  has_many :trades, foreign_key: 'bid_id'
+  has_many :trades, foreign_key: :bid_id
 
   scope :matching_rule, -> { order('price DESC, created_at ASC') }
-
-  def get_account_changes(trade)
-    [trade.funds, trade.volume]
-  end
 
   def subtract_funds(trade)
     trade.funds
@@ -50,11 +46,11 @@ class OrderBid < Order
   end
 
   def hold_account
-    member.get_account(bid)
+    member.account(bid)
   end
 
   def expect_account
-    member.get_account(ask)
+    member.account(ask)
   end
 
   def avg_price
@@ -66,10 +62,12 @@ class OrderBid < Order
   def compute_locked
     case ord_type
     when 'limit'
-      price*volume
+      price * volume
     when 'market'
-      funds = estimate_required_funds(Global[currency].asks) {|p, v| p*v }
-      funds*LOCKING_BUFFER_FACTOR
+      funds = estimate_required_funds(Global[currency].asks) {|k, v| k * v }
+      funds * LOCKING_BUFFER_FACTOR
+    else
+      raise ArgumentError, "Unknown Order Type[#{ord_type}]"
     end
   end
 

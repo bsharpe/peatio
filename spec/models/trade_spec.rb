@@ -71,22 +71,22 @@ RSpec.describe Trade, ".collect_side" do
   end
 end
 
-RSpec.describe Trade, "#for_notify" do
-  let(:order_ask) { create(:order_ask) }
-  let(:order_bid) { create(:order_bid) }
-  let(:trade) { create(:trade, ask: order_ask, bid: order_bid) }
-
-  subject(:notify) { trade.for_notify('ask') }
-
-  it { expect(notify).not_to be_blank }
-  it { expect(notify[:kind]).not_to be_blank }
-  it { expect(notify[:at]).not_to be_blank }
-  it { expect(notify[:price]).not_to be_blank }
-  it { expect(notify[:volume]).not_to be_blank }
-
-  it "should use side as kind" do
-    trade.side = 'ask'
-    expect(trade.for_notify[:kind]).to eq 'ask'
-  end
-
-end
+# RSpec.describe Trade, "#for_notify" do
+#   let(:order_ask) { create(:order_ask) }
+#   let(:order_bid) { create(:order_bid) }
+#   let(:trade) { create(:trade, ask: order_ask, bid: order_bid) }
+#
+#   subject(:notify) { trade.for_notify('ask') }
+#
+#   it { expect(notify).not_to be_blank }
+#   it { expect(notify[:kind]).not_to be_blank }
+#   it { expect(notify[:at]).not_to be_blank }
+#   it { expect(notify[:price]).not_to be_blank }
+#   it { expect(notify[:volume]).not_to be_blank }
+#
+#   it "should use side as kind" do
+#     trade.side = 'ask'
+#     expect(trade.for_notify[:kind]).to eq 'ask'
+#   end
+#
+# end

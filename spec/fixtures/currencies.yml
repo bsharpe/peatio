@@ -1,5 +1,5 @@
 - id: 1
-  key: dollar
+  key: euro
   code: eur
   coin: false
   quick_withdraw_max: 10
@@ -12,6 +12,10 @@
   blockchain: "http://testnet.btclook.com/txn/#{txid}"
   address_url: "https://blockchain.info/address/#{address}"
   quick_withdraw_max: 0.1
+- id: 3
+  key: dollar
+  code: usd
+  coin: false
 - id: 4
   key: protoshare
   code: pts

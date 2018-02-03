@@ -6,11 +6,11 @@
 #  member_id                       :integer
 #  currency                        :integer
 #  balance                         :decimal(32, 16)  default(0.0)
-#  locked                          :decimal(32, 16)
+#  locked                          :decimal(32, 16)  default(0.0)
 #  created_at                      :datetime
 #  updated_at                      :datetime
-#  in                              :decimal(32, 16)
-#  out                             :decimal(32, 16)
+#  in                              :decimal(32, 16)  default(0.0)
+#  out                             :decimal(32, 16)  default(0.0)
 #  default_withdraw_fund_source_id :integer
 #
 # Indexes
@@ -53,6 +53,7 @@ class Account < ApplicationRecord
   validates_numericality_of :balance, :locked, greater_than_or_equal_to: ZERO
 
   scope :enabled, -> { where("currency in (?)", Currency.ids) }
+  scope :with_currency, ->(currency) { where(currency: currency) }
   scope :locked_sum,  -> (currency) { with_currency(currency).sum(:locked) }
   scope :balance_sum, -> (currency) { with_currency(currency).sum(:balance) }
 
@@ -60,12 +61,12 @@ class Account < ApplicationRecord
     self.payment_addresses.last || self.payment_addresses.create(currency: self.currency)
   end
 
-  def amount
+  def total_amount
     self.balance + self.locked
   end
 
   def verify
-    self.versions.sum('balance + locked') == self.amount
+    self.versions.sum('balance + locked') == self.total_amount
   end
 
   def as_json(options = {})

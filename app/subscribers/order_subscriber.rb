@@ -14,9 +14,7 @@ class OrderSubscriber
   def trigger(object)
     return unless object.member
 
-    json = Jbuilder.encode do |json|
-      json.(object, *ATTRIBUTES)
-    end
+    json = object.attributes.slice(ATTRIBUTES)
 
     object.member.trigger('order', json)
   end

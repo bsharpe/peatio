@@ -4,8 +4,8 @@ RSpec.describe APIv2::Members, type: :api do
 
   let(:member) do
     create(:verified_member).tap {|m|
-      m.get_account(:btc).update_attributes(balance: 12.13,   locked: 3.14)
-      m.get_account(:eur).update_attributes(balance: 2014.47, locked: 0)
+      m.account(:btc).update_attributes(balance: 12.13,   locked: 3.14)
+      m.account(:eur).update_attributes(balance: 2014.47, locked: 0)
     }
   end
   let(:token)  { create(:api_token, member: member) }

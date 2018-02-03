@@ -3,7 +3,7 @@ module Deposits
     extend ActiveSupport::Concern
 
     def gen_address
-      account = current_user.get_account(channel.currency)
+      account = current_user.account(channel.currency)
       @address = account.payment_addresses.create currency: account.currency
       @address.gen_address if @address.address.blank?
       render nothing: true

@@ -15,6 +15,10 @@ class WithdrawSubscriber
     ::Pusher["private-#{object.member.uid}"].trigger_async('withdraws', { type: 'destroy', id: object_data[:id] })
   end
 
+  def lock_funds(object)
+    send_email(object)
+  end
+
   def send_mail(object)
     case object.aasm_state
     when 'submitted'

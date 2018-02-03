@@ -10,6 +10,10 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
+# Indexes
+#
+#  index_tickets_on_created_at  (created_at)
+#
 
 class Ticket < ApplicationRecord
   include AASM
@@ -20,7 +24,7 @@ class Ticket < ApplicationRecord
   validates_with TicketValidator
 
   has_many :comments
-  belongs_to :author, class_name: 'Member', foreign_key: 'author_id'
+  belongs_to :author, class_name: Member.name, foreign_key: :author_id
 
   scope :open, -> { where(aasm_state: :open) }
   scope :close, -> { where(aasm_state: :closed) }

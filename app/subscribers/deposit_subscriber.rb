@@ -4,7 +4,7 @@ class DepositSubscriber
   end
 
   def after_update(object, changes, current_user)
-    if changes.keys.include(:aasm_state)
+    if changes.keys.include?('aasm_state')
       Audit::TransferAuditLog.audit!(object, current_user)
     end
     ::Pusher["private-#{object.member.uid}"].trigger_async('deposits', { type: 'update', id: object.id, attributes: changes })

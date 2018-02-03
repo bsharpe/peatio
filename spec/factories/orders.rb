@@ -37,7 +37,6 @@ FactoryBot.define do
     bid :eur
     ask :btc
     currency :btceur
-    state :wait
     source 'Web'
     ord_type :limit
     price 1
@@ -52,7 +51,6 @@ FactoryBot.define do
     bid :eur
     ask :btc
     currency :btceur
-    state :wait
     source 'Web'
     ord_type :limit
     price 1

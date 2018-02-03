@@ -16,10 +16,11 @@ RSpec.describe PaymentAddress do
 
   context ".create" do
     it "generate address after commit" do
-
-      address = PaymentAddress.create(currency: :btc)
+      member = create(:member)
+      address = PaymentAddress.create(currency: :btc, account: member.account(:btc))
       expect(AMQPQueue).to receive(:enqueue)
         .with(:deposit_coin_address, {payment_address_id: address.id, currency: address.currency}, {persistent: true})
+      address.gen_address
       expect(address).to be_valid
     end
   end

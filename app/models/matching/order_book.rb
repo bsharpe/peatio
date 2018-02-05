@@ -94,7 +94,6 @@ module Matching
       order = price_level.find(order.id)
       return unless order
 
-      ap price_level
       price_level.remove(order)
       @limit_orders.delete(order.price) if price_level.empty?
 

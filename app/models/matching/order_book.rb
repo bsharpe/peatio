@@ -76,9 +76,7 @@ module Matching
     end
 
     def limit_orders
-      orders = {}
-      @limit_orders.keys.each {|k| orders[k] = @limit_orders[k].orders }
-      orders
+      @limit_orders.keys.each_with_object({}) {|k, orders| orders[k] = @limit_orders[k].orders }
     end
 
     def market_orders

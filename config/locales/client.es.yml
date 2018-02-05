@@ -148,7 +148,7 @@ es:
         no_data: No hay datos en el Historial
 
         submitting: Enviando
-        cancelled: Cancelado
+        canceled: Cancelado
         submitted: Enviado
         accepted: Aceptado
         rejected: Rechazado

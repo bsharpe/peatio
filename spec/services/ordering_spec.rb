@@ -38,7 +38,7 @@ RSpec.describe Ordering do
 
     it "should hard cancel order" do
       Ordering.new(order).cancel!
-      expect(order.reload.state).to eq Order::CANCEL
+      expect(order.reload.state).to eq Order::STATE_CANCELED
       expect(account.reload.locked).to eq ('100'.to_d - order.locked)
     end
   end

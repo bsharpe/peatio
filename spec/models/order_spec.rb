@@ -115,7 +115,7 @@ RSpec.describe Order, "#done" do
         fee: (strike_volume * bid_fee),
         reference: trade).and_call_original
 
-      order_bid.strike(trade)
+      Order::Strike.(order: order, trade: trade)
     end
 
     it "order_ask done" do
@@ -134,7 +134,7 @@ RSpec.describe Order, "#done" do
         fee: (strike_volume * strike_price) * ask_fee,
         reference: trade).and_call_original
 
-      order_ask.strike(trade)
+      Order::Strike.(order: order, trade: trade)
     end
   end
 
@@ -142,27 +142,27 @@ RSpec.describe Order, "#done" do
     describe "#state" do
       it "should be keep wait state" do
         expect do
-          order.strike(build_stubbed(:trade, volume: "5.0", price: "0.8"))
+          Order::Strike.(order: order, trade: build_stubbed(:trade, volume: "5.0", price: "0.8"))
         end.not_to change{ order.state }
       end
 
       it "should be change to done state" do
         expect do
-          order.strike(build_stubbed(:trade, volume: "10.0", price:  "1.2"))
-        end.to change{ order.state }.from(Order::WAIT).to(Order::DONE)
+          Order::Strike.(order: order, trade: build_stubbed(:trade, volume: "10.0", price:  "1.2"))
+        end.to change{ order.state }.from(Order::STATE_WAITING.to_s).to(Order::STATE_DONE.to_s)
       end
     end
 
     describe "#volume" do
       it "should be change volume" do
         expect do
-          order.strike(build_stubbed(:trade, volume: "4.0", price:  "1.2"))
-        end.to change{ order.volume }.from("10.0".to_d).to("6.0".to_d)
+          Order::Strike.(order: order, trade: build_stubbed(:trade, volume: "4.0", price:  "1.2"))
+        end.to change{ order.volume }.from(10).to(6)
       end
 
       it "should be don't change origin volume" do
         expect do
-          order.strike(build_stubbed(:trade, volume: "4.0", price:  "1.2"))
+          Order::Strike.(order: order, trade: build_stubbed(:trade, volume: "4.0", price:  "1.2"))
         end.not_to change{ order.origin_volume }
       end
     end
@@ -170,21 +170,21 @@ RSpec.describe Order, "#done" do
     describe "#trades_count" do
       it "should increase trades count" do
         expect do
-          order.strike(build_stubbed(:trade, volume: "4.0", price:  "1.2"))
+          Order::Strike.(order: order, trade: build_stubbed(:trade, volume: "4.0", price:  "1.2"))
         end.to change{ order.trades_count }.from(0).to(1)
       end
     end
 
     describe "#done" do
       context "trade done volume 5.0 with price 0.8" do
-        let(:strike_price) { "0.8".to_d }
-        let(:strike_volume) { "5.0".to_d }
+        let(:strike_price) { 0.8 }
+        let(:strike_volume) { 5.0 }
         it_behaves_like "trade done"
       end
 
       context "trade done volume 3.1 with price 0.7" do
-        let(:strike_price) { "0.7".to_d }
-        let(:strike_volume) { "3.1".to_d }
+        let(:strike_price) { 0.7 }
+        let(:strike_volume) { 3.1 }
         it_behaves_like "trade done"
       end
 
@@ -215,7 +215,7 @@ RSpec.describe Order, "#done" do
             reason: Account::ORDER_FULLFILLED,
             reference: trade).and_call_original
 
-          order_bid.strike(trade)
+          Order::Strike.(order: order, trade: trade)
         end
       end
     end
@@ -265,8 +265,8 @@ RSpec.describe Order, "#kind" do
 end
 
 RSpec.describe Order, "related accounts" do
-  let(:alice)  { who_is_billionaire }
-  let(:bob)    { who_is_billionaire }
+  let(:alice)  { create(:member, :billionaire) }
+  let(:bob)    { create(:member, :billionaire) }
 
   context OrderAsk do
     it "should hold btc and expect eur" do
@@ -315,8 +315,9 @@ RSpec.describe Order, "#estimate_required_funds" do
 end
 
 RSpec.describe Order, "#strike" do
-  it "should raise error if order has been cancelled" do
-    order = Order.new(state: Order::CANCEL)
-    expect { order.strike(build_stubbed(:trade)) }.to raise_error(OrderError)
+  it "should raise error if order has been canceled" do
+    order = build_stubbed(:order_bid, state: Order::STATE_CANCELED)
+    result = Order::Strike.(order: order, trade: build_stubbed(:trade, bid: order))
+    expect(result.failure?).to be_truthy
   end
 end

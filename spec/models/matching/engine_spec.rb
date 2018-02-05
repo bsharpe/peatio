@@ -5,21 +5,21 @@ RSpec.describe Matching::Engine do
   let(:market) { Market.find('btceur') }
   let(:price)  { 10.to_d }
   let(:volume) { 5.to_d }
-  let(:ask)    { Matching.mock_limit_order(type: :ask, price: price, volume: volume)}
-  let(:bid)    { Matching.mock_limit_order(type: :bid, price: price, volume: volume)}
+  let(:ask)    { create(:matching_limit_order, type: :ask, price: price, volume: volume)}
+  let(:bid)    { create(:matching_limit_order, type: :bid, price: price, volume: volume)}
 
   let(:orderbook) { Matching::OrderBookManager.new('btceur', broadcast: false) }
   subject         { Matching::Engine.new(market, mode: :run) }
   before          { allow(subject).to receive(:orderbook).and_return(orderbook) }
 
   context "submit market order" do
-    let!(:bid)  { Matching.mock_limit_order(type: :bid, price: '0.1'.to_d, volume: '0.1'.to_d) }
-    let!(:ask1) { Matching.mock_limit_order(type: :ask, price: '1.0'.to_d, volume: '1.0'.to_d) }
-    let!(:ask2) { Matching.mock_limit_order(type: :ask, price: '2.0'.to_d, volume: '1.0'.to_d) }
-    let!(:ask3) { Matching.mock_limit_order(type: :ask, price: '3.0'.to_d, volume: '1.0'.to_d) }
+    let!(:bid)  { create(:matching_limit_order, type: :bid, price: '0.1'.to_d, volume: '0.1'.to_d) }
+    let!(:ask1) { create(:matching_limit_order, type: :ask, price: '1.0'.to_d, volume: '1.0'.to_d) }
+    let!(:ask2) { create(:matching_limit_order, type: :ask, price: '2.0'.to_d, volume: '1.0'.to_d) }
+    let!(:ask3) { create(:matching_limit_order, type: :ask, price: '3.0'.to_d, volume: '1.0'.to_d) }
 
     it "should fill the market order completely" do
-      mo = Matching.mock_market_order(type: :bid, locked: '6.0'.to_d, volume: '2.4'.to_d)
+      mo = create(:matching_market_order, type: :bid, locked: '6.0'.to_d, volume: '2.4'.to_d)
 
       expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
       expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: ask2.volume, funds: '2.0'.to_d}, anything)
@@ -39,7 +39,7 @@ RSpec.describe Matching::Engine do
     end
 
     it "should fill the market order partially and cancel it" do
-      mo = Matching.mock_market_order(type: :bid, locked: '6.0'.to_d, volume: '2.4'.to_d)
+      mo = create(:matching_market_order, type: :bid, locked: '6.0'.to_d, volume: '2.4'.to_d)
 
       expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
       expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: ask2.volume, funds: '2.0'.to_d}, anything)
@@ -55,7 +55,7 @@ RSpec.describe Matching::Engine do
     end
 
     it "should partially fill then cancel the market order if locked funds run out" do
-      mo = Matching.mock_market_order(type: :bid, locked: '2.5'.to_d, volume: '2'.to_d)
+      mo = create(:matching_market_order, type: :bid, locked: '2.5'.to_d, volume: '2'.to_d)
 
       expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask1.id, bid_id: mo.id, strike_price: ask1.price, volume: ask1.volume, funds: '1.0'.to_d}, anything)
       expect(AMQPQueue).to receive(:enqueue).with(:trade_executor, {market_id: market.id, ask_id: ask2.id, bid_id: mo.id, strike_price: ask2.price, volume: '0.75'.to_d, funds: '1.5'.to_d}, anything)
@@ -89,7 +89,7 @@ RSpec.describe Matching::Engine do
     end
 
     context "partial match incoming order" do
-      let(:ask) { Matching.mock_limit_order(type: :ask, price: price, volume: 3.to_d)}
+      let(:ask) { create(:matching_limit_order, type: :ask, price: price, volume: 3.to_d)}
 
       it "should execute trade" do
         expect(AMQPQueue).to receive(:enqueue)
@@ -109,11 +109,11 @@ RSpec.describe Matching::Engine do
     end
 
     context "match order with many counter orders" do
-      let(:bid)    { Matching.mock_limit_order(type: :bid, price: price, volume: 10.to_d)}
+      let(:bid)    { create(:matching_limit_order, type: :bid, price: price, volume: 10.to_d)}
 
       let(:asks) do
         [nil,nil,nil].map do
-          Matching.mock_limit_order(type: :ask, price: price, volume: 3.to_d)
+          create(:matching_limit_order, type: :ask, price: price, volume: 3.to_d)
         end
       end
 
@@ -129,14 +129,14 @@ RSpec.describe Matching::Engine do
     end
 
     context "fully match order after some cancellatons" do
-      let(:bid)      { Matching.mock_limit_order(type: :bid, price: price,   volume: 10.to_d)}
-      let(:low_ask)  { Matching.mock_limit_order(type: :ask, price: price-1, volume: 3.to_d) }
-      let(:high_ask) { Matching.mock_limit_order(type: :ask, price: price,   volume: 3.to_d) }
+      let(:bid)      { create(:matching_limit_order, type: :bid, price: price,   volume: 10.to_d)}
+      let(:low_ask)  { create(:matching_limit_order, type: :ask, price: price-1, volume: 3.to_d) }
+      let(:high_ask) { create(:matching_limit_order, type: :ask, price: price,   volume: 3.to_d) }
 
       it "should match bid with high ask" do
         subject.submit(low_ask) # low ask enters first
         subject.submit(high_ask)
-        subject.cancel(low_ask) # but it's cancelled
+        subject.cancel(low_ask) # but it's canceled
 
         expect(AMQPQueue).to receive(:enqueue)
         .with(:trade_executor, {market_id: market.id, ask_id: high_ask.id, bid_id: bid.id, strike_price: high_ask.price, volume: high_ask.volume, funds: '30.0'.to_d}, anything)
@@ -163,12 +163,12 @@ RSpec.describe Matching::Engine do
   context "float number edge cases" do
     it "should add up used funds to locked funds" do
       order = create(:order_bid, price: '3662.05', volume: '0.62')
-      bid  = Matching.mock_limit_order(order.to_matching_attributes)
+      bid  = create(:matching_limit_order, order.to_matching_attributes)
 
-      ask1 = Matching.mock_limit_order(type: :ask, price: '3658.28'.to_d, volume: '0.0129'.to_d)
-      ask2 = Matching.mock_limit_order(type: :ask, price: '3661.72'.to_d, volume: '0.26'.to_d)
-      ask3 = Matching.mock_limit_order(type: :ask, price: '3659.00'.to_d, volume: '0.2945'.to_d)
-      ask4 = Matching.mock_limit_order(type: :ask, price: '3661.68'.to_d, volume: '0.0526'.to_d)
+      ask1 = create(:matching_limit_order, type: :ask, price: '3658.28'.to_d, volume: '0.0129'.to_d)
+      ask2 = create(:matching_limit_order, type: :ask, price: '3661.72'.to_d, volume: '0.26'.to_d)
+      ask3 = create(:matching_limit_order, type: :ask, price: '3659.00'.to_d, volume: '0.2945'.to_d)
+      ask4 = create(:matching_limit_order, type: :ask, price: '3661.68'.to_d, volume: '0.0526'.to_d)
 
       used_funds = 0
       allow(subject).to receive(:publish) do |order, counter_order, trade|

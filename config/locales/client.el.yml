@@ -34,7 +34,7 @@ el:
         amount: Ποσό
         cancel: ακυρώσει
         no_data: Δεν υπάρχουν δεδομένα ιστορικού
-        cancelled: Ακυρωμένες
+        canceled: Ακυρωμένες
         accepted: Αποδεκτή
         rejected: Απορρίφθηκε
         checked: Ελεγμένο

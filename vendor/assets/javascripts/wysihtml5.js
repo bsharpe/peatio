@@ -3501,10 +3501,10 @@ wysihtml5.browser = (function() {
     },
 
     /**
-     * Chrome & Safari only fire the ondrop/ondragend/... events when the ondragover event is cancelled
+     * Chrome & Safari only fire the ondrop/ondragend/... events when the ondragover event is canceled
      * with event.preventDefault
      * Firefox 3.6 fires those events anyway, but the mozilla doc says that the dragover/dragenter event needs
-     * to be cancelled
+     * to be canceled
      */
     firesOnDropOnlyWhenOnDragOverIsCancelled: function() {
       return isWebKit || isGecko;

@@ -77,10 +77,15 @@ class Order < ApplicationRecord
   belongs_to :member, optional: true
 
   ## -- SCOPES
+  scope :active, -> { where(state: :waiting) }
   scope :position, -> { group("price").pluck(:price, 'sum(volume)') }
   scope :best_price, ->(currency) { where(ord_type: 'limit').active.with_currency(currency).matching_rule.position }
 
   ## — INSTANCE METHODS
+  def label
+    "%d/$%s/%s" % [id, price.to_s('F'), volume.to_s('F')]
+  end
+
   def funds_used
     origin_locked - locked
   end
@@ -89,59 +94,27 @@ class Order < ApplicationRecord
     config[kind.to_sym]["fee"]
   end
 
-  def config
-    @config ||= Market.find(currency)
+  def market
+    @_market ||= Market.find(currency)
+  end
+  alias :config :market
+
+  ## FIXME: Remove this
+  def to_matching_attributes
+    { id: id,
+      market: market,
+      type: type[-3, 3].downcase.to_sym,
+      ord_type: ord_type,
+      volume: volume,
+      price: price,
+      locked: locked,
+      timestamp: created_at.to_i
+    }
   end
 
   def strike(trade)
     puts "DEPRECATED".yellow
-    # raise OrderError, "Cannot strike on CANCELLED or DONE order. id: #{id}, state: #{state.to_s.upcase}" unless state == Order::WAIT
-    #
-    # real_sub  = subtract_funds(trade)
-    # add       = add_funds(trade)
-    # real_fee  = add * self.fee.to_d
-    # real_add  = add - real_fee
-    #
-    # context = Account::UnlockAndSubtractFunds.call(
-    #   account: hold_account,
-    #   amount: real_sub,
-    #   locked: real_sub,
-    #   reason: Account::STRIKE_SUB,
-    #   reference: trade
-    #   )
-    # raise AccountError.new(context.error) if context.fail?
-    #
-    # context = Account::AddFunds.call(
-    #   account: expect_account,
-    #   amount: real_add,
-    #   fee: real_fee,
-    #   reason: Account::STRIKE_ADD,
-    #   reference: trade
-    #   )
-    # raise AccountError.new(context.error) if context.fail?
-    #
-    # self.volume         -= trade.volume
-    # self.locked         -= real_sub
-    # self.funds_received += add
-    # self.trades_count   += 1
-    #
-    # if volume.zero?
-    #   self.state = Order::DONE
-    #
-    #   # unlock unused funds
-    #   if locked.positive?
-    #     Account::UnlockFunds.call(
-    #       account: hold_account,
-    #       amount: locked,
-    #       reason: Account::ORDER_FULLFILLED,
-    #       reference: trade)
-    #   end
-    # elsif ord_type == 'market' && locked.zero?
-    #   # partially filled market order has run out its locked fund
-    #   self.state = Order::CANCEL
-    # end
-    #
-    # self.save!
+    asdf
   end
 
   def kind
@@ -156,10 +129,6 @@ class Order < ApplicationRecord
     created_at.to_i
   end
 
-  def market
-    currency
-  end
-
   def fix_number_precision
     self.price = config.fix_number_precision(:bid, price.to_d) if price
 
@@ -172,7 +141,7 @@ class Order < ApplicationRecord
   private
 
   def unlock_funds
-    Account::UnlockFunds(account: hold_account, amount: order.locked, reason: Account::ORDER_CANCEL, reference: self)
+    Account::UnlockFunds.(account: self.hold_account, amount: self.locked, reason: Account::ORDER_CANCEL, reference: self)
   end
 
   def market_order_validations

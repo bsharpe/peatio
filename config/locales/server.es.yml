@@ -728,7 +728,7 @@ es:
   deposits/bank:
     aasm_state:
       submitting: Enviando
-      cancelled: Cancelado
+      canceled: Cancelado
       submitted: Enviado
       accepted: Aceptado
       rejected: Rechazado
@@ -1991,7 +1991,7 @@ es:
         submitted: Enviado
         submitting: Enviando
         accepted: Aceptado
-        cancelled: Cancelado
+        canceled: Cancelado
         rejected: Rechazado
         checked: Revisado
         warning: Advertencia

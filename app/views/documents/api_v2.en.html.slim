@@ -125,7 +125,7 @@
             p side: Buy/Sell
             p price: Order price
             p avg_price: Average execution price
-            p state: wait, done or cancel. 'wait' represents the order is active, it may be a new order or partial complete order; 'done' means the order has been fulfilled completely; 'cancel' means the order has been cancelled.
+            p state: wait, done or cancel. 'wait' represents the order is active, it may be a new order or partial complete order; 'done' means the order has been fulfilled completely; 'cancel' means the order has been canceled.
             p market: Which market the order belongs to
             p created_at: Order created time
             p volume: volume to buy/sell
@@ -175,10 +175,10 @@
       tbody
         tr
           td POST /api/v2/order/delete
-          td Cancel order is an asynchronous operation. A success response only means your cancel request has been accepted, it doesn't mean the order has been cancelled. You should always use /api/v2/order or websocket api to get order's latest state.
+          td Cancel order is an asynchronous operation. A success response only means your cancel request has been accepted, it doesn't mean the order has been canceled. You should always use /api/v2/order or websocket api to get order's latest state.
         tr
           td POST /api/v2/orders/clear
-          td Cancel all your orders is an asynchronous operation. A success response only means your request has been accepted. The orders in response may or may not have been cancelled yet.
+          td Cancel all your orders is an asynchronous operation. A success response only means your request has been accepted. The orders in response may or may not have been canceled yet.
 
 .panel.panel-default
   .panel-heading

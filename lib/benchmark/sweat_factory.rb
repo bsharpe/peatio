@@ -16,7 +16,7 @@ module Benchmark
         klass.new({
           bid: :eur,
           ask: :btc,
-          state: Order::WAIT,
+          state: Order::STATE_WAITING,
           currency: :btceur,
           origin_volume: attrs[:volume],
           source: 'Web'

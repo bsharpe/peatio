@@ -56,7 +56,7 @@ cs:
         cancel: Storno
         no_data: Není žádná historie
         submitting: Odesíláno
-        cancelled: Stornováno
+        canceled: Stornováno
         submitted: Odesláno
         accepted: Akceptováno
         rejected: Odmítnuto

@@ -18,7 +18,7 @@ namespace :order do
 
       order = klass.new(
         source:        'APIv2',
-        state:         ::Order::WAIT,
+        state:         ::Order::STATE_WAITING,
         member_id:     m.id,
         ask:           market.base_unit,
         bid:           market.quote_unit,

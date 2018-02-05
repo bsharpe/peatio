@@ -19,11 +19,11 @@ module Worker
 
       case payload[:action]
       when 'submit'
-        submit build_order(payload[:order])
+        submit(build_order(payload[:order]))
       when 'cancel'
-        cancel build_order(payload[:order])
+        cancel(build_order(payload[:order]))
       when 'reload'
-        reload payload[:market]
+        reload(payload[:market])
       else
         Rails.logger.fatal "Unknown action: #{payload[:action]}"
       end
@@ -56,6 +56,7 @@ module Worker
     end
 
     def build_order(attrs)
+      asdf
       ::Matching::OrderBookManager.build_order attrs
     end
 
@@ -70,8 +71,8 @@ module Worker
     end
 
     def load_orders(market)
-      ::Order.active.with_currency(market.id).order('id asc').each do |order|
-        submit build_order(order.to_matching_attributes)
+      ::Order.waiting.with_currency(market.id).order(:created_at).each do |order|
+        submit(order)
       end
     end
 

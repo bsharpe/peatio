@@ -148,7 +148,7 @@ en:
         no_data: There is no history data
 
         submitting: Submitting
-        cancelled: Cancelled
+        canceled: Cancelled
         submitted: Submitted
         accepted: Accepted
         rejected: Rejected

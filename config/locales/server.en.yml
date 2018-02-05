@@ -724,7 +724,7 @@ en:
   deposits/bank:
     aasm_state:
       submitting: Submitting
-      cancelled: Cancelled
+      canceled: Cancelled
       submitted: Submitted
       accepted: Accepted
       rejected: Rejected
@@ -842,7 +842,7 @@ en:
           notice: Bank Transfer withdrawal application has been submitted, we will process it as soon as possible
           alert_two_factor: Two-Factor Authentication error
         destroy:
-          notice: Bank Transfer withdraw has been cancelled, frozen amount has been returned to your account.
+          notice: Bank Transfer withdraw has been canceled, frozen amount has been returned to your account.
         new:
           fund_source: Select Fund Source
           manage_fund_source: Manage Fund Source
@@ -1986,7 +1986,7 @@ en:
         submitted: Submitted
         submitting: Submitting
         accepted: Accepted
-        cancelled: Canceled
+        canceled: Canceled
         rejected: Rejected
         checked: Checked
         warning: Warning

@@ -15,18 +15,18 @@ module Matching
     end
 
     def submit(order)
-      book, counter_book = orderbook.get_books order.type
-      match order, counter_book
-      add_or_cancel order, book
+      book, counter_book = orderbook.get_books(order.type)
+      match( order, counter_book)
+      add_or_cancel( order, book)
     rescue
-      Rails.logger.fatal "Failed to submit order #{order.label}: #{$!}"
+      Rails.logger.fatal "Failed to submit order #{order}: #{$!}"
       Rails.logger.fatal $!.backtrace.join("\n")
     end
 
     def cancel(order)
-      book, counter_book = orderbook.get_books order.type
+      book, counter_book = orderbook.get_books(order.type)
       if removed_order = book.remove(order)
-        publish_cancel removed_order, "cancelled by user"
+        publish_cancel( removed_order, "canceled by user")
       else
         Rails.logger.warn "Cannot find order##{order.id} to cancel, skip."
       end

@@ -37,6 +37,10 @@ class OrderAsk < Order
 
   scope :matching_rule, -> { order('price ASC, created_at ASC') }
 
+  def crossed?(value)
+    value >= price # if people offer price higher or equal than ask limit
+  end
+
   def get_account_changes(trade)
     [trade.volume, trade.funds]
   end

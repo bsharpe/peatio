@@ -5,7 +5,7 @@ module Concerns
     def order_params(order)
       params[order][:bid] = params[:bid]
       params[order][:ask] = params[:ask]
-      params[order][:state] = Order::WAIT
+      params[order][:state] = Order::STATE_WAITING
       params[order][:currency] = params[:market]
       params[order][:member_id] = current_user.id
       params[order][:volume] = params[order][:origin_volume]

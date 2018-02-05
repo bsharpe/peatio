@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Worker::Matching do
 
-  let(:alice)  { who_is_billionaire }
-  let(:bob)    { who_is_billionaire }
+  let(:alice)  { create(:member, :billionaire) }
+  let(:bob)    { create(:member, :billionaire) }
   let(:market) { Market.find('btceur') }
 
   subject { Worker::Matching.new }

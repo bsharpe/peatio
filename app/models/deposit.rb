@@ -29,7 +29,7 @@
 class Deposit < ApplicationRecord
   include Wisper::ActiveRecord::Publisher
 
-  STATES = [:submitting, :cancelled, :submitted, :rejected, :accepted, :checked, :warning].freeze
+  STATES = [:submitting, :canceled, :submitted, :rejected, :accepted, :checked, :warning].freeze
 
   include AASM
   include HasCurrencies
@@ -55,7 +55,7 @@ class Deposit < ApplicationRecord
 
   aasm :whiny_transitions => false, requires_lock: true do
     state :submitting, initial: true, before_enter: :set_fee # FIXME: This happens *before* db load
-    state :cancelled
+    state :canceled
     state :submitted
     state :rejected
     state :accepted
@@ -67,7 +67,7 @@ class Deposit < ApplicationRecord
     end
 
     event :cancel do
-      transitions from: :submitting, to: :cancelled
+      transitions from: :submitting, to: :canceled
     end
 
     event :reject do

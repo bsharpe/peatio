@@ -37,7 +37,7 @@ RSpec.describe APIv2::Deposits, type: :api do
     end
 
     it "should filter deposits by state" do
-      signed_get '/api/v2/deposits', params: {state: 'cancelled'}, token: token
+      signed_get '/api/v2/deposits', params: {state: 'canceled'}, token: token
       expect(json_data.size).to eq 0
       reset_json_object
       d = create(:deposit, member: member, currency: 'btc')

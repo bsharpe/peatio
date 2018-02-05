@@ -94,7 +94,7 @@ nl:
         no_data: Er is geen historische data
 
         submitting: Toevoegen
-        cancelled: Geannuleerd
+        canceled: Geannuleerd
         submitted: Toegevoegd
         accepted: Geaccepteerd
         rejected: Geweigerd

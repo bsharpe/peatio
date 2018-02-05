@@ -472,7 +472,7 @@ cs:
   deposits/bank:
     aasm_state:
       submitting: Odesíláno
-      cancelled: Stornováno
+      canceled: Stornováno
       submitted: Odesláno
       accepted: Akceptováno
       rejected: Odmítnuto
@@ -1334,7 +1334,7 @@ cs:
         submitted: Odesláno
         submitting: Odesíláno
         accepted: Akceptováno
-        cancelled: Stornováno
+        canceled: Stornováno
         rejected: Odmítnuto
         checked: Kontrolováno
         warning: Upozornění

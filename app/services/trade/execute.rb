@@ -13,12 +13,16 @@ class Trade
     end
 
     def call
-      ActiveRecord::Base.transaction do
-        ask = context.trade.ask.lock!
-        bid = context.trade.bid.lock!
+      trade = context.trade
 
-        bid.strike(context.trade)
-        ask.strike(context.trade)
+      ActiveRecord::Base.transaction do
+        ask = trade.ask.lock!
+        bid = trade.bid.lock!
+
+        result = Order::Strike.(order: bid, trade: trade)
+        context.fail!(error: "BID: #{result.error}") unless result.success?
+        result = Order::Strike.(order: ask, trade: trade)
+        context.fail!(error: "ASK: #{result.error}") unless result.success?
       end
     end
   end

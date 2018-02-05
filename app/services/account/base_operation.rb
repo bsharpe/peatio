@@ -19,7 +19,8 @@ class Account
     protected
 
     def create_record_of_change(operation, balance_delta, locked_delta = 0)
-      puts "Account[#{context.account.id}] balance[#{context.account.balance}] locked[#{context.account.locked}]".green
+      puts "Account[#{context.account.id}]"
+      puts "> balance[#{context.account.balance}] locked[#{context.account.locked}]".green
       puts "%25s Account[#{context.account.id}] Amt[#{context.amount}] Locked[#{context.locked}] Fee[#{context.fee}]".yellow % self.class.name.split('::').last
       account = context.account
       account.transaction do
@@ -49,7 +50,7 @@ class Account
           broadcast(operation, account.versions.last)
         end
 
-        puts "Account[#{context.account.id}] balance[#{context.account.balance}] locked[#{context.account.locked}]".green
+        puts "< balance[#{context.account.balance}] locked[#{context.account.locked}]".green
         puts
       end
     end

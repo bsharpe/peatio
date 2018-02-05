@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Trade::Execute, type: :service do
 
-  let(:alice)  { who_is_billionaire }
-  let(:bob)    { who_is_billionaire }
+  let(:alice)  { create(:member, :billionaire) }
+  let(:bob)    { create(:member, :billionaire) }
   let(:price)  { 10 }
   let(:volume) { 5 }
   let(:market) { Market.find('btceur') }
@@ -75,8 +75,8 @@ RSpec.describe Trade::Execute, type: :service do
     it "should mark both orders as done" do
       described_class.(ask: ask, bid: bid, price: price, volume: volume)
 
-      expect(Order.find(ask.id).state).to eq Order::DONE
-      expect(Order.find(bid.id).state).to eq Order::DONE
+      expect(Order.find(ask.id).state).to eq Order::STATE_DONE
+      expect(Order.find(bid.id).state).to eq Order::STATE_DONE
     end
 
     # it "should publish trade through amqp" do
@@ -92,8 +92,8 @@ RSpec.describe Trade::Execute, type: :service do
     it "should set bid to done only" do
       described_class.(ask: ask, bid: bid, price: price, volume: volume)
 
-      expect(ask.reload.state).to_not eq Order::DONE
-      expect(bid.reload.state).to eq Order::DONE
+      expect(ask.reload.state).to_not eq Order::STATE_DONE
+      expect(bid.reload.state).to eq Order::STATE_DONE
     end
   end
 
@@ -104,8 +104,8 @@ RSpec.describe Trade::Execute, type: :service do
     it "should set ask to done only" do
       described_class.(ask: ask, bid: bid, price: price, volume: volume)
 
-      expect(ask.reload.state).to eq Order::DONE
-      expect(bid.reload.state).to_not eq Order::DONE
+      expect(ask.reload.state).to eq Order::STATE_DONE
+      expect(bid.reload.state).to_not eq Order::STATE_DONE
     end
   end
 
@@ -116,7 +116,7 @@ RSpec.describe Trade::Execute, type: :service do
     it "should cancel the market order" do
       described_class.( ask: ask, bid: bid, price: 2, volume: 1.5, funds: 3.0 )
 
-      expect(bid.reload.state).to eq Order::CANCEL
+      expect(bid.reload.state).to eq Order::STATE_CANCELED
     end
   end
 

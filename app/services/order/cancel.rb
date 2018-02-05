@@ -14,13 +14,14 @@ class Order
     def call
         account = context.order.hold_account
 
-        if order.state == Order::WAIT
+        if order.state == Order::STATE_WAITING
           ActiveRecord::Base.transaction do
-            order.state = Order::CANCEL
+            order.state = Order::STATE_CANCELED
             account.unlock_funds(order.locked, reason: Account::ORDER_CANCEL, ref: order)
             order.save!
+          end
         else
-          raise CancelOrderError, "Only active order can be cancelled. id: #{order.id}, state: #{order.state}"
+          raise CancelOrderError, "Only active order can be canceled. id: #{order.id}, state: #{order.state}"
         end
 
     end

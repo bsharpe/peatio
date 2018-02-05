@@ -30,7 +30,7 @@ module APIv2
 
       order = klass.new(
         source:        'APIv2',
-        state:         ::Order::WAIT,
+        state:         ::Order::STATE_WAITING,
         member_id:     current_user.id,
         ask:           current_market.base_unit,
         bid:           current_market.quote_unit,

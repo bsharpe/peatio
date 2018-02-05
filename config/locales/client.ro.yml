@@ -55,7 +55,7 @@ ro:
         cancel: отменить
         no_data: Нет исторических данных
         submitting: В процессе подтверждения
-        cancelled: Отменен
+        canceled: Отменен
         submitted: Подтвержден
         accepted: Принят
         rejected: Отклонен

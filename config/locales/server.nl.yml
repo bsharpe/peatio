@@ -481,7 +481,7 @@ nl:
   deposits/bank:
     aasm_state:
       submitting: Toevoegen
-      cancelled: Geannuleerd 
+      canceled: Geannuleerd 
       submitted: Toegevoegd
       accepted: Geaccepteerd
       rejected: Geweigerd
@@ -1335,7 +1335,7 @@ nl:
         submitted: Ingezonden
         submitting: Inzenden
         accepted: Geaccepteerd
-        cancelled: Geannuleerd
+        canceled: Geannuleerd
         rejected: Afgewezen
         checked: Nagekeken
         warning: Waarschuwing

@@ -158,7 +158,7 @@ RSpec.describe Withdraw do
     it 'transitions to :done after calling rpc' do
       allow(CoinRPC).to receive(:[]).and_return(@rpc)
 
-      expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to change{subject.account.reload.amount}.by(-subject.sum)
+      expect { Worker::WithdrawCoin.new.process({id: subject.id}, {}, {}) }.to change{subject.account.reload.total_amount}.by(-subject.sum)
 
       subject.reload
       expect(subject.done?).to eq(true)
@@ -176,7 +176,7 @@ RSpec.describe Withdraw do
 
       expect {
         Worker::WithdrawCoin.new.process({id: subject.id}, {}, {})
-      }.to_not change{ subject.account.reload.amount }
+      }.to_not change{ subject.account.reload.total_amount }
 
       expect(subject.reload.almost_done?).to eq(true)
     end
@@ -224,7 +224,7 @@ RSpec.describe Withdraw do
 
         bank_withdraw.process!
 
-        expect { bank_withdraw.fail! }.to_not change{bank_withdraw.account.amount}
+        expect { bank_withdraw.fail! }.to_not change{bank_withdraw.account.total_amount}
 
         expect(bank_withdraw.failed?).to eq(true)
       end

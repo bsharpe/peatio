@@ -7,13 +7,13 @@ module Matching
     def initialize(market, side, options={})
       @market = market
       @side   = side.to_sym
-      @limit_orders = RBTree.new
+      @limit_orders  = RBTree.new
       @market_orders = RBTree.new
 
       @broadcast = options.has_key?(:broadcast) ? options[:broadcast] : true
       broadcast(action: 'new', market: @market, side: @side)
 
-      singleton = class<<self;self;end
+      singleton = class<<self;self;end # ???
       singleton.send :define_method, :limit_top, self.class.instance_method("#{@side}_limit_top")
     end
 
@@ -38,38 +38,40 @@ module Matching
     end
 
     def find(order)
-      case order
-      when LimitOrder
+      case order.ord_type.to_sym
+      when :limit
         @limit_orders[order.price].find(order.id)
-      when MarketOrder
+      when :market
         @market_orders[order.id]
+      else
+        raise ArgumentError, "Unknown order type(#{order.ord_type})"
       end
     end
 
     def add(order)
       raise InvalidOrderError, "volume is zero" if order.volume <= ZERO
 
-      case order
-      when LimitOrder
+      case order.ord_type.to_sym
+      when :limit
         @limit_orders[order.price] ||= PriceLevel.new(order.price)
         @limit_orders[order.price].add order
-      when MarketOrder
+      when :market
         @market_orders[order.id] = order
       else
-        raise ArgumentError, "Unknown order type"
+        raise ArgumentError, "Unknown order type(#{order.ord_type})"
       end
 
       broadcast(action: 'add', order: order.attributes)
     end
 
     def remove(order)
-      case order
-      when LimitOrder
+      case order.ord_type.to_sym
+      when :limit
         remove_limit_order(order)
-      when MarketOrder
+      when :market
         remove_market_order(order)
       else
-        raise ArgumentError, "Unknown order type"
+        raise ArgumentError, "Unknown order type(#{order.ord_type})"
       end
     end
 
@@ -89,10 +91,11 @@ module Matching
       price_level = @limit_orders[order.price]
       return unless price_level
 
-      order = price_level.find order.id # so we can return fresh order
+      order = price_level.find(order.id)
       return unless order
 
-      price_level.remove order
+      ap price_level
+      price_level.remove(order)
       @limit_orders.delete(order.price) if price_level.empty?
 
       broadcast(action: 'remove', order: order.attributes)

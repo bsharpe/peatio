@@ -684,7 +684,7 @@ ru-RU:
     deposits/bank:
     aasm_state:
       submitting: Отправка
-      cancelled: Отменено
+      canceled: Отменено
       submitted: Отправлено
       accepted: Принято
       rejected: Отклонено
@@ -1927,7 +1927,7 @@ ru-RU:
         submitted: Отправлено
         submitting: Отправка
         accepted: Принято
-        cancelled: Отменено
+        canceled: Отменено
         rejected: Отклонено
         checked: Проверено
         warning: Предупреждение

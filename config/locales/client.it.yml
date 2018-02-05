@@ -56,7 +56,7 @@ it:
         cancel: cancella
         no_data: Nessuna cronologia
         submitting: Immettendo
-        cancelled: Cancellato
+        canceled: Cancellato
         submitted: Immesso
         accepted: Accettato
         rejected: Rifiutato

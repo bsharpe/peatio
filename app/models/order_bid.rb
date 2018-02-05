@@ -37,6 +37,10 @@ class OrderBid < Order
 
   scope :matching_rule, -> { order('price DESC, created_at ASC') }
 
+  def crossed?(value)
+    value <= price # if people offer price lower or equal than bid limit
+  end
+
   def subtract_funds(trade)
     trade.funds
   end

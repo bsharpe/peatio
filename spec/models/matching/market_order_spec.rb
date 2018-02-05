@@ -4,16 +4,16 @@ RSpec.describe Matching::MarketOrder do
 
   context "initialize" do
     it "should not allow price attribute" do
-      expect { Matching.mock_market_order(type: :ask, price: '1.0'.to_d) }.to raise_error(Matching::InvalidOrderError)
+      expect { create(:matching_market_order, type: :ask, price: '1.0'.to_d) }.to raise_error(Matching::InvalidOrderError)
     end
 
     it "should only accept positive sum limit" do
-      expect { Matching.mock_market_order(type: :bid, locked: '0.0'.to_d) }.to raise_error(Matching::InvalidOrderError)
+      expect { create(:matching_market_order, type: :bid, locked: '0.0'.to_d) }.to raise_error(Matching::InvalidOrderError)
     end
   end
 
   context "#fill" do
-    subject { Matching.mock_market_order(type: :bid, locked: '10.0'.to_d, volume: '2.0'.to_d) }
+    subject { create(:matching_market_order, type: :bid, locked: '10.0'.to_d, volume: '2.0'.to_d) }
 
     it "should raise not enough volume error" do
       expect { subject.fill('1.0'.to_d, '3.0'.to_d, '3.0'.to_d) }.to raise_error(Matching::NotEnoughVolume)

@@ -8,9 +8,9 @@ RSpec.describe APIv2::Orders, type: :api do
   describe "GET /api/v2/orders" do
     before do
       create(:order_bid, currency: 'btceur', price: '11'.to_d, volume: '123.123456789', member: member)
-      create(:order_bid, currency: 'btceur', price: '12'.to_d, volume: '123.123456789', member: member, state: Order::CANCEL)
+      create(:order_bid, currency: 'btceur', price: '12'.to_d, volume: '123.123456789', member: member, state: Order::STATE_CANCELED)
       create(:order_ask, currency: 'btceur', price: '13'.to_d, volume: '123.123456789', member: member)
-      create(:order_ask, currency: 'btceur', price: '14'.to_d, volume: '123.123456789', member: member, state: Order::DONE)
+      create(:order_ask, currency: 'btceur', price: '14'.to_d, volume: '123.123456789', member: member, state: Order::STATE_DONE)
     end
 
     it "should require authentication" do
@@ -37,9 +37,9 @@ RSpec.describe APIv2::Orders, type: :api do
     end
 
     it "should return complete orders" do
-      signed_get '/api/v2/orders', params: {market: 'btceur', state: Order::DONE}, token: token
+      signed_get '/api/v2/orders', params: {market: 'btceur', state: Order::STATE_DONE}, token: token
       assert_successful
-      expect(json_data.first['state']).to eq Order::DONE
+      expect(json_data.first['state']).to eq Order::STATE_DONE
     end
 
     it "should return paginated orders" do

@@ -34,6 +34,13 @@ FactoryBot.define do
       end
     end
 
+    trait :billionaire do
+      after :create do |member|
+        member.account(:btc).update_attributes(locked: 1_000_000_000, balance: 1_000_000_000)
+        member.account(:eur).update_attributes(locked: 1_000_000_000, balance: 1_000_000_000)
+      end
+    end
+
     factory :activated_member, traits: [:activated]
     factory :verified_member, traits: [:activated, :verified]
     factory :admin_member, traits: [:admin]

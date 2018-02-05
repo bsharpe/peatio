@@ -465,7 +465,7 @@ zh-CN:
   deposits/bank:
     aasm_state:
       submitting: 已提交
-      cancelled: 已撤销
+      canceled: 已撤销
       submitted: 受理中
       accepted: 充值成功
       rejected: 已驳回
@@ -1330,7 +1330,7 @@ zh-CN:
         submitted: 受理中
         submitting: 待提交
         accepted: 已到账
-        cancelled: 已撤销
+        canceled: 已撤销
         rejected: 已驳回
         checked: 已到账
         warning: 异常
